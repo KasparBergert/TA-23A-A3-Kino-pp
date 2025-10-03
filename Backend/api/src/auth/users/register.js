@@ -1,33 +1,42 @@
-export default function register(req, res) {
-  /*
+import createAccount from '../../../../database/src/funcs/createAccount.js'
+import findUser from '../../../../database/src/funcs/findUser.js'
+import userSchema from '../../../../models/userSchema.js'
+import { createAccessToken, createRefreshToken } from '../../../utils/JWT/tokens.js'
 
- takes in
- {
-  email
-  password
-  name
- }
+export default async function register(req, res) {
+  const body = req.body
+  if (typeof body != 'object') {
+    console.log(body)
+    console.log(typeof body)
+    return res.status(400).send({ code: 'VAL-0001' })
+  }
 
+  //type check the values
+  const { error } = userSchema.validate(body)
+  if (error) {
+    return res.status(400).send({ code: 'AUTH-0002', message: error.details[0].message })
+  }
 
+  //if database cannot find a user with the email then send error
+  const found = await findUser(body.email)
+  if (found > 0) {
+    return res.status(400).send({ code: 'AUTH-0002' }) //email already exists
+  }
 
- if any is missing, returns VAL error.
- if any with wrong type return val error
- if field contains invalid chars, val error
- if field contains too many chars, val error, email, password and name have different length minimums  
+  const result = await createAccount(body)
+  if (!result) {
+    return res.status(400).send({ code: 'AUTH-0002' })
+  }
 
- use userSchema for type checking  
+  const accessToken = createAccessToken({ email: body.email })
+  const refreshToken = createRefreshToken({ email: body.email })
 
- if password is 8 chars or more and 4 numbers or more, it is seen as valid
- 
- if database cannot find a user with the email and password (that was hashed before).
-  send error
+  res.cookie('refreshToken', refreshToken, {
+    httpOnly: true,
+    secure: process.env.SecureCookies === 'true',
+    SameSite: 'lax', // only allow with GET requests
+    path: '/',
+  })
 
- if it reaches here, 
- create the account using a helper fuction to set the data, verify it and make the password the hash needed
- 
- create refreshToken as cookie
- create accessToken
- 
- send success code and access token 
- */
+  res.status(201).send({ code: 'AUTH-0001', accessToken })
 }
