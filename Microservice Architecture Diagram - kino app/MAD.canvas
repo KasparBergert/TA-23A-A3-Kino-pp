@@ -1,12 +1,13 @@
 {
 	"nodes":[
-		{"id":"c7a75a6f23b637c6","x":-640,"y":-280,"width":325,"height":170,"type":"group","label":"Middleware"},
-		{"id":"6448fbf6e7396213","x":20,"y":-260,"width":250,"height":60,"color":"2","type":"text","text":"CreateAccount [API](https://tptlive-team-iocjhipz.atlassian.net/wiki/spaces/KP/pages/10256390/API+Documentation#Creating-an-account-%2F-Registering)"},
-		{"id":"84c5a5acbcd37046","x":20,"y":-180,"width":250,"height":60,"color":"2","type":"text","text":"LogIn [API](https://tptlive-team-iocjhipz.atlassian.net/wiki/spaces/KP/pages/10256390/API+Documentation#Logging-in)"},
+		{"id":"c7a75a6f23b637c6","type":"group","x":-640,"y":-280,"width":360,"height":200,"label":"Middleware"},
+		{"id":"6448fbf6e7396213","type":"text","text":"CreateAccount [API](https://tptlive-team-iocjhipz.atlassian.net/wiki/spaces/KP/pages/10256390/API+Documentation#Creating-an-account-%2F-Registering)","x":20,"y":-260,"width":250,"height":60,"color":"2"},
+		{"id":"84c5a5acbcd37046","type":"text","text":"LogIn [API](https://tptlive-team-iocjhipz.atlassian.net/wiki/spaces/KP/pages/10256390/API+Documentation#Logging-in)","x":20,"y":-180,"width":250,"height":60,"color":"2"},
 		{"id":"66c8ee5a405b2f05","type":"text","text":"RefreshToken [API](https://tptlive-team-iocjhipz.atlassian.net/wiki/spaces/KP/pages/10256390/API+Documentation#Getting-the-refresh-token)","x":20,"y":-460,"width":250,"height":60,"color":"2"},
 		{"id":"67ca6baa8a753300","type":"text","text":"AccessToken [API](https://tptlive-team-iocjhipz.atlassian.net/wiki/spaces/KP/pages/10256390/API+Documentation#Getting-the-access-token)","x":20,"y":-540,"width":250,"height":60,"color":"2"},
-		{"id":"8141dc0b1055968f","x":-640,"y":-660,"width":600,"height":180,"color":"1","type":"text","text":"## Input fields (Name, Email, password)\n\nI have included a *valid_chars.md* in the *shared* directory in our repo.\nEach field has a regex pattern attached to it. These patterns are used in the backend and frontend to check if the user has inserted valid or invalid characters."},
-		{"id":"1ca586d1754ab2a5","x":-620,"y":-260,"width":280,"height":110,"color":"#787878","type":"text","text":"Read code and add message component to the response"}
+		{"id":"1ca586d1754ab2a5","type":"text","text":"if message doesn't exist in the response, add the message field and its value based on the code.\nif it does i exist. ignore it","x":-620,"y":-260,"width":300,"height":140,"color":"#787878"},
+		{"id":"9b3cc31aec107e82","x":-1760,"y":-780,"width":400,"height":200,"type":"text","text":"# Roles\n\nThere are 2 roles, `admin` and `user` .\n\n`Admin` - Can create new films.\n`User` - Can view all films and buy tickets"},
+		{"id":"8141dc0b1055968f","type":"text","text":"## Input fields (Name, Email, password)\n\nI have included a *valid_chars.md* in the *shared* directory in our repo.\nEach field has a regex pattern attached to it. These patterns are used in the backend and frontend to check if the user has inserted valid or invalid characters.","x":-1320,"y":-780,"width":600,"height":180,"color":"1"}
 	],
 	"edges":[
 		{"id":"4a7de0c53ca64d24","fromNode":"84c5a5acbcd37046","fromSide":"left","toNode":"1ca586d1754ab2a5","toSide":"right"},
