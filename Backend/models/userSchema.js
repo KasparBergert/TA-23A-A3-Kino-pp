@@ -4,17 +4,17 @@ const userSchema = Joi.object({
   id: Joi.number().messages({
     'number.base': 'Id is not a number or could not be cast to a number',
   }),
-  username: Joi.string()
+  name: Joi.string()
     .pattern(/^[A-Za-z0-9_-]+$/)
     .max(128)
     .required()
     .messages({
-      'string.pattern.base': 'username contains invalid characters.',
-      'string.max': 'username is too long',
-      'any.required': 'username required',
+      'string.pattern.base': 'name contains invalid characters.',
+      'string.max': 'name is too long',
+      'any.required': 'name required',
     }),
   password: Joi.string()
-    .pattern(/^[\x21-\x7E]$/)
+    .pattern(/^[\x21-\x7E]+$/)
     .min(15)
     .max(99)
     .required()
