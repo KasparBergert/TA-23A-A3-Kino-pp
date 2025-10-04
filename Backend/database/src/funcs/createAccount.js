@@ -46,5 +46,5 @@ export default async function createAccount(details, role = 'user') {
     return true
   })
 
-  return await result
+  return result
 }
