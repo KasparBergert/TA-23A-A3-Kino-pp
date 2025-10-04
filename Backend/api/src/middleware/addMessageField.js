@@ -5,6 +5,7 @@ export default function addMessageField(req, res, next) {
 
   res.send = function (body) {
     if (typeof body == 'object' && !('code' in body)) {
+      //throwing an error because sending a response without a code is against API standards.
       throw Error("Response body doesn't include a 'code' field or is not an 'object'")
     }
 
