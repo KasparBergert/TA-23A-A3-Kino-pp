@@ -1,9 +1,10 @@
-import createAccount from '../../../../database/src/funcs/createAccount.js'
-import findUser from '../../../../database/src/funcs/findUser.js'
-import userSchema from '../../../../models/userSchema.js'
-import { createAccessToken, createRefreshToken } from '../../../utils/JWT/tokens.js'
+import createAccount from '../../../../database/src/funcs/createAccount.ts'
+import findUser from '../../../../database/src/funcs/findUser.ts'
+import userSchema from '../../../../models/userSchema.ts'
+import { Request, Response } from 'express'
+import { createRefreshToken, createAccessToken } from '../../../utils/JWT/tokens.ts'
 
-export default async function register(req, res) {
+export default async function register(req: Request, res: Response) {
   const body = req.body
   if (typeof body != 'object') {
     console.log(body)
@@ -14,7 +15,7 @@ export default async function register(req, res) {
   //type check the values
   const { error } = userSchema.validate(body)
   if (error) {
-    return res.status(400).send({ code: 'AUTH-0002', message: error.details[0].message })
+    return res.status(400).send({ code: 'AUTH-0002', message: error.details[0]?.message })
   }
 
   //if database cannot find a user with the email then send error
@@ -34,14 +35,14 @@ export default async function register(req, res) {
   res.cookie('refreshToken', refreshToken, {
     httpOnly: true,
     secure: process.env.SecureCookies === 'true',
-    SameSite: 'strict',
+    sameSite: 'strict',
     path: '/api/auth/jwt/refresh',
   })
 
   res.cookie('accessToken', accessToken, {
     httpOnly: true,
     secure: process.env.SecureCookies === 'true',
-    SameSite: 'strict',
+    sameSite: 'strict',
     path: '/api',
   })
 

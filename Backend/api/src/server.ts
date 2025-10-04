@@ -1,15 +1,15 @@
-import '../../env.js'
+import '../../env.ts'
 import express from 'express'
 import cookieParser from 'cookie-parser'
-import ApiRoutes from './routes.js'
-import addMessageField from './middleware/addMessageField.js'
+import ApiRoutes from './routes.ts'
+import addMessageField from './middleware/addMessageField.ts'
 import chalk from 'chalk'
 import cors from 'cors'
 
 //colors the error to red
 const origError = console.error
-console.error = (error) => {
-  origError(chalk.red(error))
+console.error = (error: unknown) => {
+  origError(chalk.red(String(error)))
 }
 
 const app = express()

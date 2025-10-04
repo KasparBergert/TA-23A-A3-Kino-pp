@@ -1,4 +1,4 @@
-const appMessages = {
+const appMessages: Record<string, string> = {
   'AUTH-0001': 'Account created successfully',
   'AUTH-0002': 'Account creation unsuccessful',
   'AUTH-0003': 'Invalid Access token',
@@ -10,6 +10,6 @@ const appMessages = {
   'VAL-0001': 'Body not sent',
 }
 
-export default function codeToMessage(code) {
+export default function codeToMessage(code: string): string | undefined {
   return appMessages[code]
 }

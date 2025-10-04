@@ -1,4 +1,4 @@
-import mariadb from 'mariadb'
+import mariadb, { Connection, PoolConnection } from 'mariadb'
 
 const pool = mariadb.createPool({
   host: '127.0.0.1',
@@ -6,7 +6,7 @@ const pool = mariadb.createPool({
   user: 'dev',
   password: '01293472093',
   database: 'movies',
-  connectionLimit: 1,
+  connectionLimit: 3,
 })
 
 //since there is manual releasing, you have to insert a callback
@@ -14,8 +14,8 @@ const pool = mariadb.createPool({
  * @param {Function} callback
  * @returns what the callback returns
  */
-export default async function db(callback) {
-  let conn = null
+export default async function db(callback: Function) {
+  let conn: PoolConnection | undefined
   try {
     conn = await pool.getConnection()
     return await callback(conn)
@@ -23,23 +23,21 @@ export default async function db(callback) {
     console.log('DB Error:', err)
   } finally {
     if (conn) {
-      conn.release()
+      await conn.release()
     }
   }
 }
 
 // --- INITIALIZATION ---
-db(async (db) => {
+db(async (db: Connection) => {
   /*
-Purpose: when setting it up on a new computer, i can just run the db like normally.
+  Purpose: when setting it up on a new computer, i can just run the db like normally.
 
-right now:
-create 2 roles, admin and client
+  in the future:
+  create genres
 
-in the future:
-create genres
-
-*/
+  // should add the database schema here to to the initialization.
+  */
 
   await db.query("INSERT IGNORE INTO roles (code) VALUES ('user')")
   await db.query("INSERT IGNORE INTO roles (code) VALUES ('admin')")

@@ -3,7 +3,7 @@ import argon2 from 'argon2'
  * @param {string} plain - the password to hash
  * @returns {Buffer} argon parameters + 64 byte hash
  */
-export default async function hashPassword(plain) {
+export default async function hashPassword(plain: string) {
   return argon2.hash(plain, {
     type: 2,
     parallelism: 6,
@@ -18,6 +18,6 @@ export default async function hashPassword(plain) {
  * @param {*} plain - The plaintext password to be verified.
  * @returns {Boolean} true or false if the password matches
  */
-export async function verifyPassword(hash, password) {
+export async function verifyPassword(hash: string, password: string) {
   return await argon2.verify(hash, password)
 }

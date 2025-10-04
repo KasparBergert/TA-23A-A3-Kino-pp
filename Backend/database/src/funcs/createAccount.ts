@@ -1,6 +1,13 @@
-import { renderList } from 'vue'
+import { string } from 'joi'
 import hashPassword from '../../../api/utils/hash.js'
 import db from '../db.js'
+import { Connection } from 'mariadb/*'
+
+interface AccountDetails {
+  email: string
+  name: string
+  password: string
+}
 
 /**
  * creates an account in the DB
@@ -13,12 +20,12 @@ import db from '../db.js'
  *
  * @returns {Boolean} was user created?
  */
-export default async function createAccount(details, role = 'user') {
+export default async function createAccount(details: AccountDetails, role = 'user') {
   //check if username, email, password are valid
 
   const hash = await hashPassword(details.password)
 
-  const result = await db(async (db) => {
+  const result = await db(async (db: Connection) => {
     //create the user account
     let userId = null // new user's id
     try {
@@ -28,8 +35,12 @@ export default async function createAccount(details, role = 'user') {
       )
 
       userId = res.insertId
-    } catch (err) {
-      console.error(err.stack.split('\n').slice(0, 1).join('\n'))
+    } catch (err: any) {
+      if (err instanceof Error) {
+        console.error(err.stack?.split('\n').slice(0, 1).join('\n'))
+      } else {
+        console.error('Unknown error during query:', err)
+      }
       return false // failed to create user
     }
 
@@ -38,8 +49,12 @@ export default async function createAccount(details, role = 'user') {
       const [{ id: roleId }] = await db.query('SELECT id FROM roles WHERE code = ? LIMIT 1', [role])
       //attach a role to the user
       await db.query('INSERT INTO user_roles (user_id, role_id) VALUES (?,?)', [userId, roleId])
-    } catch (error) {
-      console.error(error)
+    } catch (err) {
+      if (err instanceof Error) {
+        console.error(err.stack?.split('\n').slice(0, 1).join('\n'))
+      } else {
+        console.error('Unknown error during query:', err)
+      }
       return false
     }
 

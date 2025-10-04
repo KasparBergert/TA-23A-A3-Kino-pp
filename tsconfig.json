@@ -1,0 +1,55 @@
+{
+  // Visit https://aka.ms/tsconfig to read more about this file
+  "compilerOptions": {
+    // File Layout
+    "rootDir": "./",                     // where TypeScript starts reading source files
+    "outDir": "./dist",                  // where compiled output would go (unused with noEmit)
+
+    // Environment Settings
+    "allowImportingTsExtensions": true,  // allow .ts extensions in imports (only works when noEmit or emitDeclarationOnly is true)
+    "noEmit": true,                      // don’t generate any .js files; just check types
+    "types": ["node", "express"],        // include type definitions for Node and Express globally
+
+    // Other Outputs
+    "sourceMap": true,                   // generate .map files for debugging (links TS to JS lines)
+    "declaration": true,                 // generate .d.ts files for your modules (type definitions)
+    "declarationMap": true,              // generate .map files for .d.ts outputs
+
+    // Language / Module Targeting
+    "target": "ESNext",                  // output JavaScript version (latest available)
+    "useDefineForClassFields": true,     // follow modern JS behavior for class field initialization
+    "module": "ESNext",                  // use ES module syntax for imports/exports
+    "moduleResolution": "Bundler",       // resolve imports like a modern bundler (Vite, Webpack)
+    "strict": true,                      // enable all strict type checking rules
+    "isolatedModules": true,             // ensure every file can be compiled separately
+    "verbatimModuleSyntax": false,       // allow TypeScript to adjust import/export syntax for compatibility
+    "resolveJsonModule": true,           // let you import .json files as modules
+    "allowJs": false,                    // disallow compiling plain .js files
+    "esModuleInterop": true,             // allow default imports from CommonJS modules
+    "lib": ["ESNext", "DOM"],            // include JS + browser API definitions (for Vue frontend)
+
+    // Stricter Typechecking Options
+    "noUncheckedIndexedAccess": true,    // mark indexed object access as possibly undefined
+    "exactOptionalPropertyTypes": true,  // treat optional properties strictly (no auto undefined merge)
+
+    // Style Options (optional checks, commented out)
+    // "noImplicitReturns": true,        // require explicit return statements in all code paths
+    // "noImplicitOverride": true,       // force 'override' keyword on overridden class methods
+    // "noUnusedLocals": true,           // warn if a variable is declared but never used
+    // "noUnusedParameters": true,       // warn if a function parameter is never used
+    // "noFallthroughCasesInSwitch": true, // disallow fall-through between switch cases
+    // "noPropertyAccessFromIndexSignature": true, // restrict property access on index signatures
+
+    // Recommended Options
+    "noUncheckedSideEffectImports": true, // warn for imports used only for side effects
+    "moduleDetection": "force",           // treat every file as a module even without exports
+    "skipLibCheck": true                  // skip checking library .d.ts files for errors
+  },
+  "include": [
+    "Frontend/src/**/*.ts",               
+    "Frontend/src/**/*.d.ts",             
+    "Frontend/src/**/*.vue",
+    "Backend/api/**/*.ts",    
+    "Backend/database/**/*.ts",    
+  ]
+}
