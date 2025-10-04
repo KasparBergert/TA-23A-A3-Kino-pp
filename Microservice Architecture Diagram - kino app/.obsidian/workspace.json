@@ -11,10 +11,17 @@
             "id": "7f5fbfff0a6a5f81",
             "type": "leaf",
             "state": {
-              "type": "empty",
-              "state": {},
-              "icon": "lucide-file",
-              "title": "New tab"
+              "type": "canvas",
+              "state": {
+                "file": "MAD.canvas",
+                "viewState": {
+                  "x": -591.8396488273244,
+                  "y": -451.5017639031912,
+                  "zoom": -0.17856570519809972
+                }
+              },
+              "icon": "lucide-layout-dashboard",
+              "title": "MAD"
             }
           }
         ]
@@ -74,8 +81,7 @@
       }
     ],
     "direction": "horizontal",
-    "width": 200,
-    "collapsed": true
+    "width": 200
   },
   "right": {
     "id": "031ed76536b42def",
