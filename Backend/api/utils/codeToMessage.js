@@ -4,8 +4,9 @@ const appMessages = {
   'AUTH-0003': 'Invalid Access token',
   'AUTH-0004': 'Invalid Refresh token',
   'AUTH-0005': 'Login successful',
-  'AUTH-0006': 'Valid Access token',
-  'AUTH-0007': 'Valid Refresh token',
+  'AUTH-0006': 'Login unsuccessful',
+  'AUTH-0007': 'Valid Access token',
+  'AUTH-0008': 'Valid Refresh token',
   'VAL-0001': 'Body not sent',
 }
 

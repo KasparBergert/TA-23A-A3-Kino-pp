@@ -1,9 +1,10 @@
 import '../../env.js'
 import express from 'express'
 import cookieParser from 'cookie-parser'
-import CreateRoutes from './routes.js'
+import ApiRoutes from './routes.js'
 import addMessageField from './middleware/addMessageField.js'
 import chalk from 'chalk'
+import cors from 'cors'
 
 //colors the error to red
 const origError = console.error
@@ -17,11 +18,18 @@ const URI = process.env.URI
 
 const middlewares = [addMessageField]
 
+//helps add 's' to 'http' protocol when cookies are set to 'secure'.
+const secureSuffix = process.env.SecureCookies === 'true' ? 's' : ''
+app.use(
+  cors({
+    origin: `http${secureSuffix}://localhost:5173`,
+  }),
+)
 app.use(cookieParser())
 app.use(express.json())
 
 app.use(middlewares)
-app.use('/api', CreateRoutes())
+app.use('/api', ApiRoutes())
 
 app
   .listen(PORT, () => {
