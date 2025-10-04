@@ -34,9 +34,16 @@ export default async function register(req, res) {
   res.cookie('refreshToken', refreshToken, {
     httpOnly: true,
     secure: process.env.SecureCookies === 'true',
-    SameSite: 'lax', // only allow with GET requests
-    path: '/',
+    SameSite: 'strict',
+    path: '/api/auth/jwt/refresh',
   })
 
-  res.status(201).send({ code: 'AUTH-0001', accessToken })
+  res.cookie('accessToken', accessToken, {
+    httpOnly: true,
+    secure: process.env.SecureCookies === 'true',
+    SameSite: 'strict',
+    path: '/api',
+  })
+
+  res.status(201).send({ code: 'AUTH-0001' })
 }
