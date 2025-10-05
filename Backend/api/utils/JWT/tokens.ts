@@ -2,13 +2,6 @@ import fs from 'fs'
 import path from 'path'
 import jwt from 'jsonwebtoken'
 
-// public key and private key are the same. current authentication works like this
-// user can receive access token and refresh tokene, but the server keeps both keys.
-// this is bad because if the server gets hacked, well, users are all gone.
-// this can be prevented by giving a custom key to every client and using the public key to encript data.
-
-// implementing with RSA
-
 function checkEnviormentVariables(): {
   PublicKey: jwt.PublicKey
   PrivateKey: jwt.PrivateKey

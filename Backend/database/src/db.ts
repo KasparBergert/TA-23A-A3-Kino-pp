@@ -31,7 +31,7 @@ export default async function db(callback: Function) {
 // --- INITIALIZATION ---
 db(async (db: Connection) => {
   /*
-  Purpose: when setting it up on a new computer, i can just run the db like normally.
+  Purpose: when setting it up on a new computer, i can just run the db normally.
 
   in the future:
   create genres

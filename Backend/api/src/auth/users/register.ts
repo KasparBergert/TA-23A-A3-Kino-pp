@@ -7,27 +7,34 @@ import { createRefreshToken, createAccessToken } from '../../../utils/JWT/tokens
 export default async function register(req: Request, res: Response) {
   const body = req.body
   if (typeof body != 'object') {
-    console.log(body)
-    console.log(typeof body)
-    return res.status(400).send({ code: 'VAL-0001' })
+    return res.status(400).send({
+      code: 'VAL-0001',
+    })
   }
 
   //type check the values
   const { error } = userSchema.validate(body)
   if (error) {
-    return res.status(400).send({ code: 'AUTH-0002', message: error.details[0]?.message })
+    return res.status(400).send({
+      code: 'AUTH-0002',
+      message: error.details[0]?.message,
+    })
   }
 
   //if database cannot find a user with the email then send error
   const found = await findUser(body.email)
-  if (found > 0) {
-    return res.status(400).send({ code: 'AUTH-0002' }) //email already exists
+  if (found) {
+    return res.status(400).send({
+      code: 'AUTH-0002',
+    }) //email already exists
   }
 
   // all checks passed
-  const result = await createAccount(body)
+  const result = await createAccount(body, 'admin')
   if (!result) {
-    return res.status(400).send({ code: 'AUTH-0002' })
+    return res.status(400).send({
+      code: 'AUTH-0002',
+    })
   }
 
   const accessToken = createAccessToken({ email: body.email })
@@ -47,5 +54,7 @@ export default async function register(req: Request, res: Response) {
     path: '/api',
   })
 
-  res.status(201).send({ code: 'AUTH-0001' })
+  res.status(201).send({
+    code: 'AUTH-0001',
+  })
 }
