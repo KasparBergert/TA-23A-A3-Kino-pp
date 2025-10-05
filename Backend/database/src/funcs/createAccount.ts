@@ -1,5 +1,5 @@
 import { string } from 'joi'
-import hashPassword from '../../../api/utils/hash.js'
+import hashPassword from '../../../api/utils/auth/hash.js'
 import db from '../db.js'
 import { Connection } from 'mariadb/*'
 
@@ -18,11 +18,12 @@ interface AccountDetails {
  * @param {string} details.password - Account password.
  * @param {string} role - type of role to give user (e.g. admin, user) default is 'user'.
  *
- * @returns {Boolean} was user created?
+ * @returns {Promise<boolean>} was user created?
  */
-export default async function createAccount(details: AccountDetails, role = 'user') {
-  //check if username, email, password are valid
-
+export default async function createAccount(
+  details: AccountDetails,
+  role = 'user',
+): Promise<boolean> {
   const hash = await hashPassword(details.password)
 
   const result = await db(async (db: Connection) => {
