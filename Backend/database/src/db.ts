@@ -1,12 +1,17 @@
-import mariadb, { Connection, PoolConnection } from 'mariadb'
+import mariadb, { PoolConnection } from 'mariadb'
+import initDB from './initDB'
+
+// --- INITIALIZATION ---
+await initDB()
+console.log('---- Database Initialized ----')
 
 const pool = mariadb.createPool({
   host: '127.0.0.1',
   port: 3306,
   user: 'dev',
-  password: '01293472093',
+  password: `${process.env.DBdevpass}`,
   database: 'movies',
-  connectionLimit: 3,
+  connectionLimit: 40,
 })
 
 //since there is manual releasing, you have to insert a callback
@@ -27,19 +32,3 @@ export default async function db(callback: Function) {
     }
   }
 }
-
-// --- INITIALIZATION ---
-db(async (db: Connection) => {
-  /*
-  Purpose: when setting it up on a new computer, i can just run the db normally.
-
-  in the future:
-  create genres
-
-  // should add the database schema here to to the initialization.
-  */
-
-  await db.query("INSERT IGNORE INTO roles (code) VALUES ('user')")
-  await db.query("INSERT IGNORE INTO roles (code) VALUES ('admin')")
-  console.log('---- Database Initialized ----')
-})
