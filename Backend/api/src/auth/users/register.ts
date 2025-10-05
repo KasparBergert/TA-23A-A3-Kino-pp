@@ -24,6 +24,7 @@ export default async function register(req: Request, res: Response) {
     return res.status(400).send({ code: 'AUTH-0002' }) //email already exists
   }
 
+  // all checks passed
   const result = await createAccount(body)
   if (!result) {
     return res.status(400).send({ code: 'AUTH-0002' })
