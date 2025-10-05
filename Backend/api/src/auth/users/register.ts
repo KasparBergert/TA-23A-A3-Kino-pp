@@ -1,25 +1,10 @@
 import createAccount from '../../../../database/src/funcs/createAccount.ts'
 import findUser from '../../../../database/src/funcs/findUser.ts'
-import userSchema from '../../../../models/userSchema.ts'
 import { Request, Response } from 'express'
-import { createRefreshToken, createAccessToken } from '../../../utils/JWT/tokens.ts'
+import { createRefreshToken, createAccessToken } from '../../../utils/auth/JWT/tokens.ts'
 
 export default async function register(req: Request, res: Response) {
-  const body = req.body
-  if (typeof body != 'object') {
-    return res.status(400).send({
-      code: 'VAL-0001',
-    })
-  }
-
-  //type check the values
-  const { error } = userSchema.validate(body)
-  if (error) {
-    return res.status(400).send({
-      code: 'AUTH-0002',
-      message: error.details[0]?.message,
-    })
-  }
+  const body = req.body //already gets validated in validateBody.ts middleware
 
   //if database cannot find a user with the email then send error
   const found = await findUser(body.email)

@@ -1,10 +1,13 @@
 import '../../env.ts'
-import express from 'express'
+import express, { Response } from 'express'
 import cookieParser from 'cookie-parser'
 import ApiRoutes from './routes.ts'
 import addMessageField from './middleware/addMessageField.ts'
 import chalk from 'chalk'
 import cors from 'cors'
+import HttpError from './types/HttpError.ts'
+import { Request, NextFunction } from 'express'
+import validateBody from './middleware/auth/validateBody.ts'
 
 //colors the error to red
 const origError = console.error
@@ -16,7 +19,7 @@ const app = express()
 const PORT = process.env.PORT
 const URI = process.env.URI
 
-const middlewares = [addMessageField]
+const middlewares = [addMessageField, validateBody]
 
 //helps add 's' to 'http' protocol when cookies are set to 'secure'.
 const secureSuffix = process.env.SecureCookies === 'true' ? 's' : ''
@@ -26,15 +29,38 @@ app.use(
   }),
 )
 app.use(cookieParser())
-app.use(express.json())
+app.use(
+  express.json({
+    verify: (req, res, buf: Buffer, encoding: BufferEncoding) => {
+      const raw = buf.toString(encoding || 'utf-8')
+      try {
+        JSON.parse(raw)
+      } catch {
+        throw new HttpError('Invalid Json', 400)
+      }
+    },
+  }),
+)
 
 app.use(middlewares)
 app.use('/api', ApiRoutes())
 
+// --- ERROR MIDDLEWARE ---
+interface ErrorMiddleware {
+  (err: HttpError, req: Request, res: Response, next: NextFunction): void
+}
+
+const errorMiddleware: ErrorMiddleware = (err, req, res, next) => {
+  res.status(err.status || 500).send(err.message || 'Internal server error')
+}
+
+app.use(errorMiddleware)
+
 app
   .listen(PORT, () => {
-    console.log(`server running ${URI}:${PORT}`)
+    console.log(`--- ${URI}:${PORT} ---`)
   })
-  .on('error', () => {
-    console.log('Server failed to launch')
+  .on('error', (err) => {
+    console.log('Server failed to start')
+    console.error(err)
   })

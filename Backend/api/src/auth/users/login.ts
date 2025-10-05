@@ -1,7 +1,44 @@
 import { Request, Response } from 'express'
+import getUser from '../../../../database/src/funcs/getUser.ts'
+import { verifyPassword } from '../../../utils/auth/hash.ts'
+import { createAccessToken, createRefreshToken } from '../../../utils/auth/JWT/tokens.ts'
 
-export default function login(req: Request, res: Response) {
-  //models must be used for type checking
-  //userSchema
-  res.send('Login works')
+export default async function login(req: Request, res: Response) {
+  const body = req.body //already gets validated in validateBody.ts middleware
+
+  //if database cannot find a user with the email then send error
+  const found = await getUser(body.email)
+  if (!found) {
+    return res.status(400).send({
+      code: 'AUTH-0006',
+    }) //account doesn't exist
+  }
+
+  const isSamePassword = await verifyPassword(found.hashed_password, body.password)
+  if (!isSamePassword) {
+    return res.status(400).send({
+      code: 'AUTH-0006',
+    }) //passwords to not match
+  }
+
+  const accessToken = createAccessToken({ email: body.email })
+  const refreshToken = createRefreshToken({ email: body.email })
+
+  res.cookie('refreshToken', refreshToken, {
+    httpOnly: true,
+    secure: process.env.SecureCookies === 'true',
+    sameSite: 'strict',
+    path: '/api/auth/jwt/refresh',
+  })
+
+  res.cookie('accessToken', accessToken, {
+    httpOnly: true,
+    secure: process.env.SecureCookies === 'true',
+    sameSite: 'strict',
+    path: '/api',
+  })
+
+  res.status(201).send({
+    code: 'AUTH-0005',
+  })
 }
