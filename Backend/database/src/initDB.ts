@@ -41,9 +41,9 @@ export default async function initDB() {
     process.env.DBdevpass,
   ])
 
-  await conn.query("GRANT SELECT, UPDATE, DELETE, INSERT ON movies.* TO 'dev'@'localhost'")
+  conn.query("GRANT SELECT, UPDATE, DELETE, INSERT ON movies.* TO 'dev'@'localhost'")
 
-  await conn.query(dbSchema)
-  await conn.query("INSERT IGNORE INTO roles (code) VALUES ('user')")
-  await conn.query("INSERT IGNORE INTO roles (code) VALUES ('admin')")
+  conn.query(dbSchema)
+  conn.query("INSERT IGNORE INTO roles (code) VALUES ('user')")
+  conn.query("INSERT IGNORE INTO roles (code) VALUES ('admin')")
 }
