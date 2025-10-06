@@ -31,12 +31,12 @@ CREATE TABLE if not exists user_roles (
 -- ========= CATALOG: FILMS / GENRES =========
 
 CREATE TABLE if not exists films (
-  id            INT AUTO_INCREMENT PRIMARY KEY,
-  title         VARCHAR(200) NOT NULL,
-  description   TEXT,
-  release_date  DATE,
-  duration_min  SMALLINT UNSIGNED,
-  poster_url    VARCHAR(500),  
+  id           INT AUTO_INCREMENT PRIMARY KEY,
+  title        VARCHAR(200) NOT NULL,
+  description  TEXT,
+  release_date DATE,
+  duration_min SMALLINT UNSIGNED,
+  poster_url   VARCHAR(500),  
   INDEX (title),
   INDEX (release_date)
 ) DEFAULT CHARSET=utf8mb4;
@@ -51,16 +51,32 @@ CREATE TABLE if not exists film_genres (
   genre_id SMALLINT UNSIGNED NOT NULL,
   PRIMARY KEY (film_id, genre_id),
   FOREIGN KEY (film_id) REFERENCES films(id) ON DELETE CASCADE,
-  FOREIGN KEY (genre_id) REFERENCES genres(id) ON DELETE RESTRICT
+  FOREIGN KEY (genre_id) REFERENCES genres(id) ON DELETE RESTRICT,
+  INDEX(film_id),
+  INDEX(genre_id)
 ) DEFAULT CHARSET=utf8mb4;
 
--- ========= VENUE: HALLS / SEATS =========
+-- ========= VENUE: THEATRES / HALLS / SEATS =========
 
-CREATE TABLE if not exists halls (
-  id        SMALLINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-  name      VARCHAR(50) NOT NULL UNIQUE,
-  capacity  SMALLINT UNSIGNED NOT NULL
+CREATE TABLE IF NOT EXISTS theatres (
+  id   SMALLINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,  
+  name VARCHAR(128) NOT NULL UNIQUE
 ) DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE IF NOT EXISTS halls (
+  id       SMALLINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  name     VARCHAR(50) NOT NULL UNIQUE,
+  capacity SMALLINT UNSIGNED NOT NULL
+) DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE IF NOT EXISTS theatre_halls (
+  theatre_id SMALLINT UNSIGNED NOT NULL,
+  hall_id    SMALLINT UNSIGNED NOT NULL,  
+  PRIMARY KEY (theatre_id, hall_id),
+  FOREIGN KEY (theatre_id) REFERENCES theatres(id) ON DELETE CASCADE,
+  FOREIGN KEY (hall_id) REFERENCES halls(id)
+) DEFAULT CHARSET=utf8mb4;
+
 
 CREATE TABLE if not exists seats (
   id          INT AUTO_INCREMENT PRIMARY KEY,
@@ -75,12 +91,12 @@ CREATE TABLE if not exists seats (
 -- ========= SCHEDULING: SHOWTIMES =========
 
 CREATE TABLE if not exists showtimes (
-  id         INT AUTO_INCREMENT PRIMARY KEY,
-  film_id    INT NOT NULL,
-  hall_id    SMALLINT UNSIGNED NOT NULL,
-  starts_at  DATETIME NOT NULL,
-  ends_at    DATETIME NULL,
-  price      DECIMAL(10,2) NOT NULL,
+  id          INT AUTO_INCREMENT PRIMARY KEY,
+  film_id     INT NOT NULL,
+  hall_id     SMALLINT UNSIGNED NOT NULL,
+  starts_at   DATETIME NOT NULL,
+  ends_at     DATETIME NULL,
+  price       DECIMAL(10,2) NOT NULL,
   is_canceled BOOLEAN NOT NULL DEFAULT 0,
   FOREIGN KEY (film_id) REFERENCES films(id) ON DELETE RESTRICT,
   FOREIGN KEY (hall_id) REFERENCES halls(id) ON DELETE RESTRICT,
