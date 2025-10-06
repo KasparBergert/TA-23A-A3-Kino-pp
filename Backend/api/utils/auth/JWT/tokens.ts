@@ -31,7 +31,7 @@ function checkEnviormentVariables(): {
 
 const { PublicKey, PrivateKey, TokenTimeShort, TokenTimeLong } = checkEnviormentVariables()
 
-function createJWT(data: object, time: `${number}${'s' | 'm' | 'h' | 'd'}`): string {
+function createJWT(data: Object, time: `${number}${'s' | 'm' | 'h' | 'd'}`): string {
   return jwt.sign(data, PrivateKey, { algorithm: 'RS256', expiresIn: time })
 }
 
@@ -40,12 +40,12 @@ function createJWT(data: object, time: `${number}${'s' | 'm' | 'h' | 'd'}`): str
  * @param key - access token key or refresh token key
  * @returns jwt payload or string. boolean will always be false, because it represents a verification fail.
  */
-function verifyToken(token: string, key: jwt.PublicKey): jwt.JwtPayload | string | boolean {
+function validateToken(token: string, key: jwt.PublicKey): jwt.JwtPayload | string | null {
   try {
     return jwt.verify(token, key, { algorithms: ['RS256'] })
   } catch (error) {
     console.log(error)
-    return false // failed to decode token.
+    return null // failed to decode token.
   }
 }
 
@@ -53,18 +53,14 @@ function verifyToken(token: string, key: jwt.PublicKey): jwt.JwtPayload | string
  * @param {Object} data - data to be made a JWT
  * @returns {string}
  */
-export function createRefreshToken(data: object): string {
+export function createRefreshToken(data: Object): string {
   return createJWT(data, TokenTimeLong)
 }
 
-export function createAccessToken(data: object): string {
+export function createAccessToken(data: Object): string {
   return createJWT(data, TokenTimeShort)
 }
 
-/**
- * @param token - JWT
- * @returns jwt payload or string. boolean will always be false, because it represents a verification fail.
- */
-export function verifyAccess(token: string): jwt.JwtPayload | string | boolean {
-  return verifyToken(token, PublicKey)
+export function verifyToken(token: string): jwt.JwtPayload | string | null {
+  return validateToken(token, PublicKey)
 }

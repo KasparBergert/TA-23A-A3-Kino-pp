@@ -1,15 +1,31 @@
 import { Request, Response } from 'express'
+import { verifyToken } from '../../../utils/auth/JWT/tokens'
+import { JwtPayload } from 'jsonwebtoken'
+import { createAccessToken, createRefreshToken } from '../../../utils/auth/JWT/tokens'
 
 export default function refresh(req: Request, res: Response) {
-  /*
-  
-  API endpoint checks if refresh token is valid
-  no? send AUTH-0005
+  const refreshToken = req.cookies.refreshToken
+  const result: string | null | JwtPayload = verifyToken(refreshToken)
+  if (!result || typeof result == 'string') {
+    return res.status(400).send({ code: 'AUTH-0004' })
+  }
 
+  const newaccessToken = createAccessToken({ email: result.email as string })
+  const newrefreshToken = createRefreshToken({ email: result.email as string })
 
-  creates and sends new refresh token and access token 
-  send AUTH-0008
+  res.cookie('refreshToken', newrefreshToken, {
+    httpOnly: true,
+    secure: process.env.SecureCookies === 'true',
+    sameSite: 'strict',
+    path: '/api/auth/jwt/refresh',
+  })
 
-  */
-  return res.send('1234')
+  res.cookie('accessToken', newaccessToken, {
+    httpOnly: true,
+    secure: process.env.SecureCookies === 'true',
+    sameSite: 'strict',
+    path: '/api',
+  })
+
+  return res.status(200).send({ code: 'AUTH-0008' })
 }
