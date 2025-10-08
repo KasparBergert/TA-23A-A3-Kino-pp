@@ -16,6 +16,7 @@
     "format": "prettier --write src/"
   },
   "dependencies": {
+    "@quasar/extras": "^1.17.0",
     "@types/express": "^5.0.3",
     "@types/jsonwebtoken": "^9.0.10",
     "argon2": "^0.44.0",
@@ -27,11 +28,13 @@
     "joi": "^18.0.1",
     "jsonwebtoken": "^9.0.2",
     "mariadb": "^3.4.5",
+    "quasar": "^2.18.5",
     "vue": "^3.5.22",
     "vue-router": "^4.5.1"
   },
   "devDependencies": {
     "@eslint/js": "^9.33.0",
+    "@quasar/vite-plugin": "^1.10.0",
     "@types/cookie-parser": "^1.4.9",
     "@types/cors": "^2.8.19",
     "@types/node": "^24.6.2",
@@ -44,6 +47,7 @@
     "globals": "^16.3.0",
     "jsdom": "^27.0.0",
     "prettier": "3.6.2",
+    "sass-embedded": "^1.93.2",
     "typescript": "^5.9.3",
     "vite": "^7.1.7",
     "vite-plugin-vue-devtools": "^8.0.2",
