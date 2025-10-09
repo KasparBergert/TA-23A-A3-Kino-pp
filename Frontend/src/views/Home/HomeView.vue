@@ -1,12 +1,13 @@
 <script setup>
 import { onMounted, ref } from 'vue'
 import Dialog from './components/Dialog.vue'
+import FormRegister from './components/FormRegister.vue'
+import FormLogin from './components/FormLogin.vue'
 
 const theatres = ref(['Tallinn - Mustamäe', 'Tallinn - Solaris', 'Tartu - Näpuots'])
 const selectedTheatre = ref(theatres.value[0])
 const dialogController = ref(null)
 
-const showDialog = ref(false)
 function onItemClick(theatre) {
   selectedTheatre.value = theatre
 }
@@ -23,11 +24,29 @@ function viewShowtimes() {
 function showFilm(movie_id) {
   // navigate to film details
 }
-</script>
 
+function showModal(raw) {
+  dialogController.value.setView(raw)
+  dialogController.value.open()
+}
+
+function onLogin(){
+  console.log("working")
+}
+
+</script>
 <template>
   <Dialog ref="dialogController" />
   <q-layout view="hHh lpr fFf">
+    <q-header elevated>
+      <q-toolbar>
+        <q-btn-group class="bg-accent text-white">
+          <q-btn flat label="login" @click="showModal(FormLogin)" />
+          <q-btn flat label="register" @click="showModal(FormRegister)" />
+        </q-btn-group>
+      </q-toolbar>
+    </q-header>
+
     <q-page-container>
       <q-page class="q-pa-md text-white fullscreen column items-center">
         <div class="q-ma-xl">
@@ -57,14 +76,15 @@ function showFilm(movie_id) {
           </q-card>
         </div>
 
-        <div class="q-gutter-md">
-          <q-btn label="login" color="primary" @click="dialogController.open()" />
-          <q-btn label="register" color="primary" @click="dialogController.open()" />
-        </div>
-
         Insert here
         <!-- movie list -->
       </q-page>
     </q-page-container>
   </q-layout>
 </template>
+
+<style scoped>
+.q-header {
+  z-index: 100000;
+}
+</style>

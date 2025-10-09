@@ -9,6 +9,7 @@ export default async function login(req: Request, res: Response) {
   //if database cannot find a user with the email then send error
   const found = await getUser(body.email)
   if (!found) {
+    console.info("account doesn't exist")
     return res.status(400).send({
       code: 'AUTH-0006',
     }) //account doesn't exist
@@ -16,6 +17,7 @@ export default async function login(req: Request, res: Response) {
 
   const isSamePassword = await verifyPassword(found.hashed_password, body.password)
   if (!isSamePassword) {
+    console.info('passwords to not match')
     return res.status(400).send({
       code: 'AUTH-0006',
     }) //passwords to not match

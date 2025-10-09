@@ -30,10 +30,10 @@ export default async function createAccount(
     //create the user account
     let userId = null // new user's id
     try {
-      const res = await db.query(
-        'INSERT INTO users (email, hashed_password, name) VALUES (?,?,?)',
-        [details.email, hash, details.name],
-      )
+      const res = await db.query('INSERT INTO users (email, hashed_password) VALUES (?,?)', [
+        details.email,
+        hash,
+      ])
 
       userId = res.insertId
     } catch (err: any) {

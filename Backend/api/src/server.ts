@@ -15,9 +15,15 @@ console.error = (error: unknown) => {
   origError(chalk.red(String(error)))
 }
 
+//colors the error to blue
+const origInfo = console.info
+console.info = (error: unknown) => {
+  origError(chalk.blue(String(error)))
+}
+
 const app = express()
-const PORT = process.env.PORT
-const URI = process.env.URI
+const PORT = process.env.VITE_PORT
+const URI = process.env.VITE_URI
 
 const middlewares = [addMessageField, validateBody]
 

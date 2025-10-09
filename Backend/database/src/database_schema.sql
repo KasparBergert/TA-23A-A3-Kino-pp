@@ -10,8 +10,7 @@ SET @@note_verbosity = 0; -- display no warnings
 CREATE TABLE if not exists users (
   id              INT AUTO_INCREMENT PRIMARY KEY,
   email           VARCHAR(128) NOT NULL UNIQUE,
-  hashed_password VARCHAR(512) NOT NULL,
-  name            VARCHAR(128) NOT NULL,
+  hashed_password VARCHAR(512) NOT NULL,  
   updated_at      TIMESTAMP NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP
 ) DEFAULT CHARSET=utf8mb4;
 

@@ -1,12 +1,13 @@
 import { createApp } from 'vue'
 import App from './App.vue'
 import router from './router/index.js'
-import { Quasar } from 'quasar'
+import { Quasar, Notify } from 'quasar'
 import 'quasar/dist/quasar.css'
 import '@quasar/extras/material-icons/material-icons.css'
 
 createApp(App)
   .use(Quasar, {
+    plugins: { Notify },
     config: {
       dark: true,
       brand: {

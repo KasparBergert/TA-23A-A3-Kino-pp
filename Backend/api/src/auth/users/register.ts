@@ -4,10 +4,11 @@ import { Request, Response } from 'express'
 import { createRefreshToken, createAccessToken } from '../../../utils/auth/JWT/tokens.ts'
 
 export default async function register(req: Request, res: Response) {
-  const body = req.body //already gets validated in validateBody.ts middleware  
+  const body = req.body //already gets validated in validateBody.ts middleware
   //if database cannot find a user with the email then send error
   const found = await findUser(body.email)
   if (found) {
+    console.info('account already exists')
     return res.status(400).send({
       code: 'AUTH-0002',
     }) //email already exists
@@ -16,6 +17,7 @@ export default async function register(req: Request, res: Response) {
   // all checks passed
   const result = await createAccount(body, 'admin')
   if (!result) {
+    console.info('account created')
     return res.status(400).send({
       code: 'AUTH-0002',
     })

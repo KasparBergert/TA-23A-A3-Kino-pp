@@ -1,8 +1,10 @@
 <script setup>
 import { ref } from 'vue'
 
+let view = ref(null) // controls what dialog shows in its content area
+
 const localDialog = ref(false)
-const maximized = ref(true)
+const maximized = ref(false)
 
 function open() {
   localDialog.value = true
@@ -12,32 +14,31 @@ function close() {
   localDialog.value = false
 }
 
-defineExpose({ open, close })
+/**
+ *
+ * @param component = raw Vue component used in the content of the dialog.
+ */
+function setView(component) {
+  view = component
+}
+
+defineExpose({ open, close, setView })
 </script>
 <template>
   <q-dialog
     v-model="localDialog"
     persistent
-    :maximized="maximized"
-    transition-show="slide-up"
-    transition-hide="slide-down"
+    transition-show="fade"
+    transition-hide="fade"
+    transition-duration="233"
   >
-    <q-card class="bg-primary">
-      <q-bar>
-        <q-space />
-        <q-btn label="1234"></q-btn>
-        <q-btn label="close" @click="localDialog = false" />
+    <div class="column flex">
+      <q-bar class="bg-primary">
+        <div class="q-py-lg">
+          <q-btn flat label="X" v-close-popup />
+        </div>
       </q-bar>
-      <q-card-section>
-        <q-btn label="Button" />
-      </q-card-section>
-
-      <q-card-section>
-        Lorem ipsum, dolor sit amet consectetur adipisicing elit. Aperiam asperiores recusandae
-        excepturi ipsum voluptatum perspiciatis similique sunt modi laboriosam debitis totam,
-        doloribus exercitationem deleniti maxime dignissimos nobis eaque odit optio? Sed dolorum
-        similique, tenetur quam veritatis sit ullam pariatur cupiditate delectus magnam.
-      </q-card-section>
-    </q-card>
+      <component :is="view" />
+    </div>
   </q-dialog>
 </template>
