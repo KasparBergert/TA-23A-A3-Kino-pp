@@ -1,10 +1,11 @@
 <script setup>
-import Form from './Form.vue';
-import { useQuasar } from 'quasar';
-import client from '../../../utils/api';
+import { ref } from 'vue'
+import Form from './Form.vue'
+import client from '../../../utils/api'
 
-
-const $q = useQuasar();
+const snackbar = ref(false)
+const snackbarMessage = ref('')
+const snackbarColor = ref('')
 
 async function onSubmit(email, password) {
   try {
@@ -12,21 +13,26 @@ async function onSubmit(email, password) {
       email,
       password,
     })
-
-    $q.notify({
-      message: result.data.message,
-      type: 'positive',
-    })
-
+    snackbarMessage.value = result.data.message
+    snackbarColor.value = 'success'
+    snackbar.value = true
   } catch (err) {
-    $q.notify({
-      message: err.response?.data?.message,
-      type: 'negative',
-    })
+    snackbarMessage.value = err.response?.data?.message || 'Registration failed'
+    snackbarColor.value = 'error'
+    snackbar.value = true
   }
 }
-
 </script>
+
 <template>
-  <Form :onSubmit="onSubmit" type="Register"/>
+  <Form :onSubmit="onSubmit" type="Register" />
+
+  <v-snackbar
+    v-model="snackbar"
+    :color="snackbarColor"
+    timeout="3000"
+    location="bottom"
+  >
+    {{ snackbarMessage }}
+  </v-snackbar>
 </template>

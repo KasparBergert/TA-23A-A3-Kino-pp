@@ -1,8 +1,7 @@
 <script setup>
 import { ref } from 'vue'
 
-let view = ref(null) // controls what dialog shows in its content area
-
+const view = ref(null)
 const localDialog = ref(false)
 const maximized = ref(false)
 
@@ -15,30 +14,29 @@ function close() {
 }
 
 /**
- *
- * @param component = raw Vue component used in the content of the dialog.
+ * @param component Raw Vue component to render inside dialog
  */
 function setView(component) {
-  view = component
+  view.value = component
 }
 
 defineExpose({ open, close, setView })
 </script>
+
 <template>
-  <q-dialog
+  <v-dialog
     v-model="localDialog"
     persistent
-    transition-show="fade"
-    transition-hide="fade"
-    transition-duration="233"
+    transition="fade-transition"
+    max-width="600"
   >
-    <div class="column flex">
-      <q-bar class="bg-primary">
-        <div class="q-py-lg">
-          <q-btn flat label="X" v-close-popup />
-        </div>
-      </q-bar>
-      <component :is="view" />
-    </div>
-  </q-dialog>
+    <v-card>
+      <v-card-title class="bg-accent d-flex justify-end">
+        <v-btn icon="mdi-close" variant="text" @click="close">Close</v-btn>
+      </v-card-title>
+      <v-card-text>
+        <component :is="view" />
+      </v-card-text>
+    </v-card>
+  </v-dialog>
 </template>

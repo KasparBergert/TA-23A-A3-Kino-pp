@@ -3,6 +3,9 @@ import { onMounted, ref } from 'vue'
 import Dialog from './components/Dialog.vue'
 import FormRegister from './components/FormRegister.vue'
 import FormLogin from './components/FormLogin.vue'
+import { useRouter } from 'vue-router'
+
+const router = useRouter()
 
 const theatres = ref(['Tallinn - Mustamäe', 'Tallinn - Solaris', 'Tartu - Näpuots'])
 const selectedTheatre = ref(theatres.value[0])
@@ -13,78 +16,70 @@ function onItemClick(theatre) {
 }
 
 onMounted(() => {
-  // fetch movies or other async setup
+  // fetch movies etc.
 })
 
 function viewShowtimes() {
-  // navigate to showtimes page
+  // e.g. router.push(...) or emit event
   console.log('viewShowtimes')
 }
 
 function showFilm(movie_id) {
-  // navigate to film details
+  console.log('showFilm', movie_id)
 }
 
-function showModal(raw) {
-  dialogController.value.setView(raw)
+function showModal(rawComp) {
+  dialogController.value.setView(rawComp)
   dialogController.value.open()
 }
 
 function onLogin(){
-  console.log("working")
+  console.log("login invoked")
 }
-
 </script>
+
 <template>
   <Dialog ref="dialogController" />
-  <q-layout view="hHh lpr fFf">
-    <q-header elevated>
-      <q-toolbar>
-        <q-btn-group class="bg-accent text-white">
-          <q-btn flat label="login" @click="showModal(FormLogin)" />
-          <q-btn flat label="register" @click="showModal(FormRegister)" />
-        </q-btn-group>
-      </q-toolbar>
-    </q-header>
+  <v-app>  <!-- Vuetify root wrapper -->
+    <v-app-bar app elevated>
+      <v-toolbar>
+        <v-btn text @click="showModal(FormLogin)">Login</v-btn>
+        <v-btn text @click="showModal(FormRegister)">Register</v-btn>
+      </v-toolbar>
+    </v-app-bar>
 
-    <q-page-container>
-      <q-page class="q-pa-md text-white fullscreen column items-center">
-        <div class="q-ma-xl">
-          <q-card>
-            <q-card-actions>
-              <q-btn-dropdown color="primary" :label="selectedTheatre">
-                <q-list>
-                  <q-item
-                    v-for="theatre in theatres"
-                    :key="theatre"
-                    clickable
-                    v-close-popup
-                    @click="onItemClick(theatre)"
-                  >
-                    <q-item-section>{{ theatre }}</q-item-section>
-                  </q-item>
-                </q-list>
-              </q-btn-dropdown>
+    <v-main>
+      <v-container class="fill-height d-flex flex-column align-center justify-center">
+        <v-card>
+          <v-card-actions>
+            <v-menu>
+              <template #activator="{ props }">
+                <v-btn v-bind="props">
+                  {{ selectedTheatre }}
+                  <v-icon right>mdi-menu-down</v-icon>
+                </v-btn>
+              </template>
+              <v-list>
+                <v-list-item
+                  v-for="theatre in theatres"
+                  :key="theatre"
+                  @click="onItemClick(theatre)"
+                >
+                  <v-list-item-title>{{ theatre }}</v-list-item-title>
+                </v-list-item>
+              </v-list>
+            </v-menu>
+            <v-btn color="primary" class="ml-4" @click="viewShowtimes">
+              View Showtimes
+            </v-btn>
+          </v-card-actions>
+        </v-card>
 
-              <q-btn
-                label="View showtimes"
-                color="primary"
-                class="q-ml-md"
-                @click="viewShowtimes"
-              />
-            </q-card-actions>
-          </q-card>
-        </div>
-
-        Insert here
-        <!-- movie list -->
-      </q-page>
-    </q-page-container>
-  </q-layout>
+        <!-- Insert movie list or other content -->
+      </v-container>
+    </v-main>
+  </v-app>
 </template>
 
 <style scoped>
-.q-header {
-  z-index: 100000;
-}
 </style>

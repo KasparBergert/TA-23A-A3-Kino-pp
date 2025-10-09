@@ -16,9 +16,10 @@
     "format": "prettier --write src/"
   },
   "dependencies": {
-    "@quasar/extras": "^1.17.0",
+    "@mdi/font": "^7.4.47",
     "@types/express": "^5.0.3",
     "@types/jsonwebtoken": "^9.0.10",
+    "@vuetify/api-types": "^1.0.0",
     "argon2": "^0.44.0",
     "axios": "^1.12.2",
     "chalk": "^5.6.2",
@@ -29,9 +30,9 @@
     "joi": "^18.0.1",
     "jsonwebtoken": "^9.0.2",
     "mariadb": "^3.4.5",
-    "quasar": "^2.18.5",
     "vue": "^3.5.22",
-    "vue-router": "^4.5.1"
+    "vue-router": "^4.5.1",
+    "vuetify": "^3.10.5"
   },
   "devDependencies": {
     "@eslint/js": "^9.33.0",
@@ -48,10 +49,13 @@
     "globals": "^16.3.0",
     "jsdom": "^27.0.0",
     "prettier": "3.6.2",
+    "sass": "^1.93.2",
     "sass-embedded": "^1.93.2",
+    "sass-loader": "^16.0.5",
     "typescript": "^5.9.3",
     "vite": "^7.1.7",
     "vite-plugin-vue-devtools": "^8.0.2",
+    "vite-plugin-vuetify": "^2.1.2",
     "vitest": "^3.2.4"
   }
 }

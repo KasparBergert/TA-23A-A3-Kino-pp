@@ -1,26 +1,39 @@
 import { createApp } from 'vue'
 import App from './App.vue'
-import router from './router/index.js'
-import { Quasar, Notify } from 'quasar'
-import 'quasar/dist/quasar.css'
-import '@quasar/extras/material-icons/material-icons.css'
+import router from './router'
 
-createApp(App)
-  .use(Quasar, {
-    plugins: { Notify },
-    config: {
-      dark: true,
-      brand: {
-        primary: '#a11212',
-        secondary: '#0d0d0d',
-        accent: '#ff3b3b',
-        dark: '#1a0000',
-        positive: '#00e676',
-        negative: '#e53935',
-        info: '#40c4ff',
-        warning: '#ffb300',
+import 'vuetify/styles' // it does find them
+import { createVuetify } from 'vuetify'
+import * as components from 'vuetify/components'
+import * as directives from 'vuetify/directives'
+
+import '@mdi/font/css/materialdesignicons.css'
+
+const vuetify = createVuetify({
+  components,
+  directives,
+  theme: {
+    defaultTheme: 'dark',
+    themes: {
+      dark: {
+        colors: {
+          primary: '#E50914', // Netflix Red
+          accent: '#B20710', // Symbol Dark Red
+          secondary: '#000000', // black
+          dark: '#121212', // near darkest
+          info: '#B20710', // reuse dark red or variant
+          warning: '#FFA500', // warm amber (film accent)
+          positive: '#FFFFFF', // for success (white text maybe)
+          negative: '#E50914', // error in red
+          background: '#0d0d0d',
+          surface: '#1a1a1a',
+          onPrimary: '#fff',
+          onSecondary: '#fff',
+          border: '#333333',
+        },
       },
     },
-  })
-  .use(router)
-  .mount('#app')
+  },
+})
+
+createApp(App).use(router).use(vuetify).mount('#app')
