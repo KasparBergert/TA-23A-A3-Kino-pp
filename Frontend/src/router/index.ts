@@ -11,7 +11,7 @@ const router = createRouter({
       component: HomeView,
     },
     {
-      path: '/showtimes',
+      path: '/showtimes:choice',
       name: 'showtimes',
       component: Showtime,
     },

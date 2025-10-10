@@ -1,5 +1,5 @@
 import { Router } from 'express'
-import refresh from './refresh.js'
+import refresh from './refresh.ts'
 
 /**
  * /jwt/refresh

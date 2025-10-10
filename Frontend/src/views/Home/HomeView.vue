@@ -4,24 +4,30 @@ import Dialog from './components/Dialog.vue'
 import FormRegister from './components/FormRegister.vue'
 import FormLogin from './components/FormLogin.vue'
 import { useRouter } from 'vue-router'
-
+import client from '../../utils/api'
 const router = useRouter()
 
-const theatres = ref(['Tallinn - Mustamäe', 'Tallinn - Solaris', 'Tartu - Näpuots'])
-const selectedTheatre = ref(theatres.value[0])
+//should be fetched from the database, because there is
+const theatres = ref([])
+const selectedTheatre = ref("Pole Valitud")
 const dialogController = ref(null)
 
 function onItemClick(theatre) {
   selectedTheatre.value = theatre
 }
 
-onMounted(() => {
-  // fetch movies etc.
+onMounted(async () => {
+  // fetch movies
+
+  // fetch theatres
+  const result = await client.get('/services/theatres', );
+  console.log()
+  theatres.value = result.data.theatres
 })
 
 function viewShowtimes() {
   // e.g. router.push(...) or emit event
-  console.log('viewShowtimes')
+  router.push('/showtimes')
 }
 
 function showFilm(movie_id) {
