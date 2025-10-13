@@ -50,6 +50,6 @@
     "Frontend/src/**/*.d.ts",             
     "Frontend/src/**/*.vue",
     "Backend/api/**/*.ts",    
-    "Backend/database/**/*.ts", "shared/models/UserAccount.ts",    
+    "Backend/database/**/*.ts", "shared/models/UserAccount.ts", "Frontend/src/main.ts", "Frontend/src/env.d.ts",    
   ]
 }
