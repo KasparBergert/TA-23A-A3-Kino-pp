@@ -1,13 +1,13 @@
-import '../../env.ts'
+import '../env.ts'
 import express, { Response } from 'express'
 import cookieParser from 'cookie-parser'
-import ApiRoutes from './routes.ts'
-import addMessageField from './middleware/addMessageField.ts'
+import ApiRoutes from './src/routes.ts'
+import addMessageField from './src/middleware/addMessageField.ts'
 import chalk from 'chalk'
 import cors from 'cors'
-import HttpError from './types/HttpError.ts'
+import HttpError from './src/types/HttpError.ts'
 import { Request, NextFunction } from 'express'
-import validateBody from './middleware/auth/validateBody.ts'
+import validateBody from './src/middleware/auth/validateBody.ts'
 
 //colors the error to red
 const origError = console.error
@@ -18,7 +18,7 @@ console.error = (error: unknown) => {
 //colors the error to blue
 const origInfo = console.info
 console.info = (error: unknown) => {
-  origError(chalk.blue(String(error)))
+  origInfo(chalk.blue(String(error)))
 }
 
 const app = express()

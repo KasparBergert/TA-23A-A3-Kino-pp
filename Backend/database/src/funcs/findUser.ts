@@ -6,6 +6,6 @@ import getUser from './getUser.ts'
  * @returns {Promise<Boolean>} true if user exists, false otherwise.
  */
 export default async function findUser(email: string): Promise<Boolean> {
-  const res = await getUser(email) // no performance noticable performance difference using getUser().
+  const res = await getUser(email) // no noticable performance difference using getUser().
   return res ? true : false
 }

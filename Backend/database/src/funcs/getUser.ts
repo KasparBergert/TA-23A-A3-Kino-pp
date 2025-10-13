@@ -1,6 +1,6 @@
 import { PoolConnection } from 'mariadb/*'
-import db from '../db.ts'
-import UserAccount from '../types/UserAccount.ts'
+import db from '../../db.ts'
+import UserAccount from '../../../../shared/models/UserAccount.ts'
 
 /**
  * get 1 user based on email

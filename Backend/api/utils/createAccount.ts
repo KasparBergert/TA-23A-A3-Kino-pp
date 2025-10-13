@@ -1,13 +1,8 @@
-import { string } from 'joi'
-import hashPassword from '../../../api/utils/auth/hash.js'
-import db from '../db.js'
+import hashPassword from './auth/hash.ts'
+import AccountDetails from '../types/AccountDetails.ts'
 import { Connection } from 'mariadb/*'
+import db from '../../database/db.ts'
 
-interface AccountDetails {
-  email: string
-  name: string
-  password: string
-}
 
 /**
  * creates an account in the DB

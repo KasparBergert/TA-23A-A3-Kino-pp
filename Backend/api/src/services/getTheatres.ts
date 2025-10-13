@@ -1,5 +1,5 @@
 import { Connection } from 'mariadb/*'
-import db from '../../../database/src/db'
+import db from '../../../database/db'
 import { Response } from 'express'
 
 //gets all available theatres

@@ -1,5 +1,5 @@
 import mariadb, { PoolConnection } from 'mariadb'
-import initDB from './initDB'
+import initDB from './src/initDB.ts'
 
 // --- INITIALIZATION ---
 await initDB()

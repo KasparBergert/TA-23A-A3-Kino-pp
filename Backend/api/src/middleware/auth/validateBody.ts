@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from 'express'
-import userSchema from '../../../../models/userSchema.ts'
+import userSchema from '../../../../database/src/types/userSchema.ts'
 
-export default function validateAuthUsersBody(req: Request, res: Response, next: NextFunction) {  
+export default function validateAuthUsersBody(req: Request, res: Response, next: NextFunction) {
   if (req.originalUrl.search(/auth\/users/g) >= 0) {
     const body = req.body
     if (typeof body != 'object') {
@@ -18,6 +18,6 @@ export default function validateAuthUsersBody(req: Request, res: Response, next:
         message: error.details[0]?.message,
       }) // user sent body which is not valid
     }
-  }  
+  }
   next()
 }

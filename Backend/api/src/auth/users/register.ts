@@ -1,4 +1,4 @@
-import createAccount from '../../../../database/src/funcs/createAccount.ts'
+import createAccount from '../../../utils/createAccount.ts'
 import findUser from '../../../../database/src/funcs/findUser.ts'
 import { Request, Response } from 'express'
 import { createRefreshToken, createAccessToken } from '../../../utils/auth/JWT/tokens.ts'
