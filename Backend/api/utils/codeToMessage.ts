@@ -7,7 +7,9 @@ const appMessages: Record<string, string> = {
   'AUTH-0006': 'Login unsuccessful',
   'AUTH-0007': 'Valid Access token',
   'AUTH-0008': 'Valid Refresh token',
+  'VAL-0000': 'success',
   'VAL-0001': 'Body not sent',
+  'VAL-0002': 'Request failed',
 }
 
 export default function codeToMessage(code: string): string | undefined {
