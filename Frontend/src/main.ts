@@ -1,8 +1,9 @@
 import { createApp } from 'vue'
 import App from './App.vue'
 import router from './router'
-
-import 'vuetify/styles' // it does find them
+import './style.css'
+// @ts-ignore
+import 'vuetify/styles' // Global CSS has to be imported
 import { createVuetify } from 'vuetify'
 import * as components from 'vuetify/components'
 import * as directives from 'vuetify/directives'
