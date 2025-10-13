@@ -1,42 +1,13 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
-import Modal from '../components/Modal.vue'
 import TheNavbar from '../components/TheNavbar.vue'
-import MovieGrid from '../components/MovieGrid.vue'
-import { useRouter } from 'vue-router'
+import MovieGrid from '../features/movies/MovieGrid.vue'
 import client from '../utils/api'
 import m from '../assets/movies.json' with {type: 'json'}
 
-
-const router = useRouter()
-
 const theatres = ref<string[]>([])
 const selectedTheatre = ref('Pole Valitud')
-const modalController = ref<InstanceType<typeof Modal> | null>(null)
 
-
-
-
-function onItemClick(theatre: string) {
-  selectedTheatre.value = theatre
-}
-
-function viewShowtimes() {
-  router.push('/showtimes')
-}
-
-function showFilm(movie_id: number) {
-  console.log('showFilm', movie_id)
-}
-
-function showModal(rawComp: any) {
-  modalController.value.setComponent(rawComp)
-  modalController.value.open()
-}
-
-function onLogin() {
-  console.log('login invoked')
-}
 
 onMounted(async () => {
   const result = await client.get('/services/theatres')
@@ -45,8 +16,6 @@ onMounted(async () => {
 </script>
 
 <template>
-  <Modal ref="modalController" />
-
   <TheNavbar></TheNavbar>
   <main class="main">
     <div class="content">
@@ -60,8 +29,6 @@ onMounted(async () => {
 
 <style scoped>
 
-
-/* Main content */
 .main {
   display: flex;
   flex-direction: column;
@@ -85,8 +52,6 @@ onMounted(async () => {
   margin-bottom: 1.5rem;
   color: #1f2937;
 }
-
-/* Movie cards */
 
 </style>
 
