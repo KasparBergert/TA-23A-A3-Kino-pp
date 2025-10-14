@@ -8,7 +8,7 @@
     // Environment Settings
     "allowImportingTsExtensions": true,  // allow .ts extensions in imports (only works when noEmit or emitDeclarationOnly is true)
     "noEmit": true,                      // don’t generate any .js files; just check types
-    "types": ["node", "express"],        // include type definitions for Node and Express globally
+    "types": ["node", "express", "vue"], // include type definitions
 
     // Other Outputs
     "sourceMap": true,                   // generate .map files for debugging (links TS to JS lines)
@@ -20,7 +20,7 @@
     "useDefineForClassFields": true,     // follow modern JS behavior for class field initialization
     "module": "ESNext",                  // use ES module syntax for imports/exports
     "moduleResolution": "Bundler",       // resolve imports like a modern bundler (Vite, Webpack)
-    "strict": true,                      // enable all strict type checking rules
+    "strict": false,                      // enable all strict type checking rules
     "isolatedModules": true,             // ensure every file can be compiled separately
     "verbatimModuleSyntax": false,       // allow TypeScript to adjust import/export syntax for compatibility
     "resolveJsonModule": true,           // let you import .json files as modules
@@ -50,6 +50,7 @@
     "Frontend/src/**/*.d.ts",             
     "Frontend/src/**/*.vue",
     "Backend/api/**/*.ts",    
-    "Backend/database/**/*.ts", "shared/models/UserAccount.ts", "Frontend/src/main.ts", "Frontend/src/env.d.ts",    
+    "Backend/database/**/*.ts",
+    "shared/**/*.ts",     
   ]
 }

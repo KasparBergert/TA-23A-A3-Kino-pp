@@ -41,7 +41,7 @@ const { isActive, view, close } = useModal()
 .background {
   position: fixed;
   inset: 0;
-  background-color: rgba(0, 0, 0, 0.4);
+  background-color: rgba(0, 0, 0, 0.671);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -49,9 +49,9 @@ const { isActive, view, close } = useModal()
 }
 
 .modal {
-  background-color: rgb(27, 27, 27);
+  background-color: rgb(255, 255, 255);
   padding: 20px;
-  border-radius: 12px;
+  border-radius: 1.5em;
   color: white;
   min-width: 320px;
   max-width: 90%;
@@ -64,11 +64,13 @@ const { isActive, view, close } = useModal()
 }
 
 .close {
+  color:black;
   cursor: pointer;
   font-weight: bold;
   font-size: 1.2rem;
   padding: 0 0.5rem;
   user-select: none;
+  transition: all 0.2s;
 }
 
 .close:hover {
