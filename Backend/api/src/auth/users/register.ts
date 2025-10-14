@@ -17,7 +17,6 @@ export default async function register(req: Request, res: Response) {
   // all checks passed
   const result = await createAccount(body, 'admin')
   if (!result) {
-    console.info('account created')
     return res.status(400).send({
       code: 'AUTH-0002',
     })

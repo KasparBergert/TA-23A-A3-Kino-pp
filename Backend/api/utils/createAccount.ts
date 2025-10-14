@@ -22,14 +22,15 @@ export default async function createAccount(
   const hash = await hashPassword(details.password)
 
   const result = await db(async (db: Connection) => {
-    //create the user account
-    let userId = null // new user's id
+    let userId = null // role to attach id
     try {
+      //insert user into database
       const res = await db.query('INSERT INTO users (email, hashed_password) VALUES (?,?)', [
         details.email,
         hash,
       ])
 
+      //get id to attach a role
       userId = res.insertId
     } catch (err: any) {
       if (err instanceof Error) {
