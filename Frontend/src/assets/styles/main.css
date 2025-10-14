@@ -33,11 +33,12 @@
   padding: 0.5rem 1rem;
   border-radius: 0.375rem;
   cursor: pointer;
+  box-sizing: border-box;
 }
 
 .btn-primary.outlined:hover {
   border: solid #163e94ad 2px;
-  box-shadow: rgba(0, 0, 0, 0.19) 0px 10px 20px, rgba(0, 0, 0, 0.23) 0px 6px 6px;
+  box-shadow: rgba(3, 102, 214, 0.3) 0px 0px 0px 3px;
 }
 
 .btn-secondary.outlined {
@@ -51,4 +52,8 @@
 
 .btn-secondary.outlined:hover {
   background: #d1d5db;
+}
+
+.bold {
+  font-weight: bold;
 }

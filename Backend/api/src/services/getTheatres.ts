@@ -4,7 +4,7 @@ import { Response } from 'express'
 
 //gets all available theatres
 export default async function getTheatres(req: Request, res: Response) {
-  const theatres = db(async (db: Connection) => {
+  const theatres = await db(async (db: Connection) => {
     try {
       return await db.execute('SELECT * from theatres')
     } catch (err) {
@@ -13,11 +13,6 @@ export default async function getTheatres(req: Request, res: Response) {
     }
   })
 
-  //make into a list of names
-  const result = []
-  for (let theatre of await theatres) {
-    result.push(theatre.name)
-  }
 
-  res.status(200).send({ code: 'VAL-0000', theatres: result })
+  res.status(200).send({ code: 'VAL-0000', theatres })
 }
