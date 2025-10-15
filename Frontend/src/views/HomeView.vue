@@ -15,7 +15,11 @@ const selectedTheatre = ref<Theatre | null>(null)
 
 onMounted(async () => {
   const result = await client.get('/services/theatres')
-  theatres.value = result.data.theatres
+  if(result.data.theatres.length === 0){
+    theatres.value = [{id: null, name: "kinode saamine ebaõnnestus"}] // hold error when fetching failed
+  }else{
+    theatres.value = result.data.theatres
+  }  
 })
 
 </script>
@@ -26,8 +30,8 @@ onMounted(async () => {
     <div class="content">
       <div class="showtime-box">
         <div class="showtime-dropdown">
-          <button class="btn-primary bold showtime-dropdown-btn" @click="showDropdown = !showDropdown">
-            {{ selectedTheatre ? selectedTheatre.name : "Vali kino" }}
+          <button class="btn-primary bold showtime-dropdown-btn" @click="showDropdown = !showDropdown; console.log(showDropdown)">
+            {{ selectedTheatre && selectedTheatre.id != null ? selectedTheatre.name : "Vali kino" }}
             <span style="font-size:18px;">&#8595;</span>
           </button>
 
@@ -105,8 +109,8 @@ onMounted(async () => {
   position: absolute;
   background-color: rgb(219, 219, 219);
   list-style: none;
-  z-index: 10;
-  border-radius: 2em;
+  z-index: 1000;
+  border-radius: 2em;  
 }
 
 .showtime-dropdown-selection {
