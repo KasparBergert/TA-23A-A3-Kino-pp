@@ -10,16 +10,15 @@ import { RouterLink } from 'vue-router'
 
 
 const theatres = ref<Array<Theatre>>([]);
-const showDropdown = ref(false)
 const selectedTheatre = ref<Theatre | null>(null)
 
 onMounted(async () => {
   const result = await client.get('/services/theatres')
-  if(result.data.theatres.length === 0){
-    theatres.value = [{id: null, name: "kinode saamine ebaõnnestus"}] // hold error when fetching failed
-  }else{
+  if (result.data.theatres.length === 0) {
+    theatres.value = [{ id: null, name: "kinode saamine ebaõnnestus" }] // hold error when fetching failed
+  } else {
     theatres.value = result.data.theatres
-  }  
+  }
 })
 
 </script>
@@ -30,16 +29,15 @@ onMounted(async () => {
     <div class="content">
       <div class="showtime-box">
         <div class="showtime-dropdown">
-          <button class="btn-primary bold showtime-dropdown-btn" @click="showDropdown = !showDropdown; console.log(showDropdown)">
+          <button class="btn-primary bold showtime-dropdown-btn">
             {{ selectedTheatre && selectedTheatre.id != null ? selectedTheatre.name : "Vali kino" }}
             <span style="font-size:18px;">&#8595;</span>
           </button>
 
-          <ul v-show="showDropdown">
+          <ul>
             <li v-for="theatre in theatres" :key="theatre.id">
               <button @click="
-                selectedTheatre = theatre;
-              showDropdown = false;
+                selectedTheatre = theatre              
               " class="showtime-dropdown-selection">
                 {{ theatre.name }}
               </button>
@@ -106,11 +104,17 @@ onMounted(async () => {
 }
 
 .showtime-dropdown ul {
+  display: none;
   position: absolute;
   background-color: rgb(219, 219, 219);
   list-style: none;
   z-index: 1000;
-  border-radius: 2em;  
+  border-radius: 2em;
+}
+
+
+.showtime-dropdown:hover ul {
+  display: block;
 }
 
 .showtime-dropdown-selection {
