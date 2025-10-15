@@ -32,7 +32,7 @@ export default async function initDB() {
   }
 
   //Database schema
-  const dbSchema = fs.readFileSync(path.resolve('./Backend/database/src/database_schema.sql'), {
+  const dbSchema = fs.readFileSync(path.resolve('./Backend/database/database_schema.sql'), {
     encoding: 'utf-8',
   })
 
