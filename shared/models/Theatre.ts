@@ -1,5 +1,6 @@
+
 interface Theatre {
-  id: number
+  id: number | null
   name: string
 }
 export default Theatre
