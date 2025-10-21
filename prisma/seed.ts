@@ -1,6 +1,8 @@
 import prisma from "../Backend/database/db";
 
 async function runSeed(){
+
+  //create the necessary roles
   await prisma.roles.createMany({
     data:[
       {code: 'user'},
