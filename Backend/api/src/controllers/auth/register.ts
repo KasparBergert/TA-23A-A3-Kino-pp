@@ -1,7 +1,7 @@
-import createAccount from '../../../utils/createAccount.ts'
-import findUser from '../../../../database/src/funcs/findUser.ts'
+import createAccount from '../../../services/createAccount.ts'
+import findUser from '../../../../database/src/utils/findUser.ts'
 import { Request, Response } from 'express'
-import { createRefreshToken, createAccessToken } from '../../../utils/auth/JWT/tokens.ts'
+import { createRefreshToken, createAccessToken } from '../../../services/tokens.ts'
 
 export default async function register(req: Request, res: Response) {
   const body = req.body //already gets validated in validateBody.ts middleware
@@ -9,7 +9,7 @@ export default async function register(req: Request, res: Response) {
   const found = await findUser(body.email)
   if (found) {
     console.info('account already exists')
-    return res.status(400).send({
+    return res.status(401).send({
       code: 'AUTH-0002',
     }) //email already exists
   }
@@ -17,7 +17,7 @@ export default async function register(req: Request, res: Response) {
   // all checks passed
   const result = await createAccount(body, 'admin')
   if (!result) {
-    return res.status(400).send({
+    return res.status(401).send({
       code: 'AUTH-0002',
     })
   }

@@ -1,7 +1,7 @@
 import { Request, Response } from 'express'
-import { verifyToken } from '../../../utils/auth/JWT/tokens'
+import { verifyToken } from '../../../services/tokens.ts'
 import { JwtPayload } from 'jsonwebtoken'
-import { createAccessToken, createRefreshToken } from '../../../utils/auth/JWT/tokens'
+import { createRefreshToken, createAccessToken } from '../../../services/tokens.ts'
 
 export default function refresh(req: Request, res: Response) {
   const refreshToken = req.cookies.refreshToken

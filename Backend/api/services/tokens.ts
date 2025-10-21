@@ -10,7 +10,6 @@ function checkEnviormentVariables(): {
 } {
   const PrivateKey = fs.readFileSync(path.resolve('secrets/private.pem'), 'utf-8')
   const PublicKey = fs.readFileSync(path.resolve('secrets/public.pem'), 'utf-8')
-
   const { TokenTimeShort, TokenTimeLong } = process.env
 
   const variables = { PublicKey, PrivateKey, TokenTimeShort, TokenTimeLong }

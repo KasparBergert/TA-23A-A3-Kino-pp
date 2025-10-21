@@ -1,7 +1,7 @@
 import { Request, Response } from 'express'
-import getUser from '../../../../database/src/funcs/getUser.ts'
-import { verifyPassword } from '../../../utils/auth/hash.ts'
-import { createAccessToken, createRefreshToken } from '../../../utils/auth/JWT/tokens.ts'
+import getUser from '../../../../database/src/utils/getUser.ts'
+import { verifyPassword } from '../../../services/hash.ts'
+import { createRefreshToken, createAccessToken } from '../../../services/tokens.ts'
 
 export default async function login(req: Request, res: Response) {
   const body = req.body //already gets validated in validateBody.ts middleware
@@ -10,7 +10,7 @@ export default async function login(req: Request, res: Response) {
   const found = await getUser(body.email)
   if (!found) {
     console.info("account doesn't exist")
-    return res.status(400).send({
+    return res.status(401).send({
       code: 'AUTH-0006',
     }) //account doesn't exist
   }
@@ -18,7 +18,7 @@ export default async function login(req: Request, res: Response) {
   const isSamePassword = await verifyPassword(found.hashed_password, body.password)
   if (!isSamePassword) {
     console.info('passwords to not match')
-    return res.status(400).send({
+    return res.status(401).send({
       code: 'AUTH-0006',
     }) //passwords to not match
   }

@@ -2,12 +2,14 @@ import '../env.ts'
 import express, { Response } from 'express'
 import cookieParser from 'cookie-parser'
 import ApiRoutes from './src/routes.ts'
-import addMessageField from './src/middleware/addMessageField.ts'
+import addMessageField from './src/controllers/middleware/addMessageField.ts'
 import chalk from 'chalk'
 import cors from 'cors'
 import HttpError from './src/types/HttpError.ts'
 import { Request, NextFunction } from 'express'
-import validateBody from './src/middleware/auth/validateBody.ts'
+import validateBody from './src/controllers/middleware/validateBody.ts'
+
+
 
 //colors the error to red
 const origError = console.error

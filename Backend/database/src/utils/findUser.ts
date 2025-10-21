@@ -7,5 +7,5 @@ import getUser from './getUser.ts'
  */
 export default async function findUser(email: string): Promise<Boolean> {
   const res = await getUser(email) // no noticable performance difference using getUser().
-  return res ? true : false
+  return res != null ? true : false
 }

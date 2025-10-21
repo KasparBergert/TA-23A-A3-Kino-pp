@@ -8,5 +8,12 @@
 
 4. muuda root kasutaja password ära selleks mis on defineeritud .env failis.
 
-5. `bun run dev-server` jooksuta backend
-6. `bun run dev` jooksuta frontend
+5. scriptid mida jookutada paraleelselt
+`
+bun i
+bun run db:init
+bun run dev
+bun run dev-server
+`
+
+

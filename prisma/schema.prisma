@@ -1,0 +1,167 @@
+generator client {
+  provider               = "prisma-client-js"  
+  generatedFileExtension = "ts"
+  moduleFormat           = "esm"
+  runtime                = "bun"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model film_genres {
+  film_id  Int
+  genre_id Int    @db.UnsignedSmallInt
+  films    films  @relation(fields: [film_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "film_genres_ibfk_1")
+  genres   genres @relation(fields: [genre_id], references: [id], onUpdate: Restrict, map: "film_genres_ibfk_2")
+
+  @@id([film_id, genre_id])
+  @@index([film_id], map: "film_id")
+  @@index([genre_id], map: "genre_id")
+}
+
+model films {
+  id           Int           @id @default(autoincrement())
+  title        String        @db.VarChar(200)
+  description  String?       @db.Text
+  release_date DateTime?     @db.Date
+  duration_min Int?          @db.UnsignedSmallInt
+  poster_url   String?       @db.VarChar(500)
+  film_genres  film_genres[]
+  showtimes    showtimes[]
+
+  @@index([release_date], map: "release_date")
+  @@index([title], map: "title")
+}
+
+model genres {
+  id          Int           @id @default(autoincrement()) @db.UnsignedSmallInt
+  name        String        @unique(map: "name") @db.VarChar(60)
+  film_genres film_genres[]
+}
+
+model halls {
+  id            Int             @id @default(autoincrement()) @db.UnsignedSmallInt
+  name          String          @unique(map: "name") @db.VarChar(50)
+  capacity      Int             @db.UnsignedSmallInt
+  seats         seats[]
+  showtimes     showtimes[]
+  theatre_halls theatre_halls[]
+}
+
+model orders {
+  id         BigInt        @id @default(autoincrement())
+  user_id    Int
+  status     orders_status @default(pending)
+  created_at DateTime      @default(now()) @db.Timestamp(0)
+  expires_at DateTime?     @db.Timestamp(0)
+  users      users         @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "orders_ibfk_1")
+  tickets    tickets[]
+
+  @@index([user_id, status, created_at], map: "user_id")
+}
+
+model roles {
+  id         Int          @id @default(autoincrement()) @db.UnsignedTinyInt
+  code       String       @unique(map: "code") @db.VarChar(32)
+  user_roles user_roles[]
+}
+
+model seats {
+  id          Int       @id @default(autoincrement())
+  hall_id     Int       @db.UnsignedSmallInt
+  row_label   String    @db.VarChar(5)
+  seat_number Int       @db.UnsignedSmallInt
+  halls       halls     @relation(fields: [hall_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "seats_ibfk_1")
+  tickets     tickets[]
+
+  @@unique([hall_id, row_label, seat_number], map: "hall_id")
+  @@index([hall_id], map: "hall_id_2")
+}
+
+model showtimes {
+  id          Int       @id @default(autoincrement())
+  film_id     Int
+  hall_id     Int       @db.UnsignedSmallInt
+  starts_at   DateTime  @db.DateTime(0)
+  ends_at     DateTime? @db.DateTime(0)
+  price       Decimal   @db.Decimal(10, 2)
+  is_canceled Boolean   @default(false)
+  films       films     @relation(fields: [film_id], references: [id], onUpdate: Restrict, map: "showtimes_ibfk_1")
+  halls       halls     @relation(fields: [hall_id], references: [id], onUpdate: Restrict, map: "showtimes_ibfk_2")
+  tickets     tickets[]
+
+  @@unique([hall_id, starts_at], map: "hall_id")
+  @@index([film_id, starts_at], map: "film_id")
+  @@index([starts_at], map: "starts_at")
+}
+
+model theatre_halls {
+  theatre_id Int      @db.UnsignedSmallInt
+  hall_id    Int      @db.UnsignedSmallInt
+  theatres   theatres @relation(fields: [theatre_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "theatre_halls_ibfk_1")
+  halls      halls    @relation(fields: [hall_id], references: [id], onUpdate: Restrict, map: "theatre_halls_ibfk_2")
+
+  @@id([theatre_id, hall_id])
+  @@index([hall_id], map: "hall_id")
+}
+
+model theatres {
+  id            Int             @id @default(autoincrement()) @db.UnsignedSmallInt
+  name          String          @unique(map: "name") @db.VarChar(128)
+  theatre_halls theatre_halls[]
+
+  @@index([name], map: "name_2")
+}
+
+model tickets {
+  id          BigInt         @id @default(autoincrement())
+  order_id    BigInt?
+  showtime_id Int
+  seat_id     Int
+  status      tickets_status @default(reserved)
+  unit_price  Decimal        @db.Decimal(10, 2)
+  reserved_at DateTime       @default(now()) @db.Timestamp(0)
+  paid_at     DateTime?      @db.Timestamp(0)
+  ticket_code String?        @unique(map: "ticket_code") @db.VarChar(64)
+  orders      orders?        @relation(fields: [order_id], references: [id], onUpdate: Restrict, map: "tickets_ibfk_1")
+  showtimes   showtimes      @relation(fields: [showtime_id], references: [id], onUpdate: Restrict, map: "tickets_ibfk_2")
+  seats       seats          @relation(fields: [seat_id], references: [id], onUpdate: Restrict, map: "tickets_ibfk_3")
+
+  @@unique([showtime_id, seat_id], map: "showtime_id")
+  @@index([order_id], map: "order_id")
+  @@index([seat_id], map: "seat_id")
+  @@index([showtime_id, status], map: "showtime_id_2")
+}
+
+model user_roles {
+  user_id Int   
+  role_id Int   @db.UnsignedTinyInt
+  users   users @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "user_roles_ibfk_1")
+  roles   roles @relation(fields: [role_id], references: [id], onUpdate: Restrict, map: "user_roles_ibfk_2")
+
+  @@id([user_id, role_id])
+  @@index([role_id], map: "role_id")
+}
+
+model users {
+  id              Int          @id @default(autoincrement())
+  email           String       @unique(map: "email") @db.VarChar(128)
+  hashed_password String       @db.VarChar(512)
+  updated_at      DateTime?    @db.Timestamp(0)
+  orders          orders[]
+  user_roles      user_roles[]
+}
+
+enum orders_status {
+  pending
+  paid
+  expired
+}
+
+enum tickets_status {
+  reserved
+  paid
+  expired
+}

@@ -4,6 +4,7 @@ import TheNavbar from '../components/TheNavbar.vue'
 import MovieGrid from '../features/movies/MovieGrid.vue'
 import Theatre from '../../../shared/models/Theatre'
 import client from '../utils/api'
+import { Toaster, toast } from '@steveyuowo/vue-hot-toast'
 import m from '../assets/movies.json' with {type: 'json'}
 import { RouterLink } from 'vue-router'
 
@@ -13,43 +14,52 @@ const theatres = ref<Array<Theatre>>([]);
 const selectedTheatre = ref<Theatre | null>(null)
 
 onMounted(async () => {
+  try{
   const result = await client.get('/services/theatres')
   if (result.data.theatres.length === 0) {
     theatres.value = [{ id: null, name: "kinode saamine ebaõnnestus" }] // hold error when fetching failed
+    console.log(result.data)
+    console.log("database has no theatres")
   } else {
     theatres.value = result.data.theatres
+  }
+  }catch{
+    toast.error("Fatal error occured fetching theatres");
   }
 })
 
 </script>
 
 <template>
+  <Toaster></Toaster>
   <TheNavbar></TheNavbar>
   <main class="main">
     <div class="content">
-      <div class="showtime-box">
-        <div class="showtime-dropdown">
-          <button class="btn-primary bold showtime-dropdown-btn">
-            {{ selectedTheatre && selectedTheatre.id != null ? selectedTheatre.name : "Vali kino" }}
-            <span style="font-size:18px;">&#8595;</span>
-          </button>
+      <div style="display: flex; justify-content: center; align-items: center;">
+        <div class="showtime-box">
+          <div class="showtime-dropdown">
+            <button class="btn-primary bold showtime-dropdown-btn">
+              {{ selectedTheatre && selectedTheatre.id != null ? selectedTheatre.name : "Vali kino" }}
+              <span style="font-size:18px;">&#8595;</span>
+            </button>
 
-          <ul>
-            <li v-for="theatre in theatres" :key="theatre.id">
-              <button @click="
-                selectedTheatre = theatre              
-              " class="showtime-dropdown-selection">
-                {{ theatre.name }}
-              </button>
-            </li>
-          </ul>
+            <ul>
+              <li v-for="theatre in theatres" :key="theatre.id || -1">
+                <button @click="
+                  selectedTheatre = theatre
+                  " class="showtime-dropdown-selection">
+                  {{ theatre.name }}
+                </button>
+              </li>
+            </ul>
+          </div>
+
+          <RouterLink class="view-showtimes-btn btn-primary outlined"
+            :to="selectedTheatre ? `/showtimes/${selectedTheatre.id}` : '#'">
+            Vaata seansse
+          </RouterLink>
         </div>
 
-        <!-- RouterLink uses selectedTheatre.id dynamically -->
-        <RouterLink class="view-showtimes-btn btn-primary outlined"
-          :to="selectedTheatre ? `/showtimes/${selectedTheatre.id}` : '#'">
-          Vaata seansse
-        </RouterLink>
       </div>
 
       <div class="content-header">
@@ -89,11 +99,12 @@ onMounted(async () => {
 }
 
 .showtime-box {
+  width: max-content;
   display: flex;
   gap: 20px;
   justify-content: center;
   align-items: center;
-  padding: 15px 20px;
+  padding: 1.1em 1.9em;
   border-radius: 1.3em;
   box-shadow: rgba(50, 50, 93, 0.25) 0px 30px 60px -12px, rgba(0, 0, 0, 0.3) 0px 18px 36px -18px;
   box-shadow: rgba(6, 24, 44, 0.4) 0px 0px 0px 2px, rgba(6, 24, 44, 0.65) 0px 4px 6px -1px, rgba(255, 255, 255, 0.08) 0px 1px 0px inset;

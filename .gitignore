@@ -9,14 +9,14 @@ lerna-debug.log*
 
 
 node_modules
+/generated/
+.prisma/
 .DS_Store
 dist
 dist-ssr
 coverage
 *.local
 
-/cypress/videos/
-/cypress/screenshots/
 
 # Editor directories and files
 .vscode/*
@@ -29,3 +29,5 @@ coverage
 *.sw?
 
 *.tsbuildinfo
+
+/generated/prisma

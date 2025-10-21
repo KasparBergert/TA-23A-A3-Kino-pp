@@ -6,12 +6,10 @@ const userSchema = Joi.object({
   }),
   password: Joi.string()
     .pattern(/^[\x21-\x7E]+$/)
-    .min(8)
     .max(99)
     .required()
     .messages({
       'string.pattern.base': 'password contains invalid characters',
-      'string.min': 'password must be at least 8 characters long',
       'string.max': 'password is too long. must be <= 99',
       'any.required': 'password required',
     }),

@@ -52,6 +52,8 @@
     "Frontend/src/**/*.vue",
     "Backend/api/**/*.ts",    
     "Backend/database/**/*.ts",
-    "shared/**/*.ts",     
+    "shared/**/*.ts", 
+    "Frontend/env.d.ts",         
+    "prisma/*.ts",         
   ]
 }
