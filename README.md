@@ -11,7 +11,9 @@
 5. scriptid mida jookutada paraleelselt
 `
 bun i
-bun run db:init
+bunx prisma migrate dev
+bunx prisma generate
+bunx prisma db seed
 bun run dev
 bun run dev-server
 `
