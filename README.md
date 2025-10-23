@@ -1,21 +1,28 @@
-# kino app
+# Kino App – Paigaldusjuhend
 
-1. installi bun
+## Eeltingimused
 
-2. tee `bun i` projekti root kataloogis
+Veendu, et sul on järgmised tööriistad paigaldatud:
 
-3. installi mariadb ja pane käima oma arvuitl
+- **[Bun](https://bun.sh/)** – JavaScripti runtime ja paketihaldur  
+- **MariaDB** – andmebaasiserver
 
-4. muuda root kasutaja password ära selleks mis on defineeritud .env failis.
+---
 
-5. scriptid mida jookutada paraleelselt
-`
+## Paigaldamine
+
+1. **Installi Bun**  
+   Järgi juhiseid aadressil [https://bun.sh/](https://bun.sh/).
+
+2. **Paigalda sõltuvused**  
+   Ava terminal projekti juurkataloogis ja käivita:
+   ```bash
+   bun i
+
+
 bun i
 bunx prisma migrate dev
 bunx prisma generate
 bunx prisma db seed
 bun run dev
 bun run dev-server
-`
-
-
