@@ -7,6 +7,8 @@ import client from '../utils/api'
 import { Toaster, toast } from '@steveyuowo/vue-hot-toast'
 import m from '../assets/movies.json' with {type: 'json'}
 import { RouterLink } from 'vue-router'
+import MovieCard from '../components/MovieCard.vue'
+import { movies } from '../data/movies'
 
 
 
@@ -63,22 +65,45 @@ onMounted(async () => {
       </div>
 
       <div class="content-header">
-        <h1 class="section-title">Now Showing</h1>
-        <MovieGrid :movies="m" />
+        <h1 class="section-title">TOP 3 MOVIES</h1>
+            <section class="movie-grid">
+      <MovieCard
+        v-for="movie in movies"
+        :key="movie.id"
+        :movie="movie"
+      />
+    </section>
       </div>
     </div>
   </main>
 </template>
 
 <style scoped>
+.page-title {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #1f2937;
+  margin-bottom: 2rem;
+}
+
+.movie-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 1.5rem;
+  justify-items: center;
+  width: 100%;
+  max-width: 80rem;
+}
+
 .main {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
   background: #f9fafb;
   min-height: 100vh;
   padding: 2.5rem 1.5rem;
+  overflow-y: auto;
 }
 
 .content {
@@ -92,10 +117,12 @@ onMounted(async () => {
 }
 
 .section-title {
+  display: flex;
   font-size: 1.5rem;
   font-weight: 700;
   margin-bottom: 1.5rem;
   color: #1f2937;
+  justify-content: center;
 }
 
 .showtime-box {
