@@ -16,16 +16,16 @@ const theatres = ref<Array<Theatre>>([]);
 const selectedTheatre = ref<Theatre | null>(null)
 
 onMounted(async () => {
-  try{
-  const result = await client.get('/services/theatres')
-  if (result.data.theatres.length === 0) {
-    theatres.value = [{ id: null, name: "kinode saamine ebaõnnestus" }] // hold error when fetching failed
-    console.log(result.data)
-    console.log("database has no theatres")
-  } else {
-    theatres.value = result.data.theatres
-  }
-  }catch{
+  try {
+    const result = await client.get('/services/theatres')
+    if (result.data.theatres.length === 0) {
+      theatres.value = [{ id: null, name: "kinode saamine ebaõnnestus" }] // hold error when fetching failed
+      console.log(result.data)
+      console.log("database has no theatres")
+    } else {
+      theatres.value = result.data.theatres
+    }
+  } catch {
     toast.error("Fatal error occured fetching theatres");
   }
 })
@@ -66,25 +66,15 @@ onMounted(async () => {
 
       <div class="content-header">
         <h1 class="section-title">TOP 3 MOVIES</h1>
-            <section class="movie-grid">
-      <MovieCard
-        v-for="movie in movies"
-        :key="movie.id"
-        :movie="movie"
-      />
-    </section>
+        <section class="movie-grid">
+          <MovieCard v-for="movie in movies" :key="movie.id" :movie="movie" />
+        </section>
       </div>
     </div>
   </main>
 </template>
 
 <style scoped>
-.page-title {
-  font-size: 2rem;
-  font-weight: 700;
-  color: #1f2937;
-  margin-bottom: 2rem;
-}
 
 .movie-grid {
   display: grid;
