@@ -1,8 +1,13 @@
-<script setup>
+<script setup lang="ts">
 import { onMounted } from 'vue';
 import { useRoute } from 'vue-router';
 import ShowtimeCard from '../components/ShowtimeCard.vue';
+import ShowtimeFilter from "../types/ShowtimeFilter.ts"
+
 import client from '../utils/api';
+
+
+
 
 const route = useRoute();
 const theatre_id = route.params.theatre_id
@@ -12,9 +17,19 @@ const theatre_id = route.params.theatre_id
 onMounted(async () => {
   try {
 
+    const filter: ShowtimeFilter = {
+      film_id: null,
+      theatre_id: null ,
+      starts_at: null,
+      ends_at: null
+    }
     //get the showtimes
-    const showtimes = await client.get(`/services/showtimes?theatre_id=${theatre_id}`);
-    console.log(showtimes.data)
+    const response = await client.post(`/services/showtimes`, {
+      data:{
+        filter
+      }
+    });
+    console.log(response.data)
 
   } catch (err) {
     console.error()
@@ -27,12 +42,7 @@ onMounted(async () => {
 <template>
   <div class="container">
     <h1>SHOWTIMES</h1>
-    <ShowtimeCard title>
-      <template #title>
-
-      </template>
-
-    </ShowtimeCard>
+    <ShowtimeCard/>
   </div>
 </template>
 

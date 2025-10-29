@@ -2,7 +2,7 @@ import prisma from '../../../../database/db'
 import { Response } from 'express'
 
 //gets all available theatres
-export default async function getTheatres(req: Request, res: Response) {
+export default async function theatres(req: Request, res: Response) {
 
   try{
     const theatres = await prisma.theatres.findMany()
