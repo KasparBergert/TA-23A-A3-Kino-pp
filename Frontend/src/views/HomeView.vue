@@ -90,7 +90,7 @@ onMounted(async () => {
   display: flex;
   flex-direction: column;
   align-items: center;
-  background: url("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTMtYXB2zKabt2VrJ2MBGd2q5uAaEl9g70h3g&s");
+  background: url("https://images.unsplash.com/photo-1614850523011-8f49ffc73908?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8Ymx1ZSUyMGJhY2tncm91bmR8ZW58MHx8MHx8fDA%3D&fm=jpg&q=60&w=3000");
   min-height: 100vh;
   padding: 2.5rem 1.5rem;
   overflow-y: visible;
@@ -124,6 +124,8 @@ onMounted(async () => {
   justify-content: center;
   align-items: center;
   padding: 1.1em 1.9em;
+  background-color: #ffffff;
+  border: 1px solid rgba(0, 0, 0, 0.1);
   border-radius: 1.3em;
   box-shadow: rgba(50, 50, 93, 0.25) 0px 30px 60px -12px, rgba(0, 0, 0, 0.3) 0px 18px 36px -18px;
   box-shadow: rgba(6, 24, 44, 0.4) 0px 0px 0px 2px, rgba(6, 24, 44, 0.65) 0px 4px 6px -1px, rgba(255, 255, 255, 0.08) 0px 1px 0px inset;
