@@ -4,20 +4,39 @@
     <div class="info">
       <h2 class="title">{{ movie.title }}</h2>
       <p class="genres">{{ movie.genres?.join(' • ') || '—' }}</p>
+      <p class="summary">
+        {{ isExpanded ? movie.summary : shortSummary }}
+        <button v-if="isLong" @click="toggleSummary" class="more-btn">
+          {{ isExpanded ? 'Show less' : 'More' }}
+        </button>
+      </p>
     </div>
   </article>
 </template>
 
 <script setup lang="ts">
+import { ref, computed } from 'vue'
+
 interface Movie {
-  id: number | string
+  id: number
   title: string
   genres?: string[]
   poster?: string
+  summary?: string
 }
 
-const props = defineProps<{ movie: Movie }>()
+const props = defineProps({
+  movie: {
+    type: Object as () => Movie,
+    required: true
+  }
+})
 
+const isExpanded = ref(false)
+const toggleSummary = () => (isExpanded.value = !isExpanded.value)
+
+const shortSummary = computed(() => props.movie.summary?.slice(0, 120) + '…')
+const isLong = computed(() => (props.movie.summary?.length ?? 0) > 120)
 </script>
 <style scoped>
 .movie-card {
@@ -59,6 +78,26 @@ const props = defineProps<{ movie: Movie }>()
 .genres {
   font-size: 0.9rem;
   color: #6b7280;
+}
+
+.summary {
+  color: #374151;
+  font-size: 0.9rem;
+  line-height: 1.4;
+}
+
+.more-btn {
+  background: none;
+  border: none;
+  color: #2563eb;
+  font-weight: 600;
+  margin-left: 0.3rem;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.more-btn:hover {
+  color: #1d4ed8;
 }
 </style>
 

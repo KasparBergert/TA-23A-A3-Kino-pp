@@ -8,7 +8,7 @@ import FormRegister from "../features/auth/FormRegister.vue";
   <!-- Navbar -->
   <nav class="navbar">
     <div class="navbar-left">
-      <span class="navbar-title">FilmApp</span>
+      <span class="navbar-title">HanKas Cinema</span>
     </div>
     <div class="navbar-right">
       <button @click="open(FormLogin)" class="nav-btn">Login</button>

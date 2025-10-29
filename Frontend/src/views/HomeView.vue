@@ -86,14 +86,16 @@ onMounted(async () => {
 }
 
 .main {
+  flex: 1;
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: flex-start;
-  background: #f9fafb;
+  background: url("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTMtYXB2zKabt2VrJ2MBGd2q5uAaEl9g70h3g&s");
   min-height: 100vh;
   padding: 2.5rem 1.5rem;
-  overflow-y: auto;
+  overflow-y: visible;
+  background-repeat: no-repeat;
+  background-size: cover;
 }
 
 .content {
@@ -111,7 +113,7 @@ onMounted(async () => {
   font-size: 1.5rem;
   font-weight: 700;
   margin-bottom: 1.5rem;
-  color: #1f2937;
+  color: #e6e6e6;
   justify-content: center;
 }
 
