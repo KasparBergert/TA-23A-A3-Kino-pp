@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { onMounted, onUnmounted } from 'vue'
-import { useModal } from '../stores/modal'
+import { useModal } from '../utils/modal'
 
 // --- Singleton guard (module-scope flag)
 let modalMounted = false

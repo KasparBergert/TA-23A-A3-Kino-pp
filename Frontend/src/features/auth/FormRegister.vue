@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import client from '../../utils/api.ts'
-import { close } from '../../stores/modal.ts'
+import { close } from '../../utils/modal.ts'
 import Form from '../../components/Form.vue'
 import { Toaster, toast } from "@steveyuowo/vue-hot-toast";
 
