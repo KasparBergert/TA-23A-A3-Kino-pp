@@ -68,9 +68,9 @@ async function runSeed() {
   await createGenres()
 
   const [firstMovie, anotherFilm, indieHit] = await Promise.all([
-    getFilmByTitle('The First Movie'),
-    getFilmByTitle('Another Great Film'),
-    getFilmByTitle('Indie Hit'),
+    getFilmByTitle('The Dark Knight'),
+    getFilmByTitle('Inception'),
+    getFilmByTitle('Interstellar'),
   ])
 
   const [action, drama, comedy, scifi] = await Promise.all([
@@ -163,25 +163,25 @@ async function createUsers() {
 async function createFilms() {
   const films = [
     {
-      title: 'The First Movie',
+      title: 'The Dark Knight',
       description: 'An epic beginning.',
       release_date: new Date('2020-01-01'),
       duration_min: 120,
-      poster_url: 'https://example.com/poster1.jpg',
+      poster_url: 'https://image.tmdb.org/t/p/w500/qJ2tW6WMUDux911r6m7haRef0WH.jpg',
     },
     {
-      title: 'Another Great Film',
+      title: 'Inception',
       description: 'Sequel to the epic.',
       release_date: new Date('2021-06-15'),
       duration_min: 135,
-      poster_url: 'https://example.com/poster2.jpg',
+      poster_url: 'https://image.tmdb.org/t/p/w500/edv5CZvWj09upOsy2Y6IwDhK8bt.jpg',
     },
     {
-      title: 'Indie Hit',
+      title: 'Interstellar',
       description: 'Low budget, high heart.',
       release_date: new Date('2019-11-02'),
       duration_min: 95,
-      poster_url: 'https://example.com/poster3.jpg',
+      poster_url: 'https://image.tmdb.org/t/p/w500/gEU2QniE6E77NI6lCU6MxlNBvIx.jpg',
     },
   ]
 
