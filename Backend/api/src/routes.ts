@@ -16,8 +16,8 @@ export default function ApiRoutes(): Router {
   routes.get('/auth/jwt/refresh', refresh)
 
   // SERVICES
-  routes.get('/services/theatres', theatres)
-  routes.post('/services/showtimes', showtimes)
+  routes.get('/services/theatres', (req, res) => {return theatres(req, res)})
+  routes.post('/services/showtimes', (req, res) => {return showtimes(req, res)})
 
   return routes
 }

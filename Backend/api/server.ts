@@ -7,7 +7,7 @@ import chalk from 'chalk'
 import cors from 'cors'
 import HttpError from './src/types/HttpError.ts'
 import { Request, NextFunction } from 'express'
-import validateBody from './src/controllers/middleware/validateBody.ts'
+import validateBody from './src/controllers/middleware/validateAuthUsersBody.ts'
 
 
 
