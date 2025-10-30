@@ -5,7 +5,7 @@ import argon2 from 'argon2'
  */
 export default async function hashPassword(plain: string): Promise<string> {
   return argon2.hash(plain, {
-    type: 2,
+    type: 2, // argon2id
     parallelism: 6,
     hashLength: 64,
     memoryCost: 2 ** 16 - 1, //64 MB
