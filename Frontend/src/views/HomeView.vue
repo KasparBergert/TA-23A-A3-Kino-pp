@@ -8,12 +8,50 @@ import { Toaster, toast } from '@steveyuowo/vue-hot-toast'
 import { RouterLink } from 'vue-router'
 import MovieCard from '../components/MovieCard.vue'
 
-
+export interface Movie {
+  id: number
+  title: string
+  genres?: string[]
+  poster?: string
+  summary: string
+}
 
 const theatres = ref<Array<Theatre>>([]);
 const selectedTheatre = ref<Theatre | null>(null)
 
+//currently hardcoded top 3 movies
+const top3movies = ref<Movie[]>(
+  [
+  {
+    id: 1,
+    title: 'The Dark Knight',
+    genres: ['Action', 'Crime', 'Drama'],
+    poster: 'https://image.tmdb.org/t/p/w500/qJ2tW6WMUDux911r6m7haRef0WH.jpg',
+    summary:
+      "Some description"
+  },
+  {
+    id: 2,
+    title: 'Inception',
+    genres: ['Action', 'Sci-Fi', 'Thriller'],
+    poster: 'https://image.tmdb.org/t/p/w500/edv5CZvWj09upOsy2Y6IwDhK8bt.jpg',
+    summary:
+      "Some description Some description Some description Some description Some description Some description Some description Some description Some description Some description v v Some description"
+  },
+  {
+    id: 3,
+    title: 'Interstellar',
+    genres: ['Adventure', 'Drama', 'Sci-Fi'],
+    poster: 'https://image.tmdb.org/t/p/w500/gEU2QniE6E77NI6lCU6MxlNBvIx.jpg',
+    summary:
+      "Some description"
+  },
+]
+)
+
 onMounted(async () => {
+
+  //get all available theatres
   try {
     const result = await client.get('/services/theatres')
     if (result.data.theatres.length === 0) {
@@ -26,6 +64,20 @@ onMounted(async () => {
   } catch {
     toast.error("Fatal error occured fetching theatres");
   }
+
+
+  //get top 3 movies
+  //fetch them, endpoint not yet implemented
+  /*
+  try {
+    const result = await client.get('/services/movies/top3')
+    top3movies.value = result.data.movies
+  } catch {
+    toast.error("Fatal error occured fetching top movies");
+  }
+  */
+
+
 })
 
 </script>
@@ -65,7 +117,7 @@ onMounted(async () => {
       <div class="content-header">
         <h1 class="section-title">TOP 3 MOVIES</h1>
         <section class="movie-grid">
-          <MovieCard v-for="movie in movies" :key="movie.id" :movie="movie" />
+          <MovieCard v-for="movie in top3movies" :key="movie.id" :movie="movie" />
         </section>
       </div>
     </div>
