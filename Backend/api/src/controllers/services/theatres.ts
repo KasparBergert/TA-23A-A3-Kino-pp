@@ -1,5 +1,5 @@
 import prisma from '../../../../database/db'
-import { Response } from 'express'
+import { Request, Response } from 'express'
 
 //gets all available theatres
 export default async function theatres(req: Request, res: Response) {
