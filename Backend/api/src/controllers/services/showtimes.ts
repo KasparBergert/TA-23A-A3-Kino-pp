@@ -69,5 +69,5 @@ export default async function showtimes(req: Request, res: Response) {
     }
   })
 
-  res.status(400).send({ code: 'VAL-0000', showtimesFull })
+  res.status(400).send({ code: 'VAL-0000', showtimes: showtimesFull })
 }
