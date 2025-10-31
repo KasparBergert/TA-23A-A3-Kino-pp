@@ -24,6 +24,7 @@ const { isActive, view, close } = useModal()
 </script>
 
 <template>
+  <Teleport to="body">
   <div class="background" v-show="isActive">
     <div class="modal">
       <div class="modal-head">
@@ -35,6 +36,7 @@ const { isActive, view, close } = useModal()
       </div>
     </div>
   </div>
+  </Teleport>
 </template>
 
 <style scoped>
