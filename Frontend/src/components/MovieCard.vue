@@ -6,7 +6,7 @@
       <p class="genres">{{ movie.genres?.join(' • ') || '—' }}</p>
       <p class="summary">
         {{ isExpanded ? movie.summary : shortSummary }}
-        <button v-if="isLong" @click="toggleSummary" class="more-btn">
+        <button v-if="isSummaryLong" @click="toggleSummary" class="more-btn">
           {{ isExpanded ? 'Show less' : 'More' }}
         </button>
       </p>
@@ -36,7 +36,7 @@ const isExpanded = ref(false)
 const toggleSummary = () => (isExpanded.value = !isExpanded.value)
 
 const shortSummary = computed(() => props.movie.summary?.slice(0, 120) + '…')
-const isLong = computed(() => (props.movie.summary?.length ?? 0) > 120)
+const isSummaryLong = computed(() => (props.movie.summary?.length ?? 0) > 120)
 </script>
 <style scoped>
 .movie-card {
@@ -48,6 +48,7 @@ const isLong = computed(() => (props.movie.summary?.length ?? 0) > 120)
   box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
   width: 100%;
   max-width: 260px;
+  height: min-content;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
