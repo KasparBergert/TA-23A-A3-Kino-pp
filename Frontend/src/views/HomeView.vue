@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
 import TheNavbar from '../components/TheNavbar.vue'
-import MovieGrid from '../features/movies/MovieGrid.vue'
 import Theatre from '../../../shared/models/Theatre'
 import client from '../utils/api'
 import { Toaster, toast } from '@steveyuowo/vue-hot-toast'
 import { RouterLink } from 'vue-router'
+import { useRouter } from 'vue-router'
 import MovieCard from '../components/MovieCard.vue'
 
 export interface Movie {
@@ -15,6 +15,8 @@ export interface Movie {
   poster?: string
   summary: string
 }
+
+const router = useRouter();
 
 const theatres = ref<Array<Theatre>>([]);
 const selectedTheatre = ref<Theatre | null>(null)
@@ -77,8 +79,16 @@ onMounted(async () => {
   }
   */
 
-
 })
+
+function onShowtimesClicked(){
+  if (selectedTheatre != null && selectedTheatre.value?.id != null){
+    router.push(`/showtimes/${selectedTheatre.value?.id}`)
+  } else {
+    toast.error("Palun vali kino.");
+  }
+}
+
 
 </script>
 
@@ -97,27 +107,24 @@ onMounted(async () => {
 
             <ul>
               <li v-for="theatre in theatres" :key="theatre.id || -1">
-                <button @click="
-                  selectedTheatre = theatre
-                  " class="showtime-dropdown-selection">
+                <button @click="selectedTheatre = theatre" class="showtime-dropdown-selection">
                   {{ theatre.name }}
                 </button>
               </li>
             </ul>
           </div>
 
-          <RouterLink class="view-showtimes-btn btn-primary outlined"
-            :to="selectedTheatre ? `/showtimes/${selectedTheatre.id}` : '#'">
+          <button class="view-showtimes-btn btn-primary outlined"
+            @click="onShowtimesClicked">
             Vaata seansse
-          </RouterLink>
+          </button>
         </div>
-
       </div>
 
       <div class="content-header">
         <h1 class="section-title">TOP 3 MOVIES</h1>
         <section class="movie-grid">
-          <MovieCard v-for="movie in top3movies" :key="movie.id" :movie="movie" />
+          <MovieCard v-for="movie in top3movies" :key="movie.id" :movie="movie"/>
         </section>
       </div>
     </div>
