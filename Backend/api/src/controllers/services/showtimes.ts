@@ -66,7 +66,6 @@ export default async function showtimes(req: Request, res: Response) {
       const theatre = theatres.find((t) => t.id === hall?.theatre_id);
 
       return {
-        price: st.price,
         starts_at: st.starts_at,
         ends_at: st.ends_at,
         film,

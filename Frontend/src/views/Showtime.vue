@@ -1,58 +1,44 @@
 <script setup lang="ts">
 import { onMounted } from 'vue';
 import { useRoute } from 'vue-router';
+import { ref } from 'vue';
 import ShowtimeCard from '../components/ShowtimeCard.vue';
-import ShowtimeFilter from "../types/ShowtimeFilter.ts"
-
+import Showtime from '../types/ShowtimeType.ts';
 import client from '../utils/api';
 
 
-
-
 const route = useRoute();
-const theatre_id = route.params.theatre_id
-//should make a check to see if theatre_id is actually a number, not too long. user can put anything in there.
+const showtimes = ref<Showtime[]>([])
 
-//send api the theatre_id
 onMounted(async () => {
   try {
-
-    const filter: ShowtimeFilter = {
-      film_id: null,
-      theatre_id: null ,
-      starts_at: null,
-      ends_at: null
-    }
     //get the showtimes
-    const response = await client.post(`/services/showtimes`, {
-      data:{
-        filter
-      }
+    const response = await client.post('/services/showtimes', {
+      film_id: null,
+      theatre_id: Number(route.params.theatre_id),
     });
-    console.log(response.data)
-
+    showtimes.value = response.data.showtimes;
+    console.log(response.data.showtimes);
   } catch (err) {
-    console.error()
+    console.error(err)
   }
 
 })
 
-
 </script>
 <template>
-  <div class="container">
-    <h1>SHOWTIMES</h1>
-    <ShowtimeCard/>
+  <div class="showtime-container">
+    <ShowtimeCard v-for="(showtime, index) in showtimes" :key="index" :showtime="showtime" />
   </div>
 </template>
 
 <style lang="css" scoped>
-.container {
+.showtime-container {
+  margin-top: 8em;
   display: flex;
-  flex-direction: column;
   justify-content: center;
   align-items: center;
-  width: 100svw;
-  height: 100svh;
+  flex-wrap: wrap;
+  gap:20px;
 }
 </style>
