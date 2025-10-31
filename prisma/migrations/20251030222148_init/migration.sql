@@ -19,6 +19,7 @@ CREATE TABLE `films` (
 
     INDEX `release_date`(`release_date`),
     INDEX `title`(`title`),
+    UNIQUE INDEX `unique_title_release_date`(`title`, `release_date`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
@@ -34,10 +35,11 @@ CREATE TABLE `genres` (
 -- CreateTable
 CREATE TABLE `halls` (
     `id` SMALLINT UNSIGNED NOT NULL AUTO_INCREMENT,
+    `theatre_id` INTEGER NOT NULL,
     `name` VARCHAR(50) NOT NULL,
     `capacity` SMALLINT UNSIGNED NOT NULL,
 
-    UNIQUE INDEX `name`(`name`),
+    INDEX `theatre_id`(`theatre_id`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
@@ -88,15 +90,6 @@ CREATE TABLE `showtimes` (
     INDEX `starts_at`(`starts_at`),
     UNIQUE INDEX `hall_id`(`hall_id`, `starts_at`),
     PRIMARY KEY (`id`)
-) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-
--- CreateTable
-CREATE TABLE `theatre_halls` (
-    `theatre_id` SMALLINT UNSIGNED NOT NULL,
-    `hall_id` SMALLINT UNSIGNED NOT NULL,
-
-    INDEX `hall_id`(`hall_id`),
-    PRIMARY KEY (`theatre_id`, `hall_id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- CreateTable
@@ -166,12 +159,6 @@ ALTER TABLE `showtimes` ADD CONSTRAINT `showtimes_ibfk_1` FOREIGN KEY (`film_id`
 
 -- AddForeignKey
 ALTER TABLE `showtimes` ADD CONSTRAINT `showtimes_ibfk_2` FOREIGN KEY (`hall_id`) REFERENCES `halls`(`id`) ON DELETE RESTRICT ON UPDATE RESTRICT;
-
--- AddForeignKey
-ALTER TABLE `theatre_halls` ADD CONSTRAINT `theatre_halls_ibfk_1` FOREIGN KEY (`theatre_id`) REFERENCES `theatres`(`id`) ON DELETE CASCADE ON UPDATE RESTRICT;
-
--- AddForeignKey
-ALTER TABLE `theatre_halls` ADD CONSTRAINT `theatre_halls_ibfk_2` FOREIGN KEY (`hall_id`) REFERENCES `halls`(`id`) ON DELETE RESTRICT ON UPDATE RESTRICT;
 
 -- AddForeignKey
 ALTER TABLE `tickets` ADD CONSTRAINT `tickets_ibfk_1` FOREIGN KEY (`order_id`) REFERENCES `orders`(`id`) ON DELETE SET NULL ON UPDATE RESTRICT;

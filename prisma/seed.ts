@@ -1,5 +1,7 @@
 import prisma from '../Backend/database/db'
 
+// ===================================================== GET FUNCTIONS =====================================================
+
 const getUserByEmail = async (email: string) => {
   const user = await prisma.users.findUnique({ where: { email } })
   if (!user) {
@@ -38,31 +40,15 @@ const getTheatreByName = async (name: string) => {
   return theatre
 }
 
-const getHallByName = async (name: string) => {
-  const hall = await prisma.halls.findUnique({ where: { name } })
-  if (!hall) throw new Error(`Hall "${name}" not found after seed`)
-  return hall
-}
+// ===================================================== SEED FUNCTION =====================================================
+
 
 async function runSeed() {
   // ========== ROLES ==========
   await createRoles()
   await createUsers()
 
-  const [admin, user] = await Promise.all([getRoleByCode('admin'), getRoleByCode('user')])
-
-  const [alice, bob] = await Promise.all([
-    getUserByEmail('alice@example.com'),
-    getUserByEmail('bob@example.com'),
-  ])
   // ========== USER_ROLES (linking) ==========
-  await prisma.user_roles.createMany({
-    data: [
-      { user_id: alice.id, role_id: admin.id },
-      { user_id: bob.id, role_id: user.id },
-    ],
-    skipDuplicates: true,
-  })
 
   await createFilms()
   await createGenres()
@@ -92,24 +78,14 @@ async function runSeed() {
   })
 
   await createTheatres()
-  await createHalls()
 
-  const [downtown, suburbia] = await Promise.all([
-    getTheatreByName('Downtown Cinema'),
-    getTheatreByName('Suburbia Screens'),
+  const theatres: { id: number; name: string }[] = await Promise.all([
+    getTheatreByName('Downtown Cinema'), // gets halls applied
+    getTheatreByName('Suburbia Screens'), // doesn't get any halls.
+    //look at createHalls function for details
   ])
 
-  const [hallA, hallB] = await Promise.all([getHallByName('Hall A'), getHallByName('Hall B')])
-
-  // ========== THEATRE_HALLS (linking) ==========
-  await prisma.theatre_halls.createMany({
-    data: [
-      { theatre_id: downtown.id, hall_id: hallA.id }, // Downtown Cinema → Hall A
-      { theatre_id: downtown.id, hall_id: hallB.id }, // Downtown Cinema → Hall B
-      { theatre_id: suburbia.id, hall_id: hallB.id }, // Suburbia Screens → Hall B
-    ],
-    skipDuplicates: true,
-  })
+  await createHalls(theatres)
 
   // ========== SEATS ==========
   await createSeats()
@@ -118,10 +94,23 @@ async function runSeed() {
   await createShowtimes()
 
   // ========== ORDERS ==========
-  await createOrders()
+  const [alice, bob] = await Promise.all([
+    getUserByEmail('alice@example.com'),
+    getUserByEmail('bob@example.com')
+  ])
+
+  //also adding alice to test if admins can buy tickets.
+  await createOrdersForUser(alice)
+  await createOrdersForUser(bob)
 
   // ========== TICKETS ==========
-  await createTickets()
+  //await createTickets() skip for now future thing
+
+  // ========== APPLYING TIGGERS ==========
+  preventAdminBuyTickets();
+
+
+
 }
 
 runSeed()
@@ -129,6 +118,8 @@ runSeed()
   .catch((err) => {
     console.error(err)
   })
+
+// ===================================================== CREATE FUNCTIONS =====================================================
 
 async function createRoles() {
   const roles = [{ code: 'admin' }, { code: 'user' }]
@@ -139,22 +130,25 @@ async function createRoles() {
   })
 }
 
+//created and adds the necessary roles to users
 async function createUsers() {
-  const users = [
-    {
-      email: 'alice@example.com',
-      hashed_password:
-        '$argon2id$v=19$m=65535,t=2,p=6$OS0pKEBtYjtvcGV3ZWY$aFG+Yn7dwfCVJkRZEZdm62GZ6DHl1WOHFSYcg7izQPzVQoOvgtHvReNDbkAcxqL6y4ZKas2HblGG+GG0tPqbRQ',
-    },
-    {
-      email: 'bob@example.com',
-      hashed_password:
-        '$argon2id$v=19$m=65535,t=2,p=6$OS0pKEBtYjtvcGV3ZWY$aFG+Yn7dwfCVJkRZEZdm62GZ6DHl1WOHFSYcg7izQPzVQoOvgtHvReNDbkAcxqL6y4ZKas2HblGG+GG0tPqbRQ',
-    },
-  ]
+  const [admin, user] = await Promise.all([getRoleByCode('admin'), getRoleByCode('user')])
 
   await prisma.users.createMany({
-    data: users,
+    data: [
+      {
+        email: 'alice@example.com',
+        hashed_password:
+          '$argon2id$v=19$m=65535,t=2,p=6$OS0pKEBtYjtvcGV3ZWY$aFG+Yn7dwfCVJkRZEZdm62GZ6DHl1WOHFSYcg7izQPzVQoOvgtHvReNDbkAcxqL6y4ZKas2HblGG+GG0tPqbRQ',
+        role_id: admin.id
+      },
+      {
+        email: 'bob@example.com',
+        hashed_password:
+          '$argon2id$v=19$m=65535,t=2,p=6$OS0pKEBtYjtvcGV3ZWY$aFG+Yn7dwfCVJkRZEZdm62GZ6DHl1WOHFSYcg7izQPzVQoOvgtHvReNDbkAcxqL6y4ZKas2HblGG+GG0tPqbRQ',
+        role_id: user.id
+      },
+    ],
     skipDuplicates: true,
   })
 }
@@ -212,27 +206,48 @@ async function createTheatres() {
 }
 
 // ========== HALLS ==========
-async function createHalls() {
-  const halls = [
-    { name: 'Hall A', capacity: 150 },
-    { name: 'Hall B', capacity: 80 },
-  ]
-
+async function createHalls(theatres: { id: number; name: string }[]) {
+  if (!theatres || theatres.length === 0 || !theatres[0]) {
+    throw new Error('Theatres list has no values after seed')
+  }
   await prisma.halls.createMany({
-    data: halls,
+    data: [
+      { name: 'Hall A', theatre_id: theatres[0].id, capacity: 150 },
+      { name: 'Hall B', theatre_id: theatres[0].id, capacity: 80 },
+    ],
     skipDuplicates: true,
   })
 }
 
 // ========== SEATS ==========
+interface seatsType {
+  hall_id: number
+  row_label: string
+  seat_number: number
+  is_available: number
+}
+
 async function createSeats() {
-  const seats = [
-    { hall_id: 1, row_label: 'A', seat_number: 1 },
-    { hall_id: 1, row_label: 'A', seat_number: 2 },
-    { hall_id: 1, row_label: 'B', seat_number: 1 },
-    { hall_id: 2, row_label: 'A', seat_number: 1 },
-    { hall_id: 2, row_label: 'A', seat_number: 2 },
-  ]
+  const createSeatMatrix = (hall_id: number, rows: Array<string>, columns: number): seatsType[] => {
+    const seats: seatsType[] = []
+
+    for (let i = 0; i < rows.length; i++) {
+      for (let j = 1; j <= columns; j++) {
+        const label = rows[i]
+        if (!label) {
+          throw new Error(`exceeded rows array i=${i} j=${j}. returned undefined for rows[i]`)
+        }
+        seats.push({ hall_id, row_label: label, seat_number: j, is_available: 1 })
+      }
+    }
+
+    return seats
+  }
+
+  const rows = ['A', 'B', 'C', 'D', 'E']
+  const seats = createSeatMatrix(1, rows, rows.length)
+
+  console.log(seats)
 
   await prisma.seats.createMany({
     data: seats,
@@ -268,14 +283,13 @@ async function createShowtimes() {
 }
 
 // ========== ORDERS ==========
-async function createOrders() {
-  const orders = [
-    { user_id: 2, status: 'pending', expires_at: new Date('2025-11-01T19:00:00') },
-    { user_id: 3, status: 'paid', expires_at: null },
-  ]
+async function createOrdersForUser(user) {
 
   await prisma.orders.createMany({
-    data: orders,
+    data: [
+      { user_id: user.id, status: 'pending', expires_at: new Date('2025-11-01T19:00:00') },
+      { user_id: user.id, status: 'paid', expires_at: null },
+    ],
     skipDuplicates: true,
   })
 }
@@ -306,3 +320,36 @@ async function createTickets() {
     skipDuplicates: true,
   })
 }
+
+
+// ===================================================== TRIGGERS =====================================================
+async function preventAdminBuyTickets(){
+
+  //admin cannot create a ticket when an order doesn't exist for it.
+  //to insert a ticket you need an order_id
+  await prisma.$executeRawUnsafe(`USE movies;
+    DELIMITER //
+
+    CREATE TRIGGER prevent_admin_buy_tickets
+    BEFORE UPDATE ON orders
+    FOR EACH ROW
+    BEGIN
+      DECLARE user_role VARCHAR(10);
+
+      SELECT r.code
+        INTO user_role
+        FROM users u
+        JOIN roles r ON r.id = u.role_id
+       WHERE u.id = NEW.user_id
+       LIMIT 1;
+
+      IF user_role = 'admin' THEN
+        SIGNAL SQLSTATE '45000'
+          SET MESSAGE_TEXT = 'Admin cannot make purchases';
+      END IF;
+    END;
+    //
+    DELIMITER ;`)
+}
+
+
