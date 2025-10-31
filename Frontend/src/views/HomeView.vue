@@ -5,10 +5,8 @@ import MovieGrid from '../features/movies/MovieGrid.vue'
 import Theatre from '../../../shared/models/Theatre'
 import client from '../utils/api'
 import { Toaster, toast } from '@steveyuowo/vue-hot-toast'
-import m from '../assets/movies.json' with {type: 'json'}
 import { RouterLink } from 'vue-router'
 import MovieCard from '../components/MovieCard.vue'
-import { movies } from '../data/movies'
 
 
 
