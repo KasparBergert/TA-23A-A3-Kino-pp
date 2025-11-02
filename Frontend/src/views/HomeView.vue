@@ -4,7 +4,6 @@ import TheNavbar from '../components/TheNavbar.vue'
 import Theatre from '../../../shared/models/Theatre'
 import client from '../utils/api'
 import { Toaster, toast } from '@steveyuowo/vue-hot-toast'
-import { RouterLink } from 'vue-router'
 import { useRouter } from 'vue-router'
 import MovieCard from '../components/MovieCard.vue'
 
