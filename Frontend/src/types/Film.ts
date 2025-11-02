@@ -1,7 +1,7 @@
 interface Film {
   id: number;
-  duration: number;
+  duration_min: number;
   title: string;
-  postal_url: string;
+  poster_url: string;
 }
 export default Film
