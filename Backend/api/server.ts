@@ -66,7 +66,8 @@ app.use(errorMiddleware)
 
 app
   .listen(PORT, () => {
-    console.log(`--- ${URI}:${PORT} ---`)
+    console.log(`\n\n--- STARTED DEV SERVER ---\n`)
+    console.log(`--- ${URI}:${PORT} ---\n`)
   })
   .on('error', (err) => {
     console.log('Server failed to start')
