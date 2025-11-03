@@ -37,7 +37,7 @@ const top3movies = ref<Movie[]>(
     genres: ['Action', 'Sci-Fi', 'Thriller'],
     poster: 'https://image.tmdb.org/t/p/w500/edv5CZvWj09upOsy2Y6IwDhK8bt.jpg',
     summary:
-      "Some description Some description Some description Some description Some description Some description Some description Some description Some description Some description v v Some description"
+      "Some description Some description Some description Some description Some description Some description Some description Some description Some description Some description v v Some description  v Some description  v Some description "
   },
   {
     id: 3,
@@ -88,43 +88,123 @@ function onShowtimesClicked(){
   }
 }
 
+const genres = ref([
+  { name: 'Comedy', color: 'from-yellow-400 to-orange-500' },
+  { name: 'Action', color: 'from-red-500 to-rose-600' },
+  { name: 'Thriller', color: 'from-purple-500 to-indigo-600' },
+  { name: 'Animation', color: 'from-blue-400 to-teal-500' },
+]);
 
 </script>
-
 <template>
-  <Toaster></Toaster>
-  <TheNavbar></TheNavbar>
-  <main class="main">
-    <div class="content">
-      <div style="display: flex; justify-content: center; align-items: center;">
-        <div class="showtime-box">
-          <div class="showtime-dropdown">
-            <button class="btn-primary bold showtime-dropdown-btn">
+  <Toaster />
+  <TheNavbar />
+
+  <main
+    class="relative flex flex-col items-center min-h-screen bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900 text-gray-100 py-10 px-4 sm:px-6"
+  >
+    <!-- Subtle animated background gradient glow -->
+    <div class="absolute inset-0 overflow-hidden pointer-events-none">
+      <div class="absolute -top-40 -left-40 w-96 h-96 bg-blue-700/30 rounded-full blur-3xl animate-pulse"></div>
+      <div class="absolute bottom-0 right-0 w-80 h-80 bg-indigo-600/30 rounded-full blur-3xl animate-pulse"></div>
+    </div>
+
+    <div class="relative z-10 flex flex-col gap-20 w-full max-w-7xl">
+
+      <!-- Showtime Selection -->
+      <div class="flex justify-center items-center">
+        <div class="flex flex-wrap gap-4 justify-center items-center p-6 bg-slate-800/80 border border-slate-700 rounded-2xl shadow-2xl backdrop-blur-md">
+
+          <!-- Preline Dropdown -->
+          <div class="hs-dropdown relative inline-flex">
+            <button
+              id="hs-dropdown-theatre"
+              type="button"
+              class="hs-dropdown-toggle py-2.5 px-6 inline-flex items-center gap-x-2 text-sm font-semibold rounded-lg border border-slate-600 bg-slate-700 text-gray-100 shadow-sm hover:bg-slate-600 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            >
               {{ selectedTheatre && selectedTheatre.id != null ? selectedTheatre.name : "Vali kino" }}
-              <span style="font-size:18px;">&#8595;</span>
+              <svg class="w-4 h-4 hs-dropdown-open:rotate-180 transition-transform" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+              </svg>
             </button>
 
-            <ul>
-              <li v-for="theatre in theatres" :key="theatre.id || -1">
-                <button @click="selectedTheatre = theatre" class="showtime-dropdown-selection">
-                  {{ theatre.name }}
-                </button>
-              </li>
-            </ul>
+            <div
+              class="hs-dropdown-menu hidden z-10 mt-2 w-56 bg-slate-700 text-gray-100 shadow-xl rounded-lg p-2 space-y-1 border border-slate-600"
+              aria-labelledby="hs-dropdown-theatre"
+            >
+              <button
+                v-for="theatre in theatres"
+                :key="theatre.id || -1"
+                @click="selectedTheatre = theatre"
+                class="w-full text-left px-4 py-2 rounded-md hover:bg-slate-600 text-sm transition-colors"
+              >
+                {{ theatre.name }}
+              </button>
+            </div>
           </div>
 
-          <button class="view-showtimes-btn btn-primary outlined"
-            @click="onShowtimesClicked">
+          <!-- View Showtimes Button -->
+          <button
+            @click="onShowtimesClicked"
+            class="py-2.5 px-8 inline-flex items-center justify-center text-sm font-semibold text-white bg-gradient-to-r from-indigo-500 to-blue-600 hover:from-indigo-600 hover:to-blue-700 rounded-lg shadow-md focus:outline-none focus:ring-2 focus:ring-indigo-400"
+          >
             Vaata seansse
           </button>
         </div>
       </div>
 
-      <div class="content-header">
-        <h1 class="section-title">TOP 3 MOVIES</h1>
-        <section class="movie-grid">
-          <MovieCard v-for="movie in top3movies" :key="movie.id" :movie="movie"/>
+      <!-- Top 3 Movies -->
+      <div class="text-center">
+        <h1 class="text-3xl sm:text-4xl font-bold mb-10 bg-gradient-to-r from-blue-400 to-indigo-400 bg-clip-text text-transparent">
+          TOP 3 MOVIES
+        </h1>
+
+        <section class="grid gap-8 sm:gap-10 grid-cols-[repeat(auto-fit,minmax(260px,1fr))] w-full max-w-6xl mx-auto">
+          <div
+            v-for="movie in top3movies"
+            :key="movie.id"
+            class="group bg-slate-800 border border-slate-700 rounded-2xl shadow-lg overflow-hidden transition-transform duration-300 hover:-translate-y-1 hover:shadow-2xl"
+          >
+            <img
+              :src="movie.poster"
+              :alt="movie.title"
+              class="w-full h-72 object-cover transition-transform duration-500 group-hover:scale-105"
+            />
+            <div class="p-5 text-left">
+              <h2 class="text-lg font-semibold text-gray-100 mb-1 group-hover:text-indigo-400 transition-colors">
+                {{ movie.title }}
+              </h2>
+              <p class="text-gray-400 text-sm mb-3 line-clamp-3">
+                {{ movie.summary }}
+              </p>
+              <div class="flex flex-wrap gap-2">
+                <span
+                  v-for="g in movie.genres"
+                  :key="g"
+                  class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-slate-700 text-gray-300 border border-slate-600"
+                >
+                  {{ g }}
+                </span>
+              </div>
+            </div>
+          </div>
         </section>
+      </div>
+
+      <!-- Genre Section -->
+      <div class="text-center mt-10">
+        <h2 class="text-2xl font-bold mb-8 text-gray-100">Browse by Genre</h2>
+        <div class="grid gap-6 sm:gap-8 grid-cols-[repeat(auto-fit,minmax(160px,1fr))] max-w-5xl mx-auto">
+          <div
+            v-for="genre in genres"
+            :key="genre.name"
+            class="cursor-pointer bg-gradient-to-br p-6 rounded-2xl text-white font-semibold text-lg shadow-lg transform transition-transform duration-300 hover:scale-105"
+            :class="genre.color"
+          >
+
+            {{ genre.name }}
+          </div>
+        </div>
       </div>
     </div>
   </main>
@@ -132,99 +212,4 @@ function onShowtimesClicked(){
 
 <style scoped>
 
-.movie-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-  gap: 1.5rem;
-  justify-items: center;
-  width: 100%;
-  max-width: 80rem;
-}
-
-.main {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  background: url("https://images.unsplash.com/photo-1614850523011-8f49ffc73908?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8Ymx1ZSUyMGJhY2tncm91bmR8ZW58MHx8MHx8fDA%3D&fm=jpg&q=60&w=3000");
-  min-height: 100vh;
-  padding: 2.5rem 1.5rem;
-  overflow-y: visible;
-  background-repeat: no-repeat;
-  background-size: cover;
-}
-
-.content {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-  border-radius: 0.5rem;
-  padding: 1.5rem;
-  width: 100%;
-  max-width: 80rem;
-}
-
-.section-title {
-  display: flex;
-  font-size: 1.5rem;
-  font-weight: 700;
-  margin-bottom: 1.5rem;
-  color: #e6e6e6;
-  justify-content: center;
-}
-
-.showtime-box {
-  width: max-content;
-  display: flex;
-  gap: 20px;
-  justify-content: center;
-  align-items: center;
-  padding: 1.1em 1.9em;
-  background-color: #ffffff;
-  border: 1px solid rgba(0, 0, 0, 0.1);
-  border-radius: 1.3em;
-  box-shadow: rgba(50, 50, 93, 0.25) 0px 30px 60px -12px, rgba(0, 0, 0, 0.3) 0px 18px 36px -18px;
-  box-shadow: rgba(6, 24, 44, 0.4) 0px 0px 0px 2px, rgba(6, 24, 44, 0.65) 0px 4px 6px -1px, rgba(255, 255, 255, 0.08) 0px 1px 0px inset;
-}
-
-.showtime-dropdown {
-  position: relative;
-}
-
-.showtime-dropdown ul {
-  display: none;
-  position: absolute;
-  background-color: rgb(219, 219, 219);
-  list-style: none;
-  z-index: 1000;
-  border-radius: 2em;
-}
-
-
-.showtime-dropdown:hover ul {
-  display: block;
-}
-
-.showtime-dropdown-selection {
-  text-align: left;
-  user-select: none;
-  cursor: pointer;
-  padding: 10px 4px;
-  background-color: #ffffff;
-  width: 100%;
-  box-sizing: border-box;
-  text-wrap: nowrap;
-}
-
-.showtime-dropdown-selection:hover {
-  background-color: #e6e6e6;
-}
-
-.showtime-dropdown-btn {
-  padding: 0.5rem 1.5rem !important;
-}
-
-.view-showtimes-btn {
-  padding: 0.5rem 3rem !important;
-}
 </style>
