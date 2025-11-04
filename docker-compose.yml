@@ -7,8 +7,7 @@ services:
       - MARIADB_ROOT_PASSWORD=${DBrootpass}
     ports: 
       - "3306:3306"
-  kino-app:
-    image: oven/bun:latest
+  kino-app:    
     build: ./
     environment:
       DATABASE_URL: "mysql://root:${DBrootpass}@db:3306/movies"
