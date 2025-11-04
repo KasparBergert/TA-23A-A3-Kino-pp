@@ -1,5 +1,8 @@
 <script setup lang="ts">
+
+import { computed, reactive, ref } from 'vue'
 import type ShowtimeType from '../types/ShowtimeType'
+import { DatabaseSync } from 'node:sqlite'
 
 const props = defineProps({
   showtime: {
@@ -16,41 +19,75 @@ const formatTime = (iso: string) =>
     day: '2-digit',
     month: 'short',
   })
+
+
+const movie = reactive(
+  {
+    ends_at: "2025-11-01T18:00:00.000Z",
+    film: {
+      id: 1,
+      title: 'The Dark Knight',
+      duration_min: 120,
+      poster_url: 'https://image.tmdb.org/t/p/w500/qJ2tW6WMUDux911r6m7haRef0WH.jpg'
+    },
+    hall: {
+      name: 'Hall A',
+      total_seats: 150,
+      available_seats: 110
+    },
+    starts_at: "2025-11-01T16:00:00.000Z",
+    theatre_id: 1,
+    theatre_name: "Downtown Cinema",
+  },
+)
+
+const available_percent = computed(() => {
+  return ((movie.hall.available_seats) / movie.hall.total_seats) * 100;
+});
+
+console.log(available_percent.value);
+
+const showtime_time = {
+  date: computed(() => new Date(movie.starts_at).toLocaleString(undefined, { day: '2-digit', month: 'short', })),
+  starts: computed(() => new Date(movie.starts_at).toLocaleString(undefined, { hour: "2-digit", minute: '2-digit' })),
+  ends: computed(() => new Date(movie.ends_at).toLocaleString(undefined, { hour: "2-digit", minute: '2-digit' })),
+}
+
 </script>
 
 <template>
+
   <div
-    class="showtime-card flex md:flex-row gap-4 p-4 rounded-2xl bg-gray-800 text-gray-100 shadow-md hover:shadow-lg transition-shadow duration-300 w-full max-w-md">
-    <!-- Poster -->
-    <img :src="showtime.film.poster_url" :alt="showtime.film.title" class="w-1/3 h-48 object-cover rounded-xl" />
-
-    <!-- Info -->
-    <div class="flex flex-col justify-between flex-1">
-      <div>
-        <h2 class="text-xl font-semibold text-white truncate">
-          {{ showtime.film.title }}
-        </h2>
-        <p class="text-sm text-gray-300 mt-1">
-          <span class="font-medium text-gray-200">Theatre:</span> {{ showtime.theatre_name }}
-        </p>
-        <p class="text-sm text-gray-300">
-          <span class="font-medium text-gray-200">Hall:</span> {{ showtime.hall.name }}
-        </p>
-        <p class="text-sm text-gray-300">
-          <span class="font-medium text-gray-200">Duration:</span> {{ showtime.film.duration_min }} min
-        </p>
-      </div>
-
-      <div class="border-t border-gray-700 mt-3 pt-2 text-sm text-gray-300">
-        <p><span class="font-medium text-gray-200">Starts:</span> {{ formatTime(showtime.starts_at) }}</p>
-        <p><span class="font-medium text-gray-200">Ends:</span> {{ formatTime(showtime.ends_at) }}</p>
-
-        <div class="mt-3 flex flex-row items-start justify-between align-start gap-2">
-          <p class="font-semibold" :class="showtime.hall.available_seats > 0 ? 'text-green-400' : 'text-red-400'">
-            {{ showtime.hall.available_seats > 0 ? `${showtime.hall.available_seats} seats available` : 'Sold Out' }}
+    class="bg-slate-700 py-10 text-white flex flex-col justify-center items-center rounded-2xl gap-5 ring-1 ring-slate-600 my-4 px-3 shadow-lg">
+    <h1 class="font-bold text-3xl">{{ movie.film.title }}</h1>
+    <img :src="movie.film.poster_url" alt="Movie Poster" class="w-80 rounded-3xl
+      shadow-blue-400/20 shadow-lg
+    " />
+    <div class="text-left text-lg w-full max-w-md">
+      <div class="flex flex-col justify-center items-center max-w-md ">
+        <div class="grid grid-cols-1 gap-2 bg-slate-800/50 p-6 rounded-2xl min-w-full ">
+          <p>
+            <span class="font-semibold">Theatre:</span> {{ movie.theatre_name }}
           </p>
-          <button class="px-3 py-2 bg-yellow-500 rounded-md cursor-pointer text-gray-700 font-bold">Buy ticket</button>
+          <p>
+            <span class="font-semibold">Time: {{ showtime_time.date }}</span>
+            <br></br>
+            Starts: {{ showtime_time.starts }}
+            <br></br>
+            Ends: {{ showtime_time.ends }}
+          </p>
+          <p>
+            <span class="font-semibold">Available Seats:</span> {{ movie.hall.available_seats }}
+
+          <div class="w-full bg-green-600 h-1">
+            <div class="transform duration-900 bg-emerald-900 h-1" :style="{ width: available_percent + '%' }"></div>
+          </div>
+          </p>
         </div>
+        <button
+          class="w-full mt-5 px-5 py-3 bg-gradient-to-r from-yellow-500 to-yellow-600 hover:from-yellow-600 hover:to-yellow-600 rounded-lg text-white font-semibold focus:outline-none focus:ring-2 focus:ring-yellow-500 cursor-pointer">
+          Buy Tickets
+        </button>
       </div>
 
     </div>

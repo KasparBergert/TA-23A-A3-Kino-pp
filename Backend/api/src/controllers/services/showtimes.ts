@@ -65,13 +65,17 @@ export default async function showtimes(req: Request, res: Response) {
       const hallSeats = seats.filter((s) => s.hall_id === hall?.id)
       const theatre = theatres.find((t) => t.id === hall?.theatre_id);
 
+      const available_seats = hallSeats.reduce((acc, seat) => (acc += seat.is_available), 0)
+      const total_seats = hallSeats.reduce((acc, _) => (acc += 1), 0)
+
       return {
         starts_at: st.starts_at,
         ends_at: st.ends_at,
         film,
         hall: {
           name: hall?.name,
-          available_seats: hallSeats.reduce((acc, seat) => (acc += seat.is_available), 0),
+          total_seats: total_seats,
+          available_seats: available_seats
         },
         theatre_id: theatre?.id,
         theatre_name: theatre ? theatre.name : null,
