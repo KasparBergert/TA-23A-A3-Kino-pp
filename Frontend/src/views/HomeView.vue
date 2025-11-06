@@ -8,12 +8,6 @@ import BackgroundGlowComponent from '../components/BackgroundGlow.vue'
 import ShowtimeSelector from '../components/ShowtimeSelector.vue'
 import TopMovies from '../components/Top3Movies.vue'
 import GenreGrid from '../components/GenreGrid.vue'
-
-
-
-
-
-
 </script>
 <template>
   <Toaster />

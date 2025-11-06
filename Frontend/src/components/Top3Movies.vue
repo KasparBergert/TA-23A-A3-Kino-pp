@@ -51,28 +51,73 @@ const top3movies = ref<Movie[]>(
     },
   ]
 )
+const expandedIds = ref<number[]>([])
+
+function toggleExpand(id: number) {
+  if (expandedIds.value.includes(id)) {
+    expandedIds.value = expandedIds.value.filter((i) => i !== id)
+  } else {
+    expandedIds.value.push(id)
+  }
+}
 </script>
 
 <template>
-  <section class="text-center">
+  <section class="text-center p-4">
     <h1
       class="text-3xl sm:text-4xl font-bold mb-10 bg-gradient-to-r from-blue-400 to-indigo-400 bg-clip-text text-transparent">
       TOP 3 MOVIES
     </h1>
 
-    <div class="grid gap-8 sm:gap-10 grid-cols-[repeat(auto-fit,minmax(260px,1fr))] w-full max-w-6xl mx-auto">
-      <div v-for="movie in top3movies" :key="movie.id"
-        class="group bg-slate-800 border border-slate-700 rounded-2xl shadow-lg overflow-hidden transition-transform duration-300 hover:-translate-y-1 hover:shadow-2xl">
-        <img :src="movie.poster" :alt="movie.title"
-          class="w-full h-72 object-cover transition-transform duration-500 group-hover:scale-105" />
-        <div class="p-5 text-left">
-          <h2 class="text-lg font-semibold text-gray-100 mb-1 group-hover:text-indigo-400 transition-colors">
+    <div
+      class="grid gap-8 sm:gap-10 grid-cols-[repeat(auto-fit,minmax(260px,1fr))] w-full max-w-6xl mx-auto">
+      <div
+        v-for="movie in top3movies"
+        :key="movie.id"
+        class="group bg-slate-800 border border-slate-700 rounded-2xl shadow-lg overflow-hidden transition-transform duration-300 hover:-translate-y-1 hover:shadow-2xl flex flex-col"
+      >
+        <!-- Poster -->
+        <div class="relative w-full aspect-[2/3] overflow-hidden">
+          <img
+            :src="movie.poster"
+            :alt="movie.title"
+            class="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+          />
+        </div>
+
+        <!-- Content -->
+        <div class="p-5 text-left flex flex-col flex-grow">
+          <h2
+            class="text-lg font-semibold text-gray-100 mb-2 group-hover:text-indigo-400 transition-colors"
+          >
             {{ movie.title }}
           </h2>
-          <p class="text-gray-400 text-sm mb-3 line-clamp-3">{{ movie.summary }}</p>
-          <div class="flex flex-wrap gap-2">
-            <span v-for="g in movie.genres" :key="g"
-              class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-slate-700 text-gray-300 border border-slate-600">
+
+          <!-- Description with toggle -->
+          <p
+            class="text-gray-400 text-sm mb-3"
+            :class="{
+              'line-clamp-3': !expandedIds.includes(movie.id)
+            }"
+          >
+            {{ movie.summary }}
+          </p>
+
+          <button
+            type="button"
+            class="text-indigo-400 text-xs font-medium hover:underline mb-3 self-start"
+            @click="toggleExpand(movie.id)"
+          >
+            {{ expandedIds.includes(movie.id) ? 'Show Less' : 'Read More' }}
+          </button>
+
+          <!-- Genres -->
+          <div class="mt-auto flex flex-wrap gap-2">
+            <span
+              v-for="g in movie.genres"
+              :key="g"
+              class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-slate-700 text-gray-300 border border-slate-600"
+            >
               {{ g }}
             </span>
           </div>
@@ -81,3 +126,14 @@ const top3movies = ref<Movie[]>(
     </div>
   </section>
 </template>
+
+<style scoped>
+
+.line-clamp-3 {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  line-clamp: 3;
+  -webkit-line-clamp: 3;
+  overflow: hidden;
+}
+</style>
