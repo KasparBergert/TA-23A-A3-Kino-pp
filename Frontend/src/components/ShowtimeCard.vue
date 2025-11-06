@@ -10,8 +10,10 @@ const { showtime } = defineProps({
   }
 })
 
+
+
 const available_percent = computed(() => {
-  return ((showtime.hall.available_seats) / showtime.hall.total_seats) * 100;
+  return (showtime.hall.available_seats / (100 * showtime.hall.total_seats));
 });
 
 const showtime_time = {
@@ -55,8 +57,8 @@ const showtime_time = {
           </p>
 
           <!-- Availability Bar -->
-          <div class="w-full bg-green-600 h-1 rounded-full overflow-hidden">
-            <div class="h-1 bg-emerald-900 transition-all duration-700 ease-in-out"
+          <div class="w-full bg-green-400 h-1 rounded-full overflow-hidden">
+            <div class="h-1 bg-red-800 transition-all duration-700 ease-in-out border-r-2 border-red-600"
               :style="{ width: available_percent + '%' }"></div>
           </div>
         </div>
@@ -65,7 +67,8 @@ const showtime_time = {
         <button class="w-full mt-5 px-5 py-3 rounded-lg font-semibold text-white
                  bg-gradient-to-r from-yellow-500 to-yellow-600
                  hover:from-yellow-600 hover:to-yellow-700
-                 focus:outline-none focus:ring-2 focus:ring-yellow-500">
+                 focus:outline-none focus:ring-2 focus:ring-yellow-500 select-none cursor-pointer"
+                 @click="">
           Buy Tickets
         </button>
       </div>
