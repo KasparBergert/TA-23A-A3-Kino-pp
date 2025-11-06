@@ -23,20 +23,21 @@ const showtime_time = {
 </script>
 
 <template>
-  <div class="bg-slate-700 py-10 text-white flex flex-col items-center justify-center
+  <div class="bg-slate-700 py-10 text-white flex items-center justify-center
            rounded-2xl gap-5 ring-1 ring-slate-600 my-4 px-3 shadow-lg">
-    <!-- Film Title -->
-    <h1 class="text-3xl font-bold">
-      {{ showtime.film.title }}
-    </h1>
 
     <!-- Poster -->
     <img :src="showtime.film.poster_url" alt="Showtime Poster" class="w-80 rounded-3xl shadow-lg shadow-blue-400/20" />
 
     <!-- Showtime Info -->
     <div class="w-full max-w-md text-left text-lg">
-      <div class="flex flex-col items-center justify-center max-w-md">
+      <div class="flex flex-col items-center justify-center max-w-md w-full">
         <div class="grid gap-2 bg-slate-800/50 p-6 rounded-2xl w-full">
+          <p>
+            <span class="font-semibold">Film:</span>
+            {{ showtime.film.title }}
+          </p>
+
           <p>
             <span class="font-semibold">Theatre:</span>
             {{ showtime.theatre_name }}
