@@ -25,7 +25,7 @@ const showtime_time = {
 </script>
 
 <template>
-  <div class="bg-slate-700 py-10 text-white flex items-center justify-center
+  <div class="bg-slate-700 py-5 text-white flex items-center justify-center
            rounded-2xl gap-5 ring-1 ring-slate-600 my-4 px-3 shadow-lg">
 
     <!-- Poster -->
@@ -65,11 +65,11 @@ const showtime_time = {
 
         <!-- Buy Button -->
         <button class="w-full mt-5 px-5 py-3 rounded-lg font-semibold text-white
-                 bg-gradient-to-r from-yellow-500 to-yellow-600
-                 hover:from-yellow-600 hover:to-yellow-700
-                 focus:outline-none focus:ring-2 focus:ring-yellow-500 select-none cursor-pointer"
+                 bg-gradient-to-r from-red-600 to-red-700
+                 hover:from-red-700 hover:to-red-800
+                 focus:outline-none focus:ring-2 focus:ring-red-600 select-none cursor-pointer"
                  @click="">
-          Buy Tickets
+          Choose Seats
         </button>
       </div>
     </div>
