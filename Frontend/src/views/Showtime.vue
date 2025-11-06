@@ -5,6 +5,7 @@ import { ref } from 'vue';
 import ShowtimeCard from '../components/ShowtimeCard.vue';
 import Showtime from '../types/ShowtimeType.ts';
 import client from '../utils/api';
+import BackgroundGlow from '../components/BackgroundGlow.vue';
 
 
 const route = useRoute();
@@ -27,18 +28,11 @@ onMounted(async () => {
 
 </script>
 <template>
-  <div class="showtime-container">
-    <ShowtimeCard v-for="(showtime, index) in showtimes" :key="index" :showtime="showtime" />
-  </div>
+  <main class="bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900 h-full w-full min-h-screen flex items-center justify-center overflow-hidden relative">
+    <BackgroundGlow />
+    <div class="flex w-max h-max gap-5">
+      <ShowtimeCard v-for="(showtime, index) in showtimes" :key="index" :showtime="showtime" />
+    </div>
+  </main>
 </template>
 
-<style lang="css" scoped>
-.showtime-container {
-  margin-top: 8em;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-wrap: wrap;
-  gap:20px;
-}
-</style>
