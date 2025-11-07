@@ -1,4 +1,5 @@
 import { createApp } from 'vue'
+import { createPinia } from "pinia"
 import App from './src/App.vue'
 import router from './src/router'
 import './src/assets/styles/main.css'
@@ -17,7 +18,11 @@ window.DataTable = $.fn.dataTable;
 window.noUiSlider = noUiSlider;
 window.VanillaCalendarPro = VanillaCalendarPro;
 
+const pinia = createPinia();
+const app = createApp(App)
 
-createApp(App).use(router).mount('#app')
+app.use(pinia)
+app.use(router).mount('#app')
+
 
 import("preline/dist/index.js");

@@ -1,7 +1,10 @@
 <script setup lang="ts">
-
-import { computed, reactive } from 'vue'
+import { computed, inject, provide, reactive } from 'vue'
 import type ShowtimeType from '../types/ShowtimeType'
+import useTicketCreatorStore from '../stores/useTicketCreatorStore';
+import { useRouter } from 'vue-router';
+
+const ticketCreator = useTicketCreatorStore();
 
 const { showtime } = defineProps({
   showtime: {
@@ -10,7 +13,7 @@ const { showtime } = defineProps({
   }
 })
 
-
+const router = useRouter();
 
 const available_percent = computed(() => {
   return (showtime.hall.available_seats / (100 * showtime.hall.total_seats));
@@ -20,6 +23,14 @@ const showtime_time = {
   date: computed(() => new Date(showtime.starts_at).toLocaleString(undefined, { day: '2-digit', month: 'short', })),
   starts: computed(() => new Date(showtime.starts_at).toLocaleString(undefined, { hour: "2-digit", minute: '2-digit' })),
   ends: computed(() => new Date(showtime.ends_at).toLocaleString(undefined, { hour: "2-digit", minute: '2-digit' })),
+}
+
+
+const handleChooseSeats = () => {
+  //set the current showtime in the store
+  ticketCreator.setCurrentShowtime(showtime);
+  //navigate to choose seats page
+  router.push({ name: 'chooseSeat'})
 }
 
 </script>
@@ -63,12 +74,12 @@ const showtime_time = {
           </div>
         </div>
 
-        <!-- Buy Button -->
+        <!-- Choose Seats Button -->
         <button class="w-full mt-5 px-5 py-3 rounded-lg font-semibold text-white
                  bg-gradient-to-r from-red-600 to-red-700
                  hover:from-red-700 hover:to-red-800
                  focus:outline-none focus:ring-2 focus:ring-red-600 select-none cursor-pointer"
-                 @click="">
+                 @click="handleChooseSeats()">
           Choose Seats
         </button>
       </div>
