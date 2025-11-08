@@ -10,13 +10,9 @@ const router = useRouter();
 onMounted(async () => {
   try {
     const result = await client.get('/services/theatres')
-    if (result.data.theatres.length === 0) {
-      theatres.value = [{ id: null, name: "kinode saamine ebaõnnestus" }] // hold error when fetching failed
-      console.log(result.data)
-      console.log("database has no theatres")
-    } else {
-      theatres.value = result.data.theatres
-    }
+    theatres.value = result.data.theatres.length === 0
+    ? theatres.value = [{ id: null, name: "kinode saamine ebaõnnestus" }]
+    : theatres.value = result.data.theatres
   } catch {
     toast.error("Fatal error occured fetching theatres");
   }
@@ -25,12 +21,11 @@ onMounted(async () => {
 
 const selectedTheatre = ref(null)
 function onShowtimesClicked() {
-  if (selectedTheatre != null && selectedTheatre.value?.id != null) {
-    router.push(`/showtimes/${selectedTheatre.value?.id}`)
-  } else {
-    toast.error("Palun vali kino.");
-  }
+  selectedTheatre != null && selectedTheatre.value?.id != null
+  ? router.push(`/showtimes/${selectedTheatre.value?.id}`)
+  : toast.error("Palun vali kino.");
 }
+
 </script>
 <template>
   <section class="flex justify-center items-center">

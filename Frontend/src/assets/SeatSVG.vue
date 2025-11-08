@@ -14,24 +14,19 @@ type SeatColor =
   | typeof available_color
   | typeof taken_color
   | typeof selected_color
-  | typeof error_color;
 
 const available_color = "#8027a1" as const;
 const taken_color = "#db0028" as const;
 const selected_color = "#1bbf0f" as const;
-const error_color = "#575757" as const;
 const currentColor = ref<SeatColor>(available_color);
 
 watchEffect(() => {
-  if (props.is_selected) {
-    currentColor.value = selected_color
-  } else if (props.is_available) {
-    currentColor.value = available_color
-  } else if (taken_color) {
-    currentColor.value = taken_color
-  } else {
-    currentColor.value = error_color
-  }
+  currentColor.value =
+    props.is_selected
+      ? selected_color
+      : props.is_available
+        ? available_color
+        : taken_color
 });
 
 </script>

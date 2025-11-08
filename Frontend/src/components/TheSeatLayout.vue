@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import SeatSVG from '../assets/SeatSVG.vue';
 import Seat from '../types/Seat';
-import { reactive, ref } from 'vue';
+import { ref } from 'vue';
 
 const { seats } = defineProps<{ seats: Seat[]; }>()
 
@@ -23,8 +23,12 @@ const handleSeatClick = (seat: Seat) => {
 <template>
   <div class="seat-layout w-fill min-w-md select-none cursor-pointer justify-items-center items-center"
     :style="{ '--rows': rowCount, '--cols': colCount }">
-    <SeatSVG :is_available="seat.is_available ?? false" :is_selected="seat.is_selected ?? false"
-      v-for="seat, key in seatStates" :key="key" class="w-8 h-8 transform rotate-180" @click="handleSeatClick(seat)" />
+    <SeatSVG
+    :is_available="seat.is_available ?? false"
+    :is_selected="seat.is_selected ?? false"
+    v-for="seat, key in seatStates" :key="key"
+    class="w-8 h-8 transform rotate-180"
+    @click="handleSeatClick(seat)" />
   </div>
 </template>
 <style scoped>
