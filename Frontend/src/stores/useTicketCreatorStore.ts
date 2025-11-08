@@ -6,7 +6,7 @@ import client from '../utils/api';
 //used to eventually send the necessary data for the user to receive a ticket.
 const useTicketCreatorStore = defineStore('ticketCreate', () => {
   const currentShowtime = ref<ShowtimeType>();
-  const currentShowtimeSeats = getShowtimeSeats;
+  const currentShowtimeSeats = ref();
 
   watch(currentShowtime, async () => {
     if(!currentShowtime.value){ return; }
