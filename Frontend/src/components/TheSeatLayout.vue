@@ -5,19 +5,18 @@ import { reactive, ref } from 'vue';
 
 const { seats } = defineProps<{ seats: Seat[]; }>()
 
-const emit = defineEmits<{ (e: 'selected-seats', value: any): void; }>()
+const emit = defineEmits<{ (e: 'update:selected-seats', value: any): void; }>()
 
-const seatStates = reactive(seats.map((seat) => { return { ...seat, is_selected: false } }));
+const seatStates = ref(seats.map((seat) => { return { ...seat, is_selected: false } }));
 
 const rowCount = Array.from(new Set(seats.map(seat => seat.row))).length;
 const colCount = Math.max(...seats.map(seat => seat.col)) + 1;
-
 
 const handleSeatClick = (seat: Seat) => {
   const { is_available } = seat;
   if (!is_available) { return; }
   seat.is_selected = !seat.is_selected;
-  emit('selected-seats', seatStates.filter(s => s.is_selected == seat.is_selected));
+  emit('update:selected-seats', seatStates.value.filter(s => s.is_selected ));
 }
 
 </script>

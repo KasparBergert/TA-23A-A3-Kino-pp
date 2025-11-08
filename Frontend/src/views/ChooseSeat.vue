@@ -1,8 +1,9 @@
 <script lang="js" setup>
-import { onMounted, reactive } from 'vue';
+import { onMounted, reactive, ref, watchEffect } from 'vue';
 import useTicketCreatorStore from '../stores/useTicketCreatorStore';
 import BackgroundGlow from '../components/BackgroundGlow.vue';
 import TheSeatLayout from '../components/TheSeatLayout.vue';
+
 
 const ticketCreator = useTicketCreatorStore();
 onMounted(() => {
@@ -54,6 +55,11 @@ const seats = reactive([{
     is_available: false,
   },])
 
+const chosenSeats = ref();
+
+watchEffect(() => {
+  console.log(chosenSeats.value)
+})
 
 </script>
 <template>
@@ -62,7 +68,7 @@ const seats = reactive([{
     <BackgroundGlow />
     <div class="flex flex-col items-center">
       <h1 class="text-2xl font-semibold mb-6">Vali kohad</h1>
-      <TheSeatLayout :seats="seats" @selected-seats="(seats) => {console.log(seats)}"/>
+      <TheSeatLayout :seats="seats" v-model:selected-seats="chosenSeats"/>
     </div>
   </main>
 
