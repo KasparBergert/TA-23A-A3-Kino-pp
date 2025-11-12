@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from "vue-router";
 import HomeView from '../views/HomeView.vue';
 import Showtime from '../views/Showtime.vue';
 import ChooseSeat from "../views/ChooseSeat.vue";
+import TicketSummary from "../views/TicketSummary.vue";
 
 
 const router = createRouter({
@@ -21,6 +22,10 @@ const router = createRouter({
       path: '/chooseSeat',
       name: 'chooseSeat',
       component: ChooseSeat,
+    },{
+      path: '/ticketSummary',
+      name: 'ticketSummary',
+      component: TicketSummary,
     },
   ],
 });
