@@ -69,6 +69,7 @@ export default async function showtimes(req: Request, res: Response) {
       const total_seats = hallSeats.reduce((acc, _) => (acc += 1), 0)
 
       return {
+        id: st.id,
         starts_at: st.starts_at,
         ends_at: st.ends_at,
         film,

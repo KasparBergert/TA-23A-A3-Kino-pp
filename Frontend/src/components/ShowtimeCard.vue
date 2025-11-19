@@ -1,64 +1,63 @@
 <script setup lang="ts">
 import { computed } from "vue";
+import formatUnixTimeToHHMM from "../utils/formatUnixTimeToHHMM";
 import type ShowtimeType from "../types/ShowtimeType";
+import useTicketCreatorStore from "../stores/useTicketCreatorStore";
 import { useRouter } from "vue-router";
+
+const ticketCreator = useTicketCreatorStore();
+
+const { showtime } = defineProps({
+  showtime: {
+    type: Object as () => ShowtimeType,
+    required: true,
+  },
+});
 
 const router = useRouter();
 
-const { showtime } = defineProps<{
-  showtime: ShowtimeType;
-}>();
-
-// Calculate % correctly
-const availablePercent = computed(() => {
-  const seats = showtime.hall.total_seats;
-  const available = showtime.hall.available_seats;
-  return Math.round((available / seats) * 100);
+const available_percent = computed(() => {
+  return showtime.hall.available_seats / (100 * showtime.hall.total_seats);
 });
 
-const starts = computed(() =>
-  new Date(showtime.starts_at).toLocaleTimeString([], {
-    hour: "2-digit",
-    minute: "2-digit",
-  })
-);
+const showtime_time = {
+  date: computed(() =>
+    new Date(showtime.starts_at).toLocaleString(undefined, {
+      day: "2-digit",
+      month: "short",
+    })
+  ),
+  starts: computed(() => formatUnixTimeToHHMM(showtime.starts_at)),
+  ends: computed(() => formatUnixTimeToHHMM(showtime.ends_at)),
+};
 
-const ends = computed(() =>
-  new Date(showtime.ends_at).toLocaleTimeString([], {
-    hour: "2-digit",
-    minute: "2-digit",
-  })
-);
-
-const date = computed(() =>
-  new Date(showtime.starts_at).toLocaleDateString([], {
-    day: "2-digit",
-    month: "short",
-  })
-);
-
-function chooseSeats() {
-
-  router.push(`/showtime/${(showtime as any).id}`);
-}
+const handleChooseSeats = () => {
+  //set the current showtime in the store
+  ticketCreator.setCurrentShowtime(showtime);
+  //navigate to choose seats page
+  router.push({ name: "chooseSeat" });
+};
 </script>
 
 <template>
   <div
-    class="p-6 bg-white border border-gray-200 shadow-sm rounded-2xl
-           dark:bg-gray-800 dark:border-gray-700 space-y-6"
+    class="bg-slate-700 py-5 text-white flex items-center justify-center rounded-2xl gap-5 ring-1 ring-slate-600 my-4 px-3 shadow-lg"
   >
     <!-- Poster -->
     <img
       :src="showtime.film.poster_url"
       alt="Showtime Poster"
-      class="w-full h-80 object-cover rounded-xl shadow"
+      class="w-80 rounded-3xl shadow-lg shadow-blue-400/20"
     />
 
-    <div class="space-y-3 text-gray-700 dark:text-gray-300">
-      <h3 class="text-xl font-semibold text-gray-900 dark:text-white">
-        {{ showtime.film.title }}
-      </h3>
+    <!-- Showtime Info -->
+    <div class="w-full max-w-md text-left text-lg">
+      <div class="flex flex-col items-center justify-center max-w-md w-full">
+        <div class="grid gap-2 bg-slate-800/50 p-6 rounded-2xl w-full">
+          <p>
+            <span class="font-semibold">Film:</span>
+            {{ showtime.film.title }}
+          </p>
 
       <p><span class="font-medium">Teater:</span> {{ showtime.theatre_name }}</p>
 
@@ -73,19 +72,22 @@ function chooseSeats() {
         {{ showtime.hall.available_seats }}
       </p>
 
-      <!-- Progress bar -->
-      <div>
-        <div class="flex justify-between text-xs mb-1">
-          <span>Saadavus</span>
-          <span>{{ availablePercent }}%</span>
+          <!-- Availability Bar -->
+          <div class="w-full bg-green-400 h-1 rounded-full overflow-hidden">
+            <div
+              class="h-1 bg-red-800 transition-all duration-700 ease-in-out border-r-2 border-red-600"
+              :style="{ width: available_percent + '%' }"
+            ></div>
+          </div>
         </div>
 
-        <div class="h-2 bg-gray-200 rounded-full overflow-hidden">
-          <div
-            class="h-full bg-green-500 rounded-full transition-all duration-700"
-            :style="{ width: availablePercent + '%' }"
-          ></div>
-        </div>
+        <!-- Choose Seats Button -->
+        <button
+          class="w-full mt-5 px-5 py-3 rounded-lg font-semibold text-white bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 focus:outline-none focus:ring-2 focus:ring-red-600 select-none cursor-pointer"
+          @click="handleChooseSeats()"
+        >
+          Choose Seats
+        </button>
       </div>
     </div>
 
