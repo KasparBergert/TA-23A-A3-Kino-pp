@@ -1,4 +1,5 @@
 import prisma from '../Backend/database/db'
+import { Prisma } from '@prisma/client'
 
 // ===================================================== GET FUNCTIONS =====================================================
 
@@ -296,7 +297,7 @@ async function createOrdersForUser(user) {
 
 // ========== TICKETS ==========
 async function createTickets() {
-  const tickets = [
+  const tickets: Prisma.ticketsCreateManyInput[] = [
     {
       order_id: 1,
       showtime_id: 1,

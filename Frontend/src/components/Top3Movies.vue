@@ -31,7 +31,7 @@ const top3movies = ref<Movie[]>(
       genres: ['Action', 'Crime', 'Drama'],
       poster: 'https://image.tmdb.org/t/p/w500/qJ2tW6WMUDux911r6m7haRef0WH.jpg',
       summary:
-        "Some description"
+        "Gothami linnas seisab Batman silmitsi oma seni suurima vastasega –  Jokeriga, kes külvab kaost ja seab proovile nii Batmani moraali kui ka linna õigussüsteemi. Võitlus Jokeriga paneb ohtu Batmani liitlased ja sunnib teda tegema raskeid valikuid, mis määravad tema kangelasliku identiteedi tuleviku."
     },
     {
       id: 2,
@@ -39,7 +39,7 @@ const top3movies = ref<Movie[]>(
       genres: ['Action', 'Sci-Fi', 'Thriller'],
       poster: 'https://image.tmdb.org/t/p/w500/edv5CZvWj09upOsy2Y6IwDhK8bt.jpg',
       summary:
-        "Some description Some description Some description Some description Some description Some description Some description Some description Some description Some description v v Some description  v Some description  v Some description "
+        "Dom Cobb on varas, kes suudab siseneda inimeste unedesse ja varastada seal peidetud saladusi. Talle pakutakse võimalust puhastada oma kriminaalne minevik, kui ta suudab täita keeruka ülesande – mitte varastada ideed, vaid istutada see kellegi alateadvusesse. Missioon nõuab täpset meeskonnatööd ning viib nad mitmetesse unetasanditesse, kus reaalsus ja illusioonid põimuvad."
     },
     {
       id: 3,
@@ -47,77 +47,63 @@ const top3movies = ref<Movie[]>(
       genres: ['Adventure', 'Drama', 'Sci-Fi'],
       poster: 'https://image.tmdb.org/t/p/w500/gEU2QniE6E77NI6lCU6MxlNBvIx.jpg',
       summary:
-        "Some description"
+        "Lähitulevikus on Maa ökokriisis, mis seab ohtu inimkonna ellujäämise. Endine piloot Cooper liitub teadlaste meeskonnaga, et reisida läbi ussiaugu uutesse galaktikatesse otsima planeeti, kuhu inimkond saaks ümber asuda. Teekond paneb proovile meeskonna füüsilised ja emotsionaalsed piirid ning toob esile aja ja armastuse siduva jõu."
     },
   ]
 )
-const expandedIds = ref<number[]>([])
+const expandedId = ref<number | null>(null)
 
 function toggleExpand(id: number) {
-  if (expandedIds.value.includes(id)) {
-    expandedIds.value = expandedIds.value.filter((i) => i !== id)
-  } else {
-    expandedIds.value.push(id)
-  }
+  expandedId.value = expandedId.value === id ? null : id
 }
+
 </script>
 
 <template>
   <section class="text-center p-4">
     <h1
       class="text-3xl sm:text-4xl font-bold mb-10 bg-gradient-to-r from-blue-400 to-indigo-400 bg-clip-text text-transparent">
-      TOP 3 MOVIES
+      TOP 3 FILMID
     </h1>
 
     <div
-      class="grid gap-8 sm:gap-10 grid-cols-[repeat(auto-fit,minmax(260px,1fr))] w-full max-w-6xl mx-auto">
+  class="grid gap-8 sm:gap-10 grid-cols-[repeat(auto-fit,minmax(260px,1fr))] w-full max-w-6xl mx-auto min-h-[400px]"
+  style="grid-auto-rows: 1fr;"
+>
       <div
-        v-for="movie in top3movies"
-        :key="movie.id"
-        class="group bg-slate-800 border border-slate-700 rounded-2xl shadow-lg overflow-hidden transition-transform duration-300 hover:-translate-y-1 hover:shadow-2xl flex flex-col"
-      >
+  v-for="movie in top3movies"
+  :key="movie.id"
+  class="group bg-slate-800 border border-slate-700 rounded-2xl shadow-lg overflow-hidden transition-transform duration-300 hover:-translate-y-1 hover:shadow-2xl self-start"
+>
+
         <!-- Poster -->
         <div class="relative w-full aspect-[2/3] overflow-hidden">
-          <img
-            :src="movie.poster"
-            :alt="movie.title"
-            class="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-          />
+          <img :src="movie.poster" :alt="movie.title"
+            class="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
         </div>
 
         <!-- Content -->
         <div class="p-5 text-left flex flex-col flex-grow">
-          <h2
-            class="text-lg font-semibold text-gray-100 mb-2 group-hover:text-indigo-400 transition-colors"
-          >
+          <h2 class="text-lg font-semibold text-gray-100 mb-2 group-hover:text-indigo-400 transition-colors">
             {{ movie.title }}
           </h2>
 
-          <!-- Description with toggle -->
-          <p
-            class="text-gray-400 text-sm mb-3"
-            :class="{
-              'line-clamp-3': !expandedIds.includes(movie.id)
-            }"
-          >
+          <!-- Summary (clamped if not expanded) -->
+          <p class="text-gray-400 text-sm mb-3" :class="{
+            'line-clamp-3': movie.summary.length > 120 && expandedId !== movie.id
+          }">
             {{ movie.summary }}
           </p>
 
-          <button
-            type="button"
-            class="text-indigo-400 text-xs font-medium hover:underline mb-3 self-start"
-            @click="toggleExpand(movie.id)"
-          >
-            {{ expandedIds.includes(movie.id) ? 'Show Less' : 'Read More' }}
+          <button v-if="movie.summary.length > 120" type="button"
+            class="text-indigo-400 text-xs font-medium hover:underline mb-3 self-start" @click="toggleExpand(movie.id)">
+            {{ expandedId === movie.id ? 'Show Less' : 'Read More' }}
           </button>
 
           <!-- Genres -->
           <div class="mt-auto flex flex-wrap gap-2">
-            <span
-              v-for="g in movie.genres"
-              :key="g"
-              class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-slate-700 text-gray-300 border border-slate-600"
-            >
+            <span v-for="g in movie.genres" :key="g"
+              class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-slate-700 text-gray-300 border border-slate-600">
               {{ g }}
             </span>
           </div>
@@ -127,8 +113,8 @@ function toggleExpand(id: number) {
   </section>
 </template>
 
-<style scoped>
 
+<style scoped>
 .line-clamp-3 {
   display: -webkit-box;
   -webkit-box-orient: vertical;

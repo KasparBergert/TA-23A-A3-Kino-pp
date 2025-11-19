@@ -8,6 +8,11 @@ import client from '../utils/api';
 import BackgroundGlow from '../components/BackgroundGlow.vue';
 
 
+import { useRouter } from 'vue-router';
+
+const router = useRouter();
+const goHome = () => router.push('/');
+
 const route = useRoute();
 const showtimes = ref<Showtime[]>([])
 
@@ -33,6 +38,12 @@ onMounted(async () => {
     <div class="flex w-max h-max gap-5">
       <ShowtimeCard v-for="(showtime, index) in showtimes" :key="index" :showtime="showtime" />
     </div>
+    <button
+  @click="goHome"
+  class="absolute top-5 left-5 bg-slate-700 hover:bg-slate-600 text-white px-4 py-2 rounded-xl shadow"
+>
+  ← Tagasi esilehele
+</button>
   </main>
 </template>
 

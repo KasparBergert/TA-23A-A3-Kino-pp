@@ -25,18 +25,26 @@ interface Movie {
   summary?: string
 }
 
-const props = defineProps({
-  movie: {
-    type: Object as () => Movie,
-    required: true
-  }
-})
+const props = defineProps<{
+  movie: Movie
+  expandedId: number | null
+}>()
 
-const isExpanded = ref(false)
-const toggleSummary = () => (isExpanded.value = !isExpanded.value)
+const emit = defineEmits<{
+  (e: 'toggle', id: number): void
+}>()
 
-const shortSummary = computed(() => props.movie.summary?.slice(0, 120) + '…')
-const isSummaryLong = computed(() => (props.movie.summary?.length ?? 0) > 120)
+const isExpanded = computed(() => props.expandedId === props.movie.id)
+
+const toggleSummary = () => emit('toggle', props.movie.id)
+
+const shortSummary = computed(() =>
+  props.movie.summary?.slice(0, 120) + '…'
+)
+
+const isSummaryLong = computed(
+  () => (props.movie.summary?.length ?? 0) > 120
+)
 </script>
 <style scoped>
 .movie-card {
