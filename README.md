@@ -1,5 +1,7 @@
 # Kino App – Paigaldusjuhend
 
+Nõuete link, Confulencis: https://tptlive-team-iocjhipz.atlassian.net/wiki/x/BACeAg 
+
 ## Eeltingimused
 
 Veendu, et sul on järgmised tööriistad paigaldatud:
