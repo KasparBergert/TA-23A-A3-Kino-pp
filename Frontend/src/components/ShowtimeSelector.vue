@@ -5,28 +5,45 @@ import { useRouter } from 'vue-router'
 import client from '../utils/api'
 
 const theatres = ref([])
-const router = useRouter();
-
-onMounted(async () => {
-  try {
-    const result = await client.get('/services/theatres')
-    theatres.value = result.data.theatres.length === 0
-    ? theatres.value = [{ id: null, name: "kinode saamine ebaõnnestus" }]
-    : theatres.value = result.data.theatres
-  } catch {
-    toast.error("Fatal error occured fetching theatres");
-  }
-
-})
-
 const selectedTheatre = ref(null)
-function onShowtimesClicked() {
-  selectedTheatre != null && selectedTheatre.value?.id != null
-  ? router.push(`/showtimes/${selectedTheatre.value?.id}`)
-  : toast.error("Palun vali kino.");
+const router = useRouter()
+
+async function fetchTheatres() {
+  try {
+    const res = await client.get('/theatres')
+    setTheatres(res.theatres)
+  } catch (err) {
+    handleError()
+  }
 }
 
+function setTheatres(list) {
+  console.log(list)
+  if (!list || list.length === 0) {
+    theatres.value = [{ id: null, name: 'kinode saamine ebaõnnestus' }]
+    return
+  }
+  theatres.value = list
+}
+
+function handleError() {
+  toast.error('Fatal error occurred fetching theatres')
+}
+
+function onShowtimesClicked() {
+  const id = selectedTheatre.value?.id
+
+  if (!id) {
+    toast.error('Palun vali kino.')
+    return
+  }
+
+  router.push(`/showtimes/${id}`)
+}
+
+onMounted(fetchTheatres)
 </script>
+
 <template>
   <section class="flex justify-center items-center">
     <div

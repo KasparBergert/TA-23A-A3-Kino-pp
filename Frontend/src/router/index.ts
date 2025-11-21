@@ -12,21 +12,7 @@ const router = createRouter({
       path: '/',
       name: 'home',
       component: HomeView,
-    },
-    {
-      path: '/showtimes/:theatre_id',
-      name: 'showtimes',
-      component: Showtime,
-    },
-    {
-      path: '/chooseSeat',
-      name: 'chooseSeat',
-      component: ChooseSeat,
-    },{
-      path: '/ticketSummary',
-      name: 'ticketSummary',
-      component: TicketSummary,
-    },
+    }
   ],
 });
 

@@ -1,17 +1,48 @@
-import axios from 'axios'
+const VITE_URI = import.meta.env.VITE_URI
+const VITE_PORT = import.meta.env.VITE_PORT
+//sends to and receives json from the api
+class Api {
+  private makeDefaultHeaders() {
+    return {
+      'Content-Type': 'application/json',
+    }
+  }
 
-const { VITE_URI, VITE_PORT } = import.meta.env
+  private handleError(err: unknown) {
+    console.log(err)
+  }
 
-if (!VITE_URI || !VITE_PORT) {
-  throw new Error('Frontend: environment variables missing for api.ts')
+  private makeURL(path){
+    return `${VITE_URI}:${VITE_PORT}/api${path}`;
+  }
+
+  async get(path: string, options: Record<string, any>) {
+    try {
+      const res = await fetch(this.makeURL(path), {
+        method: 'GET',
+        ...options,
+        headers: this.makeDefaultHeaders(),
+      })
+      return await res.json()
+    } catch (err) {
+      this.handleError(err)
+    }
+  }
+
+  async post(path: string, body: Record<string, any>, options: Record<string, any>) {
+    try {
+      const res = await fetch(this.makeURL(path), {
+        method: 'POST',
+        ...options,
+        body: JSON.stringify(body),
+        headers: this.makeDefaultHeaders(),
+      })
+      return await res.json()
+    } catch (err) {
+      this.handleError(err)
+    }
+  }
 }
 
-const client = axios.create({
-  baseURL: `${VITE_URI}:${VITE_PORT}/api`,
-  timeout: 5000,
-  headers: {
-    'Content-Type': 'application/json',
-  },
-})
-
+const client = new Api()
 export default client

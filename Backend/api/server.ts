@@ -5,8 +5,6 @@ import ApiRoutes from './src/routes.ts'
 import addMessageField from './src/controllers/middleware/addMessageField.ts'
 import chalk from 'chalk'
 import cors from 'cors'
-import HttpError from './src/types/HttpError.ts'
-import { Request, NextFunction } from 'express'
 import validateBody from './src/controllers/middleware/validateAuthUsersBody.ts'
 
 
@@ -54,11 +52,8 @@ app.use(middlewares)
 app.use('/api', ApiRoutes())
 
 // --- ERROR MIDDLEWARE ---
-interface ErrorMiddleware {
-  (err: HttpError, req: Request, res: Response, next: NextFunction): void
-}
 
-const errorMiddleware: ErrorMiddleware = (err, req, res, next) => {
+const errorMiddleware = (err, req, res, next) => {
   res.status(err.status || 500).send(err.message || 'Internal server error')
 }
 

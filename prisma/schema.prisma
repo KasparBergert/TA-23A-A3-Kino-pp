@@ -5,10 +5,6 @@ generator client {
   runtime                = "bun"
 }
 
-datasource db {
-  provider = "mysql"
-  url      = env("DATABASE_URL")
-}
 
 model film_genres {
   film_id  Int
@@ -132,7 +128,7 @@ model tickets {
 model users {
   id              Int       @id @default(autoincrement())
   email           String    @unique(map: "email") @db.VarChar(128)
-  hashed_password String    @db.VarChar(512)
+  password String    @db.VarChar(512) //password that is hashed
   updated_at      DateTime? @db.Timestamp(0)
   role_id         Int       @db.UnsignedTinyInt
   orders          orders[]

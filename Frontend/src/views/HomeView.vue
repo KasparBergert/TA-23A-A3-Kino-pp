@@ -1,13 +1,11 @@
 <script setup lang="ts">
-import { onMounted, ref } from "vue";
+
 import TheNavbar from "../components/TheNavbar.vue";
-import Theatre from "../../../shared/models/Theatre";
 import { Toaster } from "@steveyuowo/vue-hot-toast";
-import { useRouter } from "vue-router";
 import BackgroundGlowComponent from "../components/BackgroundGlow.vue";
 import ShowtimeSelector from "../components/ShowtimeSelector.vue";
 import TopMovies from "../components/Top3Movies.vue";
-import GenreGrid from "../components/GenreGrid.vue";
+
 </script>
 <template>
   <Toaster />
@@ -19,7 +17,6 @@ import GenreGrid from "../components/GenreGrid.vue";
     <div class="relative z-10 flex flex-col gap-20 w-full max-w-7xl">
       <ShowtimeSelector />
       <TopMovies />
-      <GenreGrid />
     </div>
   </main>
 </template>

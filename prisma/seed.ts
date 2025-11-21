@@ -139,13 +139,13 @@ async function createUsers() {
     data: [
       {
         email: 'alice@example.com',
-        hashed_password:
+        password:
           '$argon2id$v=19$m=65535,t=2,p=6$OS0pKEBtYjtvcGV3ZWY$aFG+Yn7dwfCVJkRZEZdm62GZ6DHl1WOHFSYcg7izQPzVQoOvgtHvReNDbkAcxqL6y4ZKas2HblGG+GG0tPqbRQ',
         role_id: admin.id
       },
       {
         email: 'bob@example.com',
-        hashed_password:
+        password:
           '$argon2id$v=19$m=65535,t=2,p=6$OS0pKEBtYjtvcGV3ZWY$aFG+Yn7dwfCVJkRZEZdm62GZ6DHl1WOHFSYcg7izQPzVQoOvgtHvReNDbkAcxqL6y4ZKas2HblGG+GG0tPqbRQ',
         role_id: user.id
       },
