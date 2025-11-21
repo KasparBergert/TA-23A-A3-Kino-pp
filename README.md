@@ -1,6 +1,6 @@
 # Kino App – Paigaldusjuhend
 
-Nõuete link, Confulencis: https://tptlive-team-iocjhipz.atlassian.net/wiki/x/BACeAg 
+Nõuete link, Confulence'is: https://tptlive-team-iocjhipz.atlassian.net/wiki/x/BACeAg 
 
 ## Eeltingimused
 
@@ -13,10 +13,7 @@ Veendu, et sul on järgmised tööriistad paigaldatud:
 
 ## Paigaldamine
 
-1. **Installi Bun**  
-   Järgi juhiseid aadressil [https://bun.sh/](https://bun.sh/).
-
-2. **Paigalda sõltuvused**  
+1. **Paigalda sõltuvused**  
    Ava terminal projekti juurkataloogis ja käivita:
    ```bash
    bun i
@@ -24,8 +21,8 @@ Veendu, et sul on järgmised tööriistad paigaldatud:
    bunx prisma generate
    bunx prisma db seed
 
-must run these two as seperate processes, e.g in seperate terminal windows
+2. scriptid jooksutavad jooksva protessi terminalis.
    ```bash
    bun run dev
----
+   ---
    bun run dev-server
