@@ -20,11 +20,12 @@ Veendu, et sul on järgmised tööriistad paigaldatud:
    Ava terminal projekti juurkataloogis ja käivita:
    ```bash
    bun i
+   bunx prisma migrate dev
+   bunx prisma generate
+   bunx prisma db seed
 
-
-bun i
-bunx prisma migrate dev
-bunx prisma generate
-bunx prisma db seed
-bun run dev
-bun run dev-server
+must run these two as seperate processes, e.g in seperate terminal windows
+   ```bash
+   bun run dev
+---
+   bun run dev-server
