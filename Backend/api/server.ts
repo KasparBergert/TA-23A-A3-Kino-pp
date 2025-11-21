@@ -42,7 +42,7 @@ app.use(
       try {
         JSON.parse(raw)
       } catch {
-        throw new HttpError('Invalid Json', 400)
+        throw new Error('Invalid Json')
       }
     },
   }),
