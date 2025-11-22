@@ -1,45 +1,34 @@
-import createAccount from '../../../services/createAccount.ts'
-import findUser from '../../../../database/src/utils/findUser.ts'
+import userManager from '../../../../database/src/UserRepository.ts'
 import { Request, Response } from 'express'
-import { createRefreshToken, createAccessToken } from '../../../services/tokens.ts'
+import userService from '../../../../database/src/UserService.ts'
+import UserRole from '../../../../database/types/UserRole.ts'
 
 export default async function register(req: Request, res: Response) {
-  const body = req.body //already gets validated in validateBody.ts middleware
-  //if database cannot find a user with the email then send error
-  const found = await findUser(body.email)
+  const { email, password } = req.body //validated in middleware
+  const found = await userManager.findUserByEmail(email)
   if (found) {
     console.info('account already exists')
-    return res.status(401).send({
-      code: 'AUTH-0002',
-    }) //email already exists
+    return res.status(401).send('failed to create account')
   }
 
-  // all checks passed
-  const result = await createAccount(body, 'admin')
-  if (!result) {
-    return res.status(401).send({
-      code: 'AUTH-0002',
-    })
+  const tokens = await userService.createAccount(email, password, UserRole.User)
+  if (tokens === null) {
+    return res.status(500).send('failed to create account')
   }
 
-  const accessToken = createAccessToken({ email: body.email })
-  const refreshToken = createRefreshToken({ email: body.email })
-
-  res.cookie('refreshToken', refreshToken, {
+  res.cookie('refreshToken', tokens.refreshToken, {
     httpOnly: true,
     secure: process.env.SecureCookies === 'true',
     sameSite: 'strict',
     path: '/api/auth/jwt/refresh',
   })
 
-  res.cookie('accessToken', accessToken, {
+  res.cookie('accessToken', tokens.accessToken, {
     httpOnly: true,
     secure: process.env.SecureCookies === 'true',
     sameSite: 'strict',
     path: '/api',
   })
 
-  res.status(201).send({
-    code: 'AUTH-0001',
-  })
+  res.status(201).send('Account creation successful')
 }

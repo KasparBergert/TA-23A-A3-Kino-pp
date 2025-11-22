@@ -5,6 +5,9 @@ generator client {
   runtime                = "bun"
 }
 
+datasource db {
+  provider = "mysql"
+}
 
 model film_genres {
   film_id  Int

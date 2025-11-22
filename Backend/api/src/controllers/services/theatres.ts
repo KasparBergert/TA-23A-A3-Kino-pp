@@ -3,12 +3,11 @@ import { Request, Response } from 'express'
 
 //gets all available theatres
 export default async function theatres(req: Request, res: Response) {
-
-  try{
+  try {
     const theatres = await prisma.theatres.findMany()
-    return res.status(200).send({ code: 'VAL-0000', theatres })
-  }catch(err){
-    return res.status(400).send({ code: 'VAL-0002' })
+    return res.status(200).send({ theatres })
+  } catch (err) {
+    console.error(err)
+    return res.status(400).send('Error occured fetching theatres')
   }
-
 }

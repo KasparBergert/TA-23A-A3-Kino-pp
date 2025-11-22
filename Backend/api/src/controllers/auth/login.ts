@@ -1,46 +1,35 @@
 import { Request, Response } from 'express'
-import getUser from '../../../../database/src/utils/getUser.ts'
-import { verifyPassword } from '../../../services/hash.ts'
-import { createRefreshToken, createAccessToken } from '../../../services/tokens.ts'
+import userRepository from '../../../../database/src/UserRepository.ts'
+import userService from '../../../../database/src/UserService.ts'
+import passwordUtils from '../../../utils/passwordUtils.ts'
 
 export default async function login(req: Request, res: Response) {
-  const body = req.body //already gets validated in validateBody.ts middleware
+  const { email, password } = req.body //already gets validated in validateBody.ts middleware
 
   //if database cannot find a user with the email then send error
-  const found = await getUser(body.email)
+  const found = await userRepository.getUserByEmail(email)
   if (!found) {
     console.info("account doesn't exist")
-    return res.status(401).send({
-      code: 'AUTH-0006',
-    }) //account doesn't exist
+    return res.status(401).send('Login failed') //account doesn't exist
   }
 
-  const isSamePassword = await verifyPassword(found.hashed_password, body.password)
+  const isSamePassword = await passwordUtils.verify(found.password, password)
   if (!isSamePassword) {
     console.info('passwords to not match')
-    return res.status(401).send({
-      code: 'AUTH-0006',
-    }) //passwords to not match
+    return res.status(401).send('Login failed') //passwords to not match
   }
 
-  const accessToken = createAccessToken({ email: body.email })
-  const refreshToken = createRefreshToken({ email: body.email })
+  try {
+    const tokens = await userService.userLogin(email, password)
+    res.cookie('accessToken', tokens.accessToken, {
+      httpOnly: true,
+      secure: process.env.SecureCookies === 'true',
+      sameSite: 'strict',
+      path: '/api',
+    })
 
-  res.cookie('refreshToken', refreshToken, {
-    httpOnly: true,
-    secure: process.env.SecureCookies === 'true',
-    sameSite: 'strict',
-    path: '/api/auth/jwt/refresh',
-  })
-
-  res.cookie('accessToken', accessToken, {
-    httpOnly: true,
-    secure: process.env.SecureCookies === 'true',
-    sameSite: 'strict',
-    path: '/api',
-  })
-
-  res.status(201).send({
-    code: 'AUTH-0005',
-  })
+    return res.status(201).send('Login successful')
+  } catch {
+    return res.status(500).send('Login failed (server side)')
+  }
 }

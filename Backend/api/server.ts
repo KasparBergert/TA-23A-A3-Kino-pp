@@ -1,11 +1,10 @@
 import '../env.ts'
-import express, { Response } from 'express'
+import express from 'express'
 import cookieParser from 'cookie-parser'
 import ApiRoutes from './src/routes.ts'
-import addMessageField from './src/controllers/middleware/addMessageField.ts'
 import chalk from 'chalk'
 import cors from 'cors'
-import validateBody from './src/controllers/middleware/validateAuthUsersBody.ts'
+import validateBody from './src/controllers/middleware/validateEmailAndPassword.ts'
 
 
 
@@ -24,8 +23,6 @@ console.info = (error: unknown) => {
 const app = express()
 const PORT = process.env.VITE_PORT
 const URI = process.env.VITE_URI
-
-const middlewares = [addMessageField, validateBody]
 
 //helps add 's' to 'http' protocol when cookies are set to 'secure'.
 const secureSuffix = process.env.SecureCookies === 'true' ? 's' : ''
@@ -48,7 +45,6 @@ app.use(
   }),
 )
 
-app.use(middlewares)
 app.use('/api', ApiRoutes())
 
 // --- ERROR MIDDLEWARE ---
