@@ -4,8 +4,8 @@ import { Router } from 'express'
 import login from './controllers/auth/login.ts'
 import register from './controllers/auth/register.ts'
 import refresh from './controllers/auth/refresh.ts'
-import theatres from './controllers/services/theatres.ts'
-import showtimes from './controllers/services/showtimes.ts'
+import theatres from './controllers/theatres.ts'
+import showtimes from './controllers/showtimes.ts'
 import validateEmailAndPassword from './controllers/middleware/validateEmailAndPassword.ts'
 
 export default function ApiRoutes(): Router {
@@ -20,7 +20,7 @@ export default function ApiRoutes(): Router {
   routes.get('/theatres', (req, res) => {
     return theatres(req, res)
   })
-  routes.post('/showtimes', (req, res) => {
+  routes.get('/showtimes', (req, res) => {
     return showtimes(req, res)
   })
 

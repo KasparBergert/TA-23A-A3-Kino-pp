@@ -1,6 +1,6 @@
 import { Request, Response } from 'express'
 import { JwtPayload } from 'jsonwebtoken'
-import tokenService from '../../../utils/TokenService'
+import tokenService from '../../services/TokenService'
 
 export default function refresh(req: Request, res: Response) {
   const refreshToken = req.cookies.refreshToken
