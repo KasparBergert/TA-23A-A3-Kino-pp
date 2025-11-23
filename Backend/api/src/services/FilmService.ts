@@ -1,4 +1,4 @@
-import filmRepository from "./FilmRepository";
+import filmRepository from "../repositories/FilmRepository";
 import type { films } from "@prisma/client";
 
 class FilmService {
