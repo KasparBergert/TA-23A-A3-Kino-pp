@@ -246,14 +246,20 @@ async function createSeats() {
   }
 
   const rows = ['A', 'B', 'C', 'D', 'E']
-  const seats = createSeatMatrix(1, rows, rows.length)
+  const seats1 = createSeatMatrix(1, rows, rows.length)
+  const seats2 = createSeatMatrix(2, rows, rows.length)
 
-  console.log(seats)
 
   await prisma.seats.createMany({
-    data: seats,
+    data: seats1,
     skipDuplicates: true,
   })
+  await prisma.seats.createMany({
+    data: seats2,
+    skipDuplicates: true,
+  })
+
+  console.log("seeded Seats in halls_id 1 and 2")
 }
 
 // ========== SHOWTIMES ==========
