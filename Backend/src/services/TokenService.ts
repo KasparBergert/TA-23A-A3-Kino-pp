@@ -3,7 +3,7 @@ import path from 'path'
 import jwt from 'jsonwebtoken'
 import type TokenEnvVars from '../../types/TokenEnvVars'
 import type TokenTimeType from '../../types/TokenTime'
-import type TokenPair from '../../../database/types/TokenPair'
+import type TokenPair from '../../types/TokenPair'
 
 class TokenService {
   readonly PublicKey: jwt.PublicKey

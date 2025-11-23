@@ -1,4 +1,4 @@
-import prisma from '../../../database/db'
+import prisma from '../../db'
 import type { seats } from '@prisma/client'
 
 class SeatRepository {

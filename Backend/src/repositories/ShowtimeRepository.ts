@@ -1,4 +1,4 @@
-import prisma from '../../../database/db'
+import prisma from '../../db'
 import type { showtimes } from '@prisma/client'
 import ShowtimeFilters from '../../types/ShowtimeFilter'
 

@@ -1,6 +1,6 @@
 import { Request, Response } from 'express'
-import userRepository from '../../../../database/src/UserRepository.ts'
-import userService from '../../../../database/src/UserService.ts'
+import userRepository from '../../repositories/UserRepository.ts'
+import userService from '../../services/UserService.ts'
 import passwordUtils from '../../../utils/passwordUtils.ts'
 
 export default async function login(req: Request, res: Response) {

@@ -1,4 +1,4 @@
-import prisma from '../Backend/database/db'
+import prisma from "../Backend/db.ts"
 import { Prisma } from '@prisma/client'
 
 // ===================================================== GET FUNCTIONS =====================================================

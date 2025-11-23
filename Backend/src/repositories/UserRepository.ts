@@ -1,6 +1,6 @@
-import prisma from '../db.ts'
+import prisma from '../../db.ts'
 import type { users } from '@prisma/client'
-import UserRole from '../types/UserRole.ts'
+import UserRole from '../../types/UserRole.ts'
 
 class UserRepository {
   private async getRoleId(role: UserRole): Promise<number | null> {

@@ -1,4 +1,4 @@
-import theatreService from '../services/TheatreRepository'
+import theatreService from '../repositories/TheatreRepository'
 import { Request, Response } from 'express'
 
 //gets all available theatres

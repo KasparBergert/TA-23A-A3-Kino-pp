@@ -1,7 +1,7 @@
-import userManager from "./UserRepository";
-import type TokenPair from "../types/TokenPair";
-import tokenService from "../../api/src/services/TokenService";
-import passwordUtils from "../../api/utils/passwordUtils";
+import userManager from "../repositories/UserRepository";
+import type TokenPair from "../../types/TokenPair";
+import tokenService from "./TokenService";
+import passwordUtils from "../../utils/passwordUtils";
 
 class AuthService {
 

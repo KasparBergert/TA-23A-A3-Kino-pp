@@ -1,4 +1,4 @@
-import prisma from '../../../database/db.ts'
+import prisma from '../../db.ts'
 import type { theatres } from '@prisma/client'
 
 class TheatreRepository {

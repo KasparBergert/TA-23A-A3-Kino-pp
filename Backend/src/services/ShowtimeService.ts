@@ -1,11 +1,11 @@
 import type { films, halls, seats, showtimes, theatres } from '@prisma/client'
 import type ShowtimeFilters from '../../types/ShowtimeFilter.ts'
-import showtimeFilter from './ShowtimeFilter.ts'
-import showtimeRepository from './ShowtimeRepository.ts'
-import hallRepositroy from './HallRepository.ts'
-import filmRepository from './FilmRepository.ts'
-import seatRepository from './SeatRepository.ts'
-import theatreRepository from './TheatreRepository.ts'
+import showtimeFilter from '../filters/ShowtimeFilter.ts'
+import showtimeRepository from '../repositories/ShowtimeRepository.ts'
+import hallRepositroy from '../repositories/HallRepository.ts'
+import filmRepository from '../repositories/FilmRepository.ts'
+import seatRepository from '../repositories/SeatRepository.ts'
+import theatreRepository from '../repositories/TheatreRepository.ts'
 
 type NonEmptyArray<T> = [T, ...T[]]
 

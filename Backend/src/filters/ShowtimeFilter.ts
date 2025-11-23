@@ -1,5 +1,5 @@
 import type ShowtimeFilters from '../../types/ShowtimeFilter.ts'
-import prisma from '../../../database/db.ts'
+import prisma from '../../db.ts'
 
 //filter layer
 class ShowtimeFilter {

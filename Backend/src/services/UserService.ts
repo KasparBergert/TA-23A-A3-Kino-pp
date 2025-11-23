@@ -1,8 +1,8 @@
-import userRepository from './UserRepository'
-import tokenService from '../../api/src/services/TokenService'
-import type TokenPair from '../types/TokenPair'
-import type UserRole from '../types/UserRole'
-import passwordUtils from '../../api/utils/passwordUtils'
+import userRepository from '../repositories/UserRepository'
+import tokenService from './TokenService'
+import type TokenPair from '../../types/TokenPair'
+import type UserRole from '../../types/UserRole'
+import passwordUtils from '../../utils/passwordUtils'
 
 class UserService {
   /**

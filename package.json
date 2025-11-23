@@ -8,7 +8,7 @@
   },
   "scripts": {
     "dev": "bunx vite",
-    "dev-server": "bun --watch ./Backend/api/server.ts",
+    "dev-server": "bun --watch ./Backend/server.ts",
     "build": "vite build",
     "preview": "vite preview",
     "test:unit": "vitest",

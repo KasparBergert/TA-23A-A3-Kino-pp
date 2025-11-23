@@ -1,5 +1,5 @@
 import type { theatres } from '@prisma/client'
-import theatreRepository from './TheatreRepository.ts'
+import theatreRepository from '../repositories/TheatreRepository.ts'
 
 class TheatreService {
   /**

@@ -1,7 +1,7 @@
-import userManager from '../../../../database/src/UserRepository.ts'
+import userManager from '../../repositories/UserRepository.ts'
 import { Request, Response } from 'express'
-import userService from '../../../../database/src/UserService.ts'
-import UserRole from '../../../../database/types/UserRole.ts'
+import userService from '../../services/UserService.ts'
+import UserRole from '../../../types/UserRole.ts'
 
 export default async function register(req: Request, res: Response) {
   const { email, password } = req.body //validated in middleware

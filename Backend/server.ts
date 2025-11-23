@@ -1,12 +1,9 @@
-import '../env.ts'
-import express from 'express'
+import './env.ts'
+import express, { ErrorRequestHandler, NextFunction, Request, Response } from 'express'
 import cookieParser from 'cookie-parser'
 import ApiRoutes from './src/routes.ts'
 import chalk from 'chalk'
 import cors from 'cors'
-import validateBody from './src/controllers/middleware/validateEmailAndPassword.ts'
-
-
 
 //colors the error to red
 const origError = console.error
@@ -49,8 +46,18 @@ app.use('/api', ApiRoutes())
 
 // --- ERROR MIDDLEWARE ---
 
-const errorMiddleware = (err, req, res, next) => {
-  res.status(err.status || 500).send(err.message || 'Internal server error')
+const errorMiddleware = (
+  err: ErrorRequestHandler,
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  console.error(err)
+
+  const status = err.status || 500
+  const message = err.message || 'Internal server error'
+
+  res.status(status).json({ error: message })
 }
 
 app.use(errorMiddleware)
