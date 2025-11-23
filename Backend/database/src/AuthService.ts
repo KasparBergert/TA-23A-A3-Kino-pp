@@ -1,6 +1,6 @@
 import userManager from "./UserRepository";
 import type TokenPair from "../types/TokenPair";
-import tokenService from "../../api/utils/TokenService";
+import tokenService from "../../api/src/services/TokenService";
 import passwordUtils from "../../api/utils/passwordUtils";
 
 class AuthService {
@@ -12,9 +12,7 @@ class AuthService {
     //check if user was found
     if (user === null) return false;
 
-    const entered_password_hashed = await passwordUtils.createhash(entered_password);
-    //validate if password is the same
-    return user.password === entered_password_hashed
+    return passwordUtils.verify(entered_password, user.password)
   }
 
   //gives both refresh and access token when entered are correct
