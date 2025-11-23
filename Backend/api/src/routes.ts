@@ -1,12 +1,10 @@
 import { Router } from 'express'
-
-// handlers
 import login from './controllers/auth/login.ts'
 import register from './controllers/auth/register.ts'
 import refresh from './controllers/auth/refresh.ts'
-import theatres from './controllers/theatres.ts'
-import showtimes from './controllers/showtimes.ts'
+import getShowtimes from './controllers/getShowtimes.ts'
 import validateEmailAndPassword from './controllers/middleware/validateEmailAndPassword.ts'
+import getTheatres from './controllers/getTheatres.ts'
 
 export default function ApiRoutes(): Router {
   const routes = Router()
@@ -17,12 +15,9 @@ export default function ApiRoutes(): Router {
   routes.get('/auth/jwt/refresh', refresh)
 
   // SERVICES
-  routes.get('/theatres', (req, res) => {
-    return theatres(req, res)
-  })
-  routes.get('/showtimes', (req, res) => {
-    return showtimes(req, res)
-  })
+  routes.get('/theatres', getTheatres)
+
+  routes.get('/showtimes', getShowtimes)
 
   return routes
 }

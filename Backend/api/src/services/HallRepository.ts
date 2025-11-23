@@ -11,7 +11,13 @@ class HallRepositroy {
 
   async getById(hall_id: number): Promise<halls | null> {
     return await prisma.halls.findUnique({
-      where: { id: hall_id }
+      where: { id: hall_id },
+    })
+  }
+
+  async getByIds(hall_ids: number[]): Promise<halls[] | null> {
+    return await prisma.halls.findMany({
+      where: { id: { in: hall_ids } },
     })
   }
 }
