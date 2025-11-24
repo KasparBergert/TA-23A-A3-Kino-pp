@@ -54,6 +54,6 @@
     "Backend/database/**/*.ts",
     "shared/**/*.ts", 
     "Frontend/env.d.ts",         
-    "prisma/*.ts",         
+    "prisma/*.ts", "prisma.config.ts",         
   ]
 }
