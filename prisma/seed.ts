@@ -343,12 +343,14 @@ async function preventAdminBuyTickets() {
 
 ;(async () => {
   try {
-    await runSeed().then(() => prisma.$disconnect)
+    await runSeed()
 
     console.log('Seed completed successfully!')
   } catch (err) {
     console.error('Error during seeding:', err)
   } finally {
+    console.log("Disconnecting...")
     await prisma.$disconnect()
+    console.log("Disconnected")
   }
 })()
