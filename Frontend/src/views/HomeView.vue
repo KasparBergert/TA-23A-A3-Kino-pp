@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, ref } from "vue";
+import { onMounted, ref, watchEffect } from "vue";
 import TheNavbar from "../components/TheNavbar.vue";
 import BackgroundGlow from "../components/BackgroundGlow.vue";
 import TheTheatreSelector from "../components/TheTheatreSelector/TheTheatreSelector.vue";
@@ -27,7 +27,6 @@ onMounted(async () => {
     console.error("Error fetching films:", err);
   }
 });
-
 
 </script>
 <template>

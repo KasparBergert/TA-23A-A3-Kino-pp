@@ -6,10 +6,12 @@ const props = defineProps<{
   films: films[]
 }>()
 
+
 </script>
 <template>
+  <p class="text-5xl font-bold">Veel Filme</p>
   <div
-    class="group bg-slate-800 border border-slate-700 rounded-2xl shadow-lg overflow-hidden transition-transform duration-300 hover:-translate-y-1 hover:shadow-2xl self-start">
-      <FilmsGridCard v-for="film in films" :key="film.id" :film="film" />
+    class="grid gap-6 sm:gap-8 grid-cols-[repeat(auto-fit,minmax(180px,1fr))] w-full max-w-7xl mx-auto">
+    <FilmsGridCard v-for="film in props.films" :key="film.id" :film="film" />
   </div>
 </template>
