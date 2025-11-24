@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import { FunctionDeclaration } from 'typescript';
-import { defineProps } from 'vue'
 
 const props = defineProps<{
   onSubmit: Function
