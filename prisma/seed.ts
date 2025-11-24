@@ -1,4 +1,4 @@
-import prisma from "../Backend/db.ts"
+import prisma from '../Backend/db.ts'
 import { Prisma } from '@prisma/client'
 
 // ===================================================== GET FUNCTIONS =====================================================
@@ -42,7 +42,6 @@ const getTheatreByName = async (name: string) => {
 }
 
 // ===================================================== SEED FUNCTION =====================================================
-
 
 async function runSeed() {
   // ========== ROLES ==========
@@ -97,7 +96,7 @@ async function runSeed() {
   // ========== ORDERS ==========
   const [alice, bob] = await Promise.all([
     getUserByEmail('alice@example.com'),
-    getUserByEmail('bob@example.com')
+    getUserByEmail('bob@example.com'),
   ])
 
   //also adding alice to test if admins can buy tickets.
@@ -108,17 +107,8 @@ async function runSeed() {
   //await createTickets() skip for now future thing
 
   // ========== APPLYING TIGGERS ==========
-  preventAdminBuyTickets();
-
-
-
+  preventAdminBuyTickets()
 }
-
-runSeed()
-  .then(() => prisma.$disconnect)
-  .catch((err) => {
-    console.error(err)
-  })
 
 // ===================================================== CREATE FUNCTIONS =====================================================
 
@@ -141,13 +131,13 @@ async function createUsers() {
         email: 'alice@example.com',
         password:
           '$argon2id$v=19$m=65535,t=2,p=6$OS0pKEBtYjtvcGV3ZWY$aFG+Yn7dwfCVJkRZEZdm62GZ6DHl1WOHFSYcg7izQPzVQoOvgtHvReNDbkAcxqL6y4ZKas2HblGG+GG0tPqbRQ',
-        role_id: admin.id
+        role_id: admin.id,
       },
       {
         email: 'bob@example.com',
         password:
           '$argon2id$v=19$m=65535,t=2,p=6$OS0pKEBtYjtvcGV3ZWY$aFG+Yn7dwfCVJkRZEZdm62GZ6DHl1WOHFSYcg7izQPzVQoOvgtHvReNDbkAcxqL6y4ZKas2HblGG+GG0tPqbRQ',
-        role_id: user.id
+        role_id: user.id,
       },
     ],
     skipDuplicates: true,
@@ -249,7 +239,6 @@ async function createSeats() {
   const seats1 = createSeatMatrix(1, rows, rows.length)
   const seats2 = createSeatMatrix(2, rows, rows.length)
 
-
   await prisma.seats.createMany({
     data: seats1,
     skipDuplicates: true,
@@ -259,7 +248,7 @@ async function createSeats() {
     skipDuplicates: true,
   })
 
-  console.log("seeded Seats in halls_id 1 and 2")
+  console.log('seeded Seats in halls_id 1 and 2')
 }
 
 // ========== SHOWTIMES ==========
@@ -291,7 +280,6 @@ async function createShowtimes() {
 
 // ========== ORDERS ==========
 async function createOrdersForUser(user) {
-
   await prisma.orders.createMany({
     data: [
       { user_id: user.id, status: 'pending', expires_at: new Date('2025-11-01T19:00:00') },
@@ -328,16 +316,14 @@ async function createTickets() {
   })
 }
 
-
 // ===================================================== TRIGGERS =====================================================
-async function preventAdminBuyTickets(){
-
+async function preventAdminBuyTickets() {
   //admin cannot create a ticket when an order doesn't exist for it.
   //to insert a ticket you need an order_id
   await prisma.$executeRawUnsafe(`
   DROP TRIGGER IF EXISTS prevent_admin_buy_tickets;
-`);
-await prisma.$executeRawUnsafe(`
+`)
+  await prisma.$executeRawUnsafe(`
   CREATE TRIGGER prevent_admin_buy_tickets
   BEFORE UPDATE ON orders
   FOR EACH ROW
@@ -352,7 +338,17 @@ await prisma.$executeRawUnsafe(`
       SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Admin cannot make purchases';
     END IF;
   END;
-`);
+`)
 }
 
+;(async () => {
+  try {
+    await runSeed().then(() => prisma.$disconnect)
 
+    console.log('Seed completed successfully!')
+  } catch (err) {
+    console.error('Error during seeding:', err)
+  } finally {
+    await prisma.$disconnect()
+  }
+})()

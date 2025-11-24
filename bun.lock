@@ -4,7 +4,7 @@
     "": {
       "name": "kino-app",
       "dependencies": {
-        "@prisma/client": "^6.17.1",
+        "@prisma/client": "^7.0.0",
         "@steveyuowo/vue-hot-toast": "^1.4.3",
         "@tailwindcss/vite": "^4.1.14",
         "@types/express": "^5.0.3",
@@ -19,7 +19,6 @@
         "jsonwebtoken": "^9.0.2",
         "mariadb": "^3.4.5",
         "preline": "^3.2.3",
-        "prisma": "^7.0.0",
         "tailwindcss": "^4.1.14",
         "vue": "^3.5.22",
         "vue-i18n": "^11.1.12",
@@ -42,6 +41,7 @@
         "globals": "^16.3.0",
         "jsdom": "^27.0.0",
         "prettier": "3.6.2",
+        "prisma": "^7.0.0",
         "sass": "^1.93.2",
         "sass-embedded": "^1.93.2",
         "sass-loader": "^16.0.5",
@@ -302,7 +302,9 @@
 
     "@polka/url": ["@polka/url@1.0.0-next.29", "", {}, "sha512-wwQAWhWSuHaag8c4q/KN/vCoeOJYshAIvMQwD4GpSb3OiZklFfvAgmj0VCBBImRpuF/aFgIRzllXlVX93Jevww=="],
 
-    "@prisma/client": ["@prisma/client@6.17.1", "", { "peerDependencies": { "prisma": "*", "typescript": ">=5.1.0" }, "optionalPeers": ["prisma", "typescript"] }, "sha512-zL58jbLzYamjnNnmNA51IOZdbk5ci03KviXCuB0Tydc9btH2kDWsi1pQm2VecviRTM7jGia0OPPkgpGnT3nKvw=="],
+    "@prisma/client": ["@prisma/client@7.0.0", "", { "dependencies": { "@prisma/client-runtime-utils": "7.0.0" }, "peerDependencies": { "prisma": "*", "typescript": ">=5.4.0" }, "optionalPeers": ["prisma", "typescript"] }, "sha512-FM1NtJezl0zH3CybLxcbJwShJt7xFGSRg+1tGhy3sCB8goUDnxnBR+RC/P35EAW8gjkzx7kgz7bvb0MerY2VSw=="],
+
+    "@prisma/client-runtime-utils": ["@prisma/client-runtime-utils@7.0.0", "", {}, "sha512-PAiFgMBPrLSaakBwUpML5NevipuKSL3rtNr8pZ8CZ3OBXo0BFcdeGcBIKw/CxJP6H4GNa4+l5bzJPrk8Iq6tDw=="],
 
     "@prisma/config": ["@prisma/config@7.0.0", "", { "dependencies": { "c12": "3.1.0", "deepmerge-ts": "7.1.5", "effect": "3.18.4", "empathic": "2.0.0" } }, "sha512-TDASB57hyGUwHB0IPCSkoJcXFrJOKA1+R/1o4np4PbS+E0F5MiY5aAyUttO0mSuNQaX7t8VH/GkDemffF1mQzg=="],
 
