@@ -12,11 +12,11 @@ class Api {
     console.log(err)
   }
 
-  private makeURL(path){
-    return `${VITE_URI}:${VITE_PORT}/api${path}`;
+  private makeURL(path: string) {
+    return `${VITE_URI}:${VITE_PORT}/api${path}`
   }
 
-  async get(path: string, options: Record<string, any>) {
+  async get<T>(path: string, options?: Record<string, any>) {
     try {
       const res = await fetch(this.makeURL(path), {
         method: 'GET',
@@ -29,7 +29,7 @@ class Api {
     }
   }
 
-  async post(path: string, body: Record<string, any>, options: Record<string, any>) {
+  async post(path: string, body: Record<string, any>, options?: Record<string, any>) {
     try {
       const res = await fetch(this.makeURL(path), {
         method: 'POST',
