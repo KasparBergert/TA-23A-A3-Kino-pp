@@ -1,5 +1,6 @@
 import type { films, halls, seats, showtimes, theatres } from '@prisma/client'
 import type ShowtimeFilters from '../../../shared/types/ShowtimeFilter.ts'
+import type ShowtimeDTO from "../../../shared/types/ShowtimeDTO.ts"
 import showtimeFilter from '../filters/ShowtimeFilter.ts'
 import showtimeRepository from '../repositories/ShowtimeRepository.ts'
 import hallRepositroy from '../repositories/HallRepository.ts'
@@ -67,7 +68,7 @@ class ShowtimeService {
     return await showtimeRepository.getAll(builtFilters)
   }
 
-  async getList(filters: ShowtimeFilters) {
+  async getList(filters: ShowtimeFilters): Promise<ShowtimeDTO[]>  {
     //creates the desired look for the showtime object
     const showtimes = await this.getAll(filters)
 
@@ -88,9 +89,10 @@ class ShowtimeService {
       const theatre = theatres.find((t) => t.id === hall.theatre_id)!
 
       return {
+        id: st.id,
         ends_at: st.ends_at,
         is_canceled: st.is_canceled,
-        price: st.price,
+        price: Number(st.price),
         starts_at: st.starts_at,
         film: {
           id: film.id,

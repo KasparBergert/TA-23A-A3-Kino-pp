@@ -36,7 +36,7 @@ function onShowtimesClicked() {
     return
   }
 
-  router.push(`/showtimes/${id}`)
+  router.push(`/showtimes?theatre_id=${id}`)
 }
 
 onMounted(fetchTheatres)

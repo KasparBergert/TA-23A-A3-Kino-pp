@@ -6,10 +6,6 @@ const props = defineProps<{
   film: films
 }>()
 
-watchEffect(() => {
-  console.log("Films updated in Card:", props.film);
-});
-
 </script>
 <template>
   <div class="group bg-slate-800 border border-slate-700 rounded-2xl shadow-lg overflow-hidden transition-transform duration-300 hover:-translate-y-1 hover:shadow-2xl self-start">
