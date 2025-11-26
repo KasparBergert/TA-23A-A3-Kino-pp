@@ -1,5 +1,5 @@
 import type { films, halls, seats, showtimes, theatres } from '@prisma/client'
-import type ShowtimeFilters from '../../types/ShowtimeFilter.ts'
+import type ShowtimeFilters from '../../../shared/types/ShowtimeFilter.ts'
 import showtimeFilter from '../filters/ShowtimeFilter.ts'
 import showtimeRepository from '../repositories/ShowtimeRepository.ts'
 import hallRepositroy from '../repositories/HallRepository.ts'

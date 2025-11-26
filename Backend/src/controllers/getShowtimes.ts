@@ -1,4 +1,4 @@
-import type ShowtimeFilter from '../../types/ShowtimeFilter'
+import type ShowtimeFilter from '../../../shared/types/ShowtimeFilter'
 import showtimeService from '../services/ShowtimeService'
 import { Request, Response } from 'express'
 
