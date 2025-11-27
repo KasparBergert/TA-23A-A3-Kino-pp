@@ -1,14 +1,12 @@
 <script lang="ts" setup>
 import { onMounted, onBeforeMount, ref } from 'vue';
 import { useRoute } from 'vue-router';
-import { useSafeBack } from '../utils/useSafeBack';
 import showtimeService from '../services/ShowtimeService';
 import theatreService from '../services/TheatreService';
 import type { theatres } from '@prisma/client';
 import type ShowtimeDTO from '../../../shared/types/ShowtimeDTO';
 import ShowtimesGrid from '../components/ShowtimesGrid/ShowtimesGrid.vue';
 
-const { safeBack } = useSafeBack();
 const route = useRoute();
 const theatreId = route.query.theatre_id as string;
 
@@ -26,14 +24,6 @@ function setShowtimes(showtimeData: ShowtimeDTO[]) {
   showtimesList.value = showtimeData;
 }
 
-onBeforeMount(() => {
-  if (!theatreId) {
-    console.error("Missing theatre_id in query parameters");
-    safeBack('/');
-    return;
-  }
-})
-
 onMounted(async () => {
 
   const theatre_id = Number(theatreId); //check for its integrity is in BeforeMount
@@ -43,7 +33,6 @@ onMounted(async () => {
   setTheatres(theatreRes.theatre);
   setShowtimes(showtimesRes.showtimes);
 });
-
 
 
 </script>

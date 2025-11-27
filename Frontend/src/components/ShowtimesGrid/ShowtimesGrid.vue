@@ -1,12 +1,15 @@
 <script setup lang="ts">
 import type ShowtimeDTO from '../../../../shared/types/ShowtimeDTO';
+import { useRouter } from 'vue-router';
+
+const router = useRouter();
 
 defineProps<{
   showtimes: ShowtimeDTO[]
 }>();
 
 function handleShowtimeClick(showtime_id: number) {
-  console.log("click:", showtime_id)
+  router.push({ name: 'seat-select', query: { showtime_id: showtime_id.toString() } });
 }
 
 </script>
