@@ -1,19 +1,28 @@
 <script setup lang="ts">
+import { ref } from 'vue';
 import { useRoute } from 'vue-router';
+import SeatGrid from '../components/SeatGrid/SeatGrid.vue';
+import type SeatDTO from '../../../shared/types/SeatDTO';
+import orderStore from '../store/OrderStore';
+import router from '../router';
 
 const route = useRoute();
-const showtimeId = route.query.showtime_id as string;
+const hall_id = route.query.hall_id as string;
+const selectedSeats = ref<SeatDTO[]>([]);
 
-console.log(showtimeId)
+function proceedToSummary() {
+  orderStore.setChosenSeats(selectedSeats.value);
+  router.push({ name: 'summary' });
+}
+
 </script>
 <template>
-
-show a 2D grid of seats. fetch the seats from a hall.
-
-1. fetch the showtime hall seats
-2. display them in a grid
-2.1 disable selection of already booked seats
-3. user selectes seats
-4. user confirms selection and goes to payment page
-
+  <div class="flex flex-col items-center justify-center w-screen h-screen">
+    <SeatGrid :hallId="hall_id" v-model:selected-seats="selectedSeats" />
+    <button @click="proceedToSummary" class="select-none py-2.5 px-8 inline-flex items-center justify-center text-sm font-semibold
+       text-white bg-gradient-to-r from-indigo-500 to-blue-600 hover:from-indigo-600 hover:to-blue-700
+      rounded-lg shadow-md focus:outline-none focus:ring-2 focus:ring-indigo-400">Jätka
+      osutga
+    </button>
+  </div>
 </template>
