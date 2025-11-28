@@ -1,16 +1,16 @@
 import prisma from '../../db'
-import type { seats } from '@prisma/client'
+import type SeatDTO from '../../../shared/types/SeatDTO'
 
 class SeatRepository {
   /**
    * @param hall_id halls id in the database
    * @returns seats with the hall_id
    */
-  async getByHallId(hall_id: number): Promise<seats[]> {
-    const seats = await prisma.seats.findMany({
+  async getAllByHallId(hall_id: number): Promise<SeatDTO[]> {
+    return await prisma.seats.findMany({
       where: { hall_id: hall_id },
+      omit: { id: true },
     })
-    return seats
   }
 }
 
