@@ -9,13 +9,13 @@ interface SeatCreate {
 
 export async function createSeats() {
   const makeMatrix = (hall_id: number, rows: string[], columns: number): SeatCreate[] =>
-    rows.flatMap(row =>
+    rows.flatMap((row) =>
       Array.from({ length: columns }, (_, i) => ({
         hall_id,
         row_label: row,
         seat_number: i + 1,
-        is_available: 1,
-      }))
+        is_available: Math.floor(Math.random() * 2),
+      })),
     )
 
   const rows = ['A', 'B', 'C', 'D', 'E']
