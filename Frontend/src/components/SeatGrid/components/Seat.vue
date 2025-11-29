@@ -59,7 +59,7 @@ function handleSeatClick() {
 
 </script>
 <template>
-  <svg class="rotate-180 w-7 cursor-pointer" @click="handleSeatClick()" id="Layer_1" data-name="Layer 1"
+  <svg class="w-7 cursor-pointer" @click="handleSeatClick()" id="Layer_1" data-name="Layer 1"
     xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 25 24.999">
     <defs>
       <clipPath id="clip-path">

@@ -38,10 +38,16 @@ onMounted(async () => {
 <template>
 
   <main
-    class="relative flex flex-col items-center min-h-screen bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900 text-gray-100 py-10 px-4 sm:px-6">
-    <div class="relative z-10 flex flex-col gap-8 w-full max-w-7xl">
-      <section class="flex justify-center items-center mb-6 mt-7">
-        <p class="text-6xl">{{ theatre.name }}</p>
+    class="relative flex flex-col items-center min-h-screen bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900 text-gray-100 py-12 px-4 sm:px-6">
+
+    <div class="relative z-10 flex flex-col w-full max-w-7xl space-y-10">
+
+      <section class="flex flex-col items-center justify-center text-center mt-4 mb-8">
+        <h1
+          class="text-4xl md:text-6xl font-extrabold tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-white via-slate-200 to-slate-400 drop-shadow-lg">
+          {{ theatre.name }}
+        </h1>
+        <div class="h-1 w-24 bg-blue-600 rounded-full mt-6 shadow-[0_0_15px_rgba(37,99,235,0.6)]"></div>
       </section>
 
       <ShowtimesGrid :showtimes="showtimesList" />

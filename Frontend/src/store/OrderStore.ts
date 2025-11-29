@@ -1,16 +1,23 @@
+import FilmDTO from '../../../shared/types/FilmDTO'
 import SeatDTO from '../../../shared/types/SeatDTO'
 import ShowtimeDTO from '../../../shared/types/ShowtimeDTO'
 
 class OrderStore {
-  private chosenShowtime: ShowtimeDTO
+  private chosenShowtime: ShowtimeDTO | null = null
   private chosenSeats: SeatDTO[] = []
 
   setShowtime(showtime: ShowtimeDTO) {
     this.chosenShowtime = { ...showtime }
   }
 
-  getShowtime() {
+  getShowtime(): ShowtimeDTO | null {
     return this.chosenShowtime
+  }
+
+  getFilm(): FilmDTO | null {
+    return this.chosenShowtime?.film
+    ? this.chosenShowtime?.film
+    : null;
   }
 
   setChosenSeats(seats: SeatDTO[]) {

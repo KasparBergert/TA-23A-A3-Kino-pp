@@ -1,7 +1,7 @@
 import { useRoute } from 'vue-router'
 import useSafeRouter from './useSafeRouter'
 
-export function useValidatedNumberQuery(paramName: string) {
+function useValidatedNumberQuery(paramName: string) {
   const route = useRoute()
   const { safeRoute } = useSafeRouter()
 
@@ -16,3 +16,7 @@ export function useValidatedNumberQuery(paramName: string) {
 }
 
 
+
+export const useValidation = {
+  useValidatedNumberQuery
+}
