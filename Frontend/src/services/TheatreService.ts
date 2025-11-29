@@ -1,15 +1,14 @@
 import client from '../utils/api'
 
-
-class TheatreService {
-  async getAllTheatres(): Promise<any> {
-    return await client.get('/theatres')
-  }
-
-  async getTheatreDetails(theatre_id: number){
-    return await client.get(`/theatres?theatre_id=${theatre_id}`)
-  }
+async function getAllTheatres(): Promise<any> {
+  return await client.get('/theatres')
 }
 
-const theatreService = new TheatreService();
-export default theatreService
+async function getTheatreDetails(theatre_id: number) {
+  return await client.get(`/theatres?theatre_id=${theatre_id}`)
+}
+
+export const theatreService = {
+  getAllTheatres,
+  getTheatreDetails,
+}

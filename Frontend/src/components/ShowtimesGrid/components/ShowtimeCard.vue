@@ -2,7 +2,6 @@
 import { useRouter } from 'vue-router';
 import orderStore from '../../../store/OrderStore';
 import ShowtimeDTO from '../../../../../shared/types/ShowtimeDTO';
-import showtimeService from '../../../services/ShowtimeService';
 
 const props = defineProps<{
   showtime: ShowtimeDTO

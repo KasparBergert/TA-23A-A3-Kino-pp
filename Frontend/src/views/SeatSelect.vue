@@ -1,18 +1,19 @@
 <script setup lang="ts">
 import { ref } from 'vue';
-import { useRoute } from 'vue-router';
+import { useRouter } from 'vue-router';
 import SeatGrid from '../components/SeatGrid/SeatGrid.vue';
 import type SeatDTO from '../../../shared/types/SeatDTO';
 import orderStore from '../store/OrderStore';
-import router from '../router';
+import { useValidatedNumberQuery } from '../utils/useValidatedNumberQuery';
 
-const route = useRoute();
-const hall_id = route.query.hall_id as string;
+const route = useRouter();
+const hall_id: number = useValidatedNumberQuery('hall_id');
+
 const selectedSeats = ref<SeatDTO[]>([]);
 
 function proceedToSummary() {
   orderStore.setChosenSeats(selectedSeats.value);
-  router.push({ name: 'summary' });
+  route.push({ name: 'summary' });
 }
 
 </script>

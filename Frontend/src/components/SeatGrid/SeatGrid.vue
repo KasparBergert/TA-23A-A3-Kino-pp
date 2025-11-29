@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue';
 import Seat from './components/Seat.vue';
-import client from '../../utils/api';
+import { seatService } from '../../services/SeatService';
 import SeatDTO from '../../../../shared/types/SeatDTO';
 import { toast } from '@steveyuowo/vue-hot-toast';
 
 const props = defineProps<{
-  hallId: string
+  hallId: number
 }>();
 
 const emit = defineEmits<{
@@ -16,11 +16,9 @@ const emit = defineEmits<{
 const OrganizedSeats = ref<SeatDTO[][]>([]);
 const selectedSeats = ref<Set<SeatDTO>>(new Set());
 
-
-
 onMounted(async () => {
   try {
-    setOrganizedSeats(await getOrganizedSeats());
+    setOrganizedSeats(await seatService.getSeatsByRow(props.hallId));
   } catch (err) {
     toast.error(err);
     console.error("Error fetching seats:", err);
@@ -30,35 +28,6 @@ onMounted(async () => {
 function setOrganizedSeats(newSeats: SeatDTO[][]) {
   OrganizedSeats.value = newSeats
 }
-
-async function fetchSeats(): Promise<SeatDTO[]> {
-  const res = await client.get(`/showtimes/${props.hallId}/seats`)
-
-  if (res.length === 0) {
-    throw "No seats found for this hall";
-  }
-
-  return res;
-}
-
-async function getOrganizedSeats(): Promise<SeatDTO[][]> {
-  const seats = await fetchSeats();
-
-  const seatRows: SeatDTO[][] = [];
-
-  //get all the unique rows
-  const rows = new Set<string>();
-  seats.forEach(seat => {
-    rows.add(seat.row_label);
-  });
-
-  rows.forEach(row => {
-    seatRows.push(seats.filter(seat => seat.row_label === row));
-  })
-
-  return seatRows;
-}
-
 
 function handleSeatClick(seat: SeatDTO) {
   selectedSeats.value.has(seat)

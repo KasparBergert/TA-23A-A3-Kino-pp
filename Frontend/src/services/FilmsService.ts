@@ -1,10 +1,10 @@
 import client from '../utils/api'
 
-class FilmsService {
-  async getAllFilms(): Promise<any> {
-    return await client.get('/films')
-  }
+async function getAllFilms(): Promise<any> {
+  return await client.get('/films')
 }
 
-const filmsService = new FilmsService()
-export default filmsService
+export const filmsService = {
+  getAllFilms
+}
+

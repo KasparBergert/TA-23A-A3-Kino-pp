@@ -1,8 +1,8 @@
 <script lang="ts" setup>
-import { onMounted, onBeforeMount, ref } from 'vue';
+import { onMounted, ref } from 'vue';
 import { useRoute } from 'vue-router';
-import showtimeService from '../services/ShowtimeService';
-import theatreService from '../services/TheatreService';
+import { showtimeService } from '../services/ShowtimeService';
+import { theatreService } from '../services/TheatreService';
 import type { theatres } from '@prisma/client';
 import type ShowtimeDTO from '../../../shared/types/ShowtimeDTO';
 import ShowtimesGrid from '../components/ShowtimesGrid/ShowtimesGrid.vue';
@@ -25,8 +25,7 @@ function setShowtimes(showtimeData: ShowtimeDTO[]) {
 }
 
 onMounted(async () => {
-
-  const theatre_id = Number(theatreId); //check for its integrity is in BeforeMount
+  const theatre_id = Number(theatreId);
 
   const theatreRes = await theatreService.getTheatreDetails(theatre_id);
   const showtimesRes = await showtimeService.getShowtimes({ theatre_id: theatre_id })

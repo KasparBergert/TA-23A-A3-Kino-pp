@@ -1,18 +1,12 @@
 import ShowtimeFilters from '../../../shared/types/ShowtimeFilter'
+import { objectToQueryFields } from '../utils/objectToQueryFields'
 import client from '../utils/api'
 
-class ShowtimeService {
 
-  private buildUrl(filters: ShowtimeFilters){
-    return Object.entries(filters).map((key, val) => {
-      return `${key}=${val}&`
-    })
-  }
-
-  async getShowtimes(filters: ShowtimeFilters) {
-    return await client.get(`/showtimes?${this.buildUrl(filters)}`)
-  }
+async function getShowtimes(filters: ShowtimeFilters) {
+  return await client.get(`/showtimes?${objectToQueryFields(filters)}`)
 }
 
-const showtimeService = new ShowtimeService()
-export default showtimeService
+export const showtimeService = {
+  getShowtimes
+}
