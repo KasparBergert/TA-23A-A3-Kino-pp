@@ -37,22 +37,24 @@ onMounted(async () => {
 </script>
 <template>
 
-  <main
-    class="relative flex flex-col items-center min-h-screen bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900 text-gray-100 py-12 px-4 sm:px-6">
+<main
+  class="relative flex flex-col items-center min-h-screen bg-slate-900 text-gray-100 py-12 px-4 sm:px-6">
 
-    <div class="relative z-10 flex flex-col w-full max-w-7xl space-y-10">
+  <div class="absolute inset-0 bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900 opacity-90"></div>
 
-      <section class="flex flex-col items-center justify-center text-center mt-4 mb-8">
-        <h1
-          class="text-4xl md:text-6xl font-extrabold tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-white via-slate-200 to-slate-400 drop-shadow-lg">
-          {{ theatre.name }}
-        </h1>
-        <div class="h-1 w-24 bg-blue-600 rounded-full mt-6 shadow-[0_0_15px_rgba(37,99,235,0.6)]"></div>
-      </section>
+  <div class="relative z-10 flex flex-col w-full max-w-7xl space-y-12">
 
-      <ShowtimesGrid :showtimes="showtimesList" />
+    <section class="flex flex-col items-center justify-center text-center mt-4 mb-8">
+      <h1
+        class="text-5xl md:text-7xl font-extrabold tracking-tight text-white drop-shadow-2xl">
+        {{ theatre.name }}
+      </h1>
+      <div class="h-1 w-20 bg-blue-500 rounded-full mt-6 shadow-md shadow-blue-500/50"></div>
+    </section>
 
-    </div>
-  </main>
+    <ShowtimesGrid :showtimes="showtimesList" />
+
+  </div>
+</main>
 
 </template>

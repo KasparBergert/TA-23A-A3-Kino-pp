@@ -25,24 +25,26 @@ watch(() => status.value,
   }
 );
 
+// Assuming SeatStatus is an enum or constant:
+// export enum SeatStatus { Available, Taken, Selected }
+
 function getColor(status: SeatStatus): string {
   switch (status) {
     case SeatStatus.Available:
-      return '#fcfc3d';
-
+      return '#FFFFFF';
     case SeatStatus.Taken:
-      return '#fc3d3d';
-
+      return '#333333';
     case SeatStatus.Selected:
-      return '#a9a9a9';
-
+      return '#2563EB';
     default:
       return '#000000';
   }
 }
 
 function handleSeatClick() {
-  switch (status.value) {
+  const currentStatus = status.value;
+
+  switch (currentStatus) {
     case SeatStatus.Available:
       status.value = SeatStatus.Selected;
       emit('seat-clicked');
@@ -52,8 +54,12 @@ function handleSeatClick() {
       status.value = SeatStatus.Available;
       emit('seat-clicked');
       break;
-    case SeatStatus.Taken: break;
-    default: break;
+
+    case SeatStatus.Taken:
+      break;
+
+    default:
+      break;
   }
 }
 
