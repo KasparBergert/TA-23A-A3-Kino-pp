@@ -17,9 +17,9 @@ function setTheatres(list: theatres[]) {
 
 function onShowtimesClicked() {
 
-  if (selectedTheatre === null) {
+  if (selectedTheatre.value === null) {
     toast.error('Palun vali kino.')
-    return
+    return;
   }
 
   router.push(`/showtimes?theatre_id=${selectedTheatre.value?.id}`)
