@@ -12,7 +12,7 @@ import { useRouter } from 'vue-router';
 
 const { safeBack } = useSafeBack();
 const router = useRouter();
-const hall_id: number = useValidation.useValidatedNumberQuery('hall_id');
+const hall_id: number = useValidation.getNumberQueryParam('hall_id');
 
 const film: FilmDTO | null = orderStore.getFilm();
 if (film === null) {
@@ -24,7 +24,7 @@ const selectedSeats = ref<SeatDTO[]>([]);
 
 function proceedToPayment() {
   orderStore.setChosenSeats(selectedSeats.value);
-  router.push({ name: 'summary' });
+  router.push({ name: 'payment' });
 }
 
 </script>
