@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import type FilmDTO from '../../../../shared/types/FilmDTO';
 import type SeatDTO from '../../../../shared/types/SeatDTO';
-import Summary from './components/Summary.vue';
-import FilmDetails from './components/FilmDetails.vue';
+import Summary from './TheSummaryCard/Summary.vue';
+import FilmDetails from './TheSummaryCard/FilmDetails.vue';
 
 defineProps<{
   film: FilmDTO | null,

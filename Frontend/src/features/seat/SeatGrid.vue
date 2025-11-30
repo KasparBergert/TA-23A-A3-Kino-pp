@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue';
-import Seat from './components/Seat.vue';
-import { seatService } from '../../services/SeatService';
+import Seat from './SeatGrid/Seat.vue';
+import { seatService } from '../../entities/SeatService';
 import SeatDTO from '../../../../shared/types/SeatDTO';
 import { toast } from '@steveyuowo/vue-hot-toast';
 

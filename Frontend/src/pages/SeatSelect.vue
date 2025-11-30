@@ -1,13 +1,13 @@
 <script setup lang="ts">
 import { ref } from 'vue';
-import SeatGrid from '../components/SeatGrid/SeatGrid.vue';
+import SeatGrid from '../features/seat/SeatGrid.vue';
 import type SeatDTO from '../../../shared/types/SeatDTO';
 import orderStore from '../store/OrderStore';
 import { useValidation } from '../utils/useValidation';
-import FilmDTO from '../../../shared/types/FilmDTO';
+import type FilmDTO from '../../../shared/types/FilmDTO';
 import useSafeBack from '../utils/useSafeBack';
-import Screen from './components/Screen.vue';
-import TheSummaryCard from '../components/TheSummaryCard/TheSummaryCard.vue';
+import Screen from '../widgets/Screen.vue';
+import TheSummaryCard from '../features/booking/TheSummaryCard.vue';
 import { useRouter } from 'vue-router';
 
 const { safeBack } = useSafeBack();

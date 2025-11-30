@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import { onMounted, ref } from "vue";
-import TheNavbar from "../components/TheNavbar.vue";
-import BackgroundGlow from "../components/BackgroundGlow.vue";
-import TheTheatreSelector from "../components/TheTheatreSelector/TheTheatreSelector.vue";
-import HeroFilms from "../components/HeroFilms/HeroFilms.vue";
-import FilmsGrid from "../components/FilmsGrid/FilmsGrid.vue";
-import { filmsService } from "../services/FilmsService";
+import { filmsService } from "../entities/FilmsService";
 import type { films } from "@prisma/client";
+import HeroFilms from "../features/film/HeroFilms.vue";
+import FilmsGrid from "../features/film/FilmsGrid.vue";
+import TheTheatreSelector from "../features/theatre/TheTheatreSelector.vue";
+import TheNavbar from "../widgets/TheNavbar.vue";
+import BackgroundGlow from "../widgets/BackgroundGlow.vue";
 
 const films = ref<films[]>([]);
 const top3films = ref<films[]>([]);
@@ -16,11 +16,11 @@ async function setFilms(films_fetched: films[]) {
 }
 
 onMounted(async () => {
-  try{
-  const films_fetched = await filmsService.getAllFilms();
-  await setFilms(films_fetched.films);
-  //get 3 top films
-  top3films.value = films.value.slice(0, 3);
+  try {
+    const films_fetched = await filmsService.getAllFilms();
+    await setFilms(films_fetched.films);
+    //get 3 top films
+    top3films.value = films.value.slice(0, 3);
   } catch (err) {
     console.error("Error fetching films:", err);
   }
