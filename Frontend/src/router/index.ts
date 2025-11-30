@@ -3,7 +3,6 @@ import HomeView from '../views/HomeView.vue'
 import Showtimes from '../views/Showtimes.vue'
 import SeatSelect from '../views/SeatSelect.vue'
 import orderStore from '../store/OrderStore'
-import { resolveRoute } from './guard.ts'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
