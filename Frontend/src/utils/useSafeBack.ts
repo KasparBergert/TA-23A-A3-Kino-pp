@@ -1,10 +1,10 @@
 import { useRouter } from 'vue-router'
 
 //routes the user back or to home page
-export default function useSafeRouter() {
+export default function useSafeBack() {
   const router = useRouter()
 
-  function safeRoute(fallback: string = '/') {
+  function safeBack(fallback: string = '/') {
     if (window.history.length === 0) {
       router.push(fallback)
     } else {
@@ -12,5 +12,5 @@ export default function useSafeRouter() {
     }
   }
 
-  return { safeRoute }
+  return { safeBack }
 }

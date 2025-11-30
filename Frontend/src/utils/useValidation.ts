@@ -1,21 +1,19 @@
 import { useRoute } from 'vue-router'
-import useSafeRouter from './useSafeRouter'
+import useSafeRouter from './useSafeBack'
 
 function useValidatedNumberQuery(paramName: string) {
   const route = useRoute()
-  const { safeRoute } = useSafeRouter()
+  const { safeBack } = useSafeRouter()
 
   const raw = route.query[paramName]
   const n = Number(raw)
 
   if (isNaN(n)) {
-    safeRoute('/')
+    safeBack('/')
   }
 
   return n
 }
-
-
 
 export const useValidation = {
   useValidatedNumberQuery

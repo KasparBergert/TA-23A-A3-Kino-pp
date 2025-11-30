@@ -1,22 +1,13 @@
 <script setup lang="ts">
 import type FilmDTO from '../../../../shared/types/FilmDTO';
 import type SeatDTO from '../../../../shared/types/SeatDTO';
-import orderStore from '../../store/OrderStore';
-import { useRouter } from 'vue-router';
 import Summary from './components/Summary.vue';
 import FilmDetails from './components/FilmDetails.vue';
 
-const route = useRouter();
-
-const props = defineProps<{
+defineProps<{
   film: FilmDTO | null,
   seats: SeatDTO[]
 }>();
-
-function proceedToPayment() {
-  orderStore.setChosenSeats(props.seats);
-  route.push({ name: 'summary' });
-}
 
 
 </script>
@@ -34,11 +25,6 @@ function proceedToPayment() {
         <FilmDetails :film="film" />
         <div class="w-full border-t border-slate-700/80 my-2"></div>
         <Summary :seats="seats" />
-
-        <button @click="proceedToPayment"
-          class="w-full py-3 px-6 text-sm font-bold text-white bg-gradient-to-r from-indigo-500 to-blue-600 hover:from-indigo-600 hover:to-blue-700 rounded-xl shadow-lg shadow-indigo-500/20 transition-all transform hover:-translate-y-0.5 active:translate-y-0 focus:ring-4 focus:ring-indigo-500/30 outline-none">
-          Maksma
-        </button>
 
       </div>
       <div v-else class="flex flex-col items-center justify-center py-12 text-slate-500">
