@@ -3,14 +3,7 @@ import HomeView from '../views/HomeView.vue'
 import Showtimes from '../views/Showtimes.vue'
 import SeatSelect from '../views/SeatSelect.vue'
 import orderStore from '../store/OrderStore'
-
-function resolveRoute(value: any, errorMsg: string, next: (arg?: any) => void) {
-  if (!value) {
-    console.error(errorMsg)
-    return next('/') // redirect home
-  }
-  return next()
-}
+import { resolveRoute } from './guard.ts'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -25,7 +18,11 @@ const router = createRouter({
       name: 'showtimes',
       component: Showtimes,
       beforeEnter: (to, from, next) => {
-        resolveRoute(to.query.theatre_id, 'Missing theatre_id in query parameters', next)
+        if (!to.query.theatre_id) {
+          console.error('Missing theatre_id in query parameters')
+          return next('/')
+        }
+        return next()
       },
     },
     {
@@ -37,7 +34,13 @@ const router = createRouter({
           console.error('invalid showtime or film')
           return next('/')
         }
-        resolveRoute(to.query.hall_id, 'Missing hall_id in query parameters', next)
+
+        if (!to.query.hall_id) {
+          console.error('Missing theatre_id in query parameters')
+          return next('/')
+        }
+        return next()
+
       },
     },
   ],
