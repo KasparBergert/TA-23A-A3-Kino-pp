@@ -1,7 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import HomeView from '../views/HomeView.vue'
-import Showtimes from '../views/Showtimes.vue'
-import SeatSelect from '../views/SeatSelect.vue'
+import HomeView from '../pages/HomeView.vue'
+import Showtimes from '../pages/Showtimes.vue'
+import SeatSelect from '../pages/SeatSelect.vue'
 import orderStore from '../store/OrderStore'
 
 const router = createRouter({

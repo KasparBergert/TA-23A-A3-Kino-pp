@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { open } from "../utils/modal.ts";
+import { open } from "../utils/modal";
 import FormLogin from "../features/auth/FormLogin.vue";
 import FormRegister from "../features/auth/FormRegister.vue";
 
