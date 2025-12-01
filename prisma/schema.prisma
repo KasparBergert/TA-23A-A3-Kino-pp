@@ -26,7 +26,7 @@ model films {
   description  String?       @db.Text
   release_date DateTime?     @db.Date
   duration_min Int?          @db.UnsignedSmallInt
-  poster_url   String        @db.VarChar(500)
+  poster_url   String?       @db.VarChar(500)
   film_genres  film_genres[]
   showtimes    showtimes[]
 
@@ -143,11 +143,11 @@ model users {
 
 /// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
 model actors {
-  name      String? @db.Text
-  film_id   BigInt?
-  id        BigInt?
+  name      String  @db.Text
+  film_id   BigInt  @db.UnsignedBigInt
+  id        BigInt  @db.UnsignedBigInt
   link      String? @db.Text
-  image_url String? @db.Text
+  image_url String  @db.Text
 
   @@ignore
 }
