@@ -27,6 +27,7 @@ model films {
   release_date DateTime?     @db.Date
   duration_min Int?          @db.UnsignedSmallInt
   poster_url   String?       @db.VarChar(500)
+  actors       actors[]
   film_genres  film_genres[]
   showtimes    showtimes[]
 
@@ -144,12 +145,13 @@ model users {
 /// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
 model actors {
   name      String  @db.Text
-  film_id   BigInt  @db.UnsignedBigInt
-  id        BigInt  @db.UnsignedBigInt
+  film_id   Int     @default(0)
+  id        Int     @id @default(0) @db.UnsignedInt
   link      String? @db.Text
   image_url String  @db.Text
+  films     films   @relation(fields: [film_id], references: [id], onDelete: Cascade, map: "FK1_actors_films")
 
-  @@ignore
+  @@index([film_id], map: "FK1_actors_films")  
 }
 
 enum orders_status {
