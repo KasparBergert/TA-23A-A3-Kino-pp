@@ -1,4 +1,4 @@
-import type ShowtimeFilters from '../../types/ShowtimeFilter.ts'
+import type ShowtimeFilters from '../../../shared/types/ShowtimeFilter.ts'
 import prisma from '../../db.ts'
 
 //filter layer
@@ -8,6 +8,9 @@ class ShowtimeFilter {
    * @returns prisma where object with filters inside it.
    */
   async build(filters: ShowtimeFilters) {
+
+    //TODO: Must build a check for user input here.
+
     const where: any = {}
     //NOTE:
     //the text in between the ['...'] must match the real prisma model field name

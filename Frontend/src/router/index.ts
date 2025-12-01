@@ -1,9 +1,8 @@
-import { createRouter, createWebHistory } from "vue-router";
-import HomeView from '../views/HomeView.vue';
-import Showtime from '../views/Showtime.vue';
-import ChooseSeat from "../views/ChooseSeat.vue";
-import TicketSummary from "../views/TicketSummary.vue";
-
+import { createRouter, createWebHistory } from 'vue-router'
+import HomeView from '../pages/HomeView.vue'
+import Showtimes from '../pages/Showtimes.vue'
+import SeatSelect from '../pages/SeatSelect.vue'
+import orderStore from '../store/OrderStore'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -12,12 +11,42 @@ const router = createRouter({
       path: '/',
       name: 'home',
       component: HomeView,
-    }
+    },
+    {
+      path: '/showtimes',
+      name: 'showtimes',
+      component: Showtimes,
+      beforeEnter: (to, from, next) => {
+        if (!to.query.theatre_id) {
+          console.error('Missing theatre_id in query parameters')
+          return next('/')
+        }
+        return next()
+      },
+    },
+    {
+      path: '/showtime/seat-select',
+      name: 'seat-select',
+      component: SeatSelect,
+      beforeEnter: (to, from, next) => {
+        if (!orderStore.getShowtime()) {
+          console.error('invalid showtime or film')
+          return next('/')
+        }
+
+        if (!to.query.hall_id) {
+          console.error('Missing theatre_id in query parameters')
+          return next('/')
+        }
+        return next()
+
+      },
+    },
   ],
-});
+})
 
 router.afterEach(async (to, from, failure) => {
-  if (!failure) setTimeout(() => window.HSStaticMethods?.autoInit?.(), 100);
-});
+  if (!failure) setTimeout(() => window.HSStaticMethods?.autoInit?.(), 300)
+})
 
-export default router;
+export default router

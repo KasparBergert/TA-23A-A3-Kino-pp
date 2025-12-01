@@ -1,0 +1,62 @@
+@import 'tailwindcss';
+@import '../../../node_modules/preline/variants.css';
+
+.btn-primary {
+  background: #2563eb;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 0.375rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-primary:hover {
+  background: #1d4ed8;
+}
+
+.btn-secondary {
+  background: #0000001c;
+  color: #111827;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 0.375rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-secondary:hover {
+  background: #d1d5db;
+}
+
+.btn-primary.outlined {
+  background: white;
+  color: rgb(0, 0, 0);
+  border: solid #2564ebad 2px;
+  padding: 0.5rem 1rem;
+  border-radius: 0.375rem;
+  cursor: pointer;
+  box-sizing: border-box;
+}
+
+.btn-primary.outlined:hover {
+  border: solid #163e94ad 2px;
+  box-shadow: rgba(3, 102, 214, 0.3) 0px 0px 0px 3px;
+}
+
+.btn-secondary.outlined {
+  background: #0000001c;
+  color: #111827;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 0.375rem;
+  cursor: pointer;
+}
+
+.btn-secondary.outlined:hover {
+  background: #d1d5db;
+}
+
+.bold {
+  font-weight: bold;
+}

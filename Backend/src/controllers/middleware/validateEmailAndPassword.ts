@@ -8,8 +8,13 @@ export default function validateEmailAndPassword(req: Request, res: Response, ne
     return res.status(400).send("Body not sent '{email, password}'")
   }
 
-  //type check the values
   const { email, password } = body
+
+  if(typeof email !== 'string' || typeof password !== 'string'){
+    return res.status(400).send('email or password are required to be strings')
+  }
+
+
   const isEmailValid = emailUtils.validate(email)
   const isPasswordValid = passwordUtils.validate(password)
 

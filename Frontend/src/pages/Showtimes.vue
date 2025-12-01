@@ -1,0 +1,60 @@
+<script lang="ts" setup>
+import { onMounted, ref } from 'vue';
+import { useRoute } from 'vue-router';
+import { showtimeService } from '../entities/ShowtimeService';
+import { theatreService } from '../entities/TheatreService';
+import type { theatres } from '@prisma/client';
+import type ShowtimeDTO from '../../../shared/types/ShowtimeDTO';
+import ShowtimesGrid from '../features/showtimes/ShowtimesGrid/ShowtimesGrid.vue';
+
+
+
+const route = useRoute();
+const theatreId = route.query.theatre_id as string;
+
+const theatre = ref<theatres>({
+  name: '...',
+  id: 0
+});
+const showtimesList = ref<ShowtimeDTO[]>([]);
+
+function setTheatres(theatreData: theatres) {
+  theatre.value = theatreData;
+}
+
+function setShowtimes(showtimeData: ShowtimeDTO[]) {
+  showtimesList.value = showtimeData;
+}
+
+onMounted(async () => {
+  const theatre_id = Number(theatreId);
+
+  const theatreRes = await theatreService.getTheatreDetails(theatre_id);
+  const showtimesRes = await showtimeService.getShowtimes({ theatre_id: theatre_id })
+  setTheatres(theatreRes.theatre);
+  setShowtimes(showtimesRes.showtimes);
+});
+
+
+</script>
+<template>
+
+  <main class="relative flex flex-col items-center min-h-screen bg-slate-900 text-gray-100 py-12 px-4 sm:px-6">
+
+    <div class="absolute inset-0 bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900 opacity-90"></div>
+
+    <div class="relative z-10 flex flex-col w-full max-w-7xl space-y-12">
+
+      <section class="flex flex-col items-center justify-center text-center mt-4 mb-8">
+        <h1 class="text-5xl md:text-7xl font-extrabold tracking-tight text-white drop-shadow-2xl">
+          {{ theatre.name }}
+        </h1>
+        <div class="h-1 w-20 bg-blue-500 rounded-full mt-6 shadow-md shadow-blue-500/50"></div>
+      </section>
+
+      <ShowtimesGrid :showtimes="showtimesList" />
+
+    </div>
+  </main>
+
+</template>
