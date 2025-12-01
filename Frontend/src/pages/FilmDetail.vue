@@ -50,13 +50,15 @@ onMounted(async () => {
         class="overflow-hidden rounded-3xl border border-slate-800 bg-slate-900/70 shadow-2xl shadow-blue-900/30 backdrop-blur"
       >
         <div class="grid lg:grid-cols-[1fr,1.2fr] gap-0">
-          <div class="relative">
-            <div class="absolute inset-0 bg-gradient-to-tr from-blue-600/30 to-transparent mix-blend-screen"></div>
-            <img
-              :src="film.poster_url ?? ''"
-              :alt="film.title"
-              class="w-full h-full object-cover min-h-[400px]"
-            />
+          <div class="relative flex justify-center items-center bg-slate-950/60">
+            <div class="relative w-full max-w-xs sm:max-w-sm aspect-[2/3] overflow-hidden rounded-2xl shadow-xl shadow-blue-900/40 m-6">
+              <div class="absolute inset-0 bg-gradient-to-tr from-blue-600/30 to-transparent mix-blend-screen"></div>
+              <img
+                :src="film.poster_url ?? ''"
+                :alt="film.title"
+                class="absolute inset-0 w-full h-full object-cover"
+              />
+            </div>
           </div>
 
           <div class="p-8 md:p-10 lg:p-12 space-y-6">
