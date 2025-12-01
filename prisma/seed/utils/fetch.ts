@@ -30,3 +30,5 @@ export async function getTheatreByName(name: string) {
   if (!theatre) throw Error(`Theatre "${name}" not found after seed`)
   return theatre
 }
+
+
