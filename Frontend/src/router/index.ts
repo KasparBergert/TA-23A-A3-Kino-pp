@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../pages/HomeView.vue'
 import Showtimes from '../pages/Showtimes.vue'
 import SeatSelect from '../pages/SeatSelect.vue'
+import FilmDetail from '../pages/FilmDetail.vue'
 import orderStore from '../store/OrderStore'
 
 const router = createRouter({
@@ -41,6 +42,11 @@ const router = createRouter({
         return next()
 
       },
+    },
+    {
+      path: '/films/:id',
+      name: 'film-detail',
+      component: FilmDetail,
     },
   ],
 })
