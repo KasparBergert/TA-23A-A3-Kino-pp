@@ -9,6 +9,14 @@ export async function getActorByName(name: string) {
 }
 
 export async function createActors() {
+  const titles = filmSeed.map(({ title }) => title)
+  const films = await Promise.all(titles.map((title) => getFilmByTitle(title)))
+  const filmMap = new Map(films.map(({ title, id }) => [title, BigInt(id)]))
+
+  const filmId = (title: string) => {
+    const id = filmMap.get(title)
+    if (id === undefined) throw Error(`${title} not found after seed`)
+    return id
   }
 
   const actorSeed = [
