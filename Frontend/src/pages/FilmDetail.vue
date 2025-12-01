@@ -3,12 +3,14 @@ import { computed, onMounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { filmsService } from '../entities/FilmsService'
 import type { films } from '@prisma/client'
+import type ActorDTO from '../../../shared/types/ActorDTO'
 import TheNavbar from '../widgets/TheNavbar.vue'
 import BackgroundGlow from '../widgets/BackgroundGlow.vue'
 
 const route = useRoute()
 const router = useRouter()
 const film = ref<films | null>(null)
+const actors = ref<ActorDTO[]>([])
 
 const releaseLabel = computed(() =>
   film.value?.release_date ? new Date(film.value.release_date).toLocaleDateString() : 'N/A',
@@ -24,13 +26,13 @@ onMounted(async () => {
   }
 
   try {
-    const res = await filmsService.getAllFilms()
-    const found = res?.films?.find((f: films) => f.id === filmId) ?? null
-    if (!found) {
+    const res = await filmsService.getFilmById(filmId)
+    if (!res?.film) {
       router.replace('/')
       return
     }
-    film.value = found
+    film.value = res.film
+    actors.value = Array.isArray(res.actors) ? res.actors : []
   } catch (err) {
     console.error('Error loading film detail', err)
     router.replace('/')
@@ -102,6 +104,38 @@ onMounted(async () => {
             </div>
           </div>
         </div>
+      </div>
+
+      <div class="mt-10">
+        <h2 class="text-2xl font-bold text-white mb-4">Näitlejad</h2>
+        <div v-if="actors.length" class="grid gap-4 sm:gap-6 grid-cols-[repeat(auto-fit,minmax(140px,1fr))]">
+          <article
+            v-for="actor in actors"
+            :key="actor.id"
+            class="bg-slate-800/60 border border-slate-700 rounded-2xl overflow-hidden shadow-lg"
+          >
+            <div class="relative aspect-[2/3] overflow-hidden">
+              <img
+                :src="actor.image_url ?? ''"
+                :alt="actor.name"
+                class="absolute inset-0 w-full h-full object-cover"
+              />
+            </div>
+            <div class="p-3">
+              <p class="text-sm font-semibold text-white">{{ actor.name }}</p>
+              <a
+                v-if="actor.link"
+                :href="actor.link"
+                target="_blank"
+                rel="noreferrer"
+                class="text-xs text-blue-300 hover:text-blue-200"
+              >
+                IMDb
+              </a>
+            </div>
+          </article>
+        </div>
+        <p v-else class="text-slate-300">Näitlejad puuduvad.</p>
       </div>
     </section>
 
