@@ -18,10 +18,10 @@ async function runSeed() {
   await createUsers()
 
   await createFilms()
-  await createActors()
   await createGenres()
-
   await assignRandomGenresToFilms()
+
+  await createActors()
 
   await createTheatres()
 
