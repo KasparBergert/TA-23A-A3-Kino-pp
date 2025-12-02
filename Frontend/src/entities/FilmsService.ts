@@ -1,10 +1,11 @@
 import client from '../utils/api'
+import { films } from '@prisma/client'
 
-async function getAllFilms(): Promise<any> {
+async function getAllFilms(): Promise<films[]> {
   return await client.get('/films')
 }
 
-async function getFilmById(id: number): Promise<any> {
+async function getFilmById(id: number): Promise<films> {
   return await client.get(`/films/${id}`)
 }
 

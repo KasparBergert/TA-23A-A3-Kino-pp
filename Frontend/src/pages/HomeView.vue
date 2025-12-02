@@ -18,8 +18,7 @@ async function setFilms(films_fetched: films[]) {
 onMounted(async () => {
   try {
     const films_fetched = await filmsService.getAllFilms();
-    await setFilms(films_fetched.films);
-    //get 3 top films
+    await setFilms(films_fetched);
     top3films.value = films.value.slice(0, 3);
   } catch (err) {
     console.error("Error fetching films:", err);
