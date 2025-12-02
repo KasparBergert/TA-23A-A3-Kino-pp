@@ -7,9 +7,15 @@ class ShowtimeRepository {
    * @returns all theatres
    */
   async getAll(where: ShowtimeFilters): Promise<showtimes[]> {
-    return await prisma.showtimes.findMany({ where })
+    return await prisma.showtimes.findMany({
+      where: {
+        ...where,
+        starts_at: {
+          gt: new Date(), // computers time
+        },
+      },
+    })
   }
-
 }
 
 const showtimeRepository = new ShowtimeRepository()
