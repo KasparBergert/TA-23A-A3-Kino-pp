@@ -2,6 +2,7 @@ import prisma from '../../Backend/db'
 import { createRoles } from './create/roles'
 import { createUsers } from './create/users'
 import { createFilms } from './create/films'
+import { createActors } from './create/actors'
 import { createGenres } from './create/genres'
 import { createTheatres } from './create/theatres'
 import { createHalls } from './create/halls'
@@ -17,6 +18,7 @@ async function runSeed() {
   await createUsers()
 
   await createFilms()
+  await createActors()
   await createGenres()
 
   await assignRandomGenresToFilms()

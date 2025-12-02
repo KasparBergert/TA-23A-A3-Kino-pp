@@ -45,6 +45,16 @@ onMounted(async () => {
 
     <div class="relative z-10 flex flex-col w-full max-w-7xl space-y-12">
 
+      <div class="flex items-center justify-start">
+        <button
+          type="button"
+          class="px-4 py-2 rounded-lg bg-slate-800 border border-slate-700 text-slate-200 hover:bg-slate-700 hover:border-blue-500 transition-colors shadow-md"
+          @click="$router.push({ name: 'home' })"
+        >
+          Tagasi
+        </button>
+      </div>
+
       <section class="flex flex-col items-center justify-center text-center mt-4 mb-8">
         <h1 class="text-5xl md:text-7xl font-extrabold tracking-tight text-white drop-shadow-2xl">
           {{ theatre.name }}
