@@ -1,11 +1,12 @@
 -- CreateTable
 CREATE TABLE `actors` (
-    `name` TEXT NOT NULL,
+    `name` VARCHAR(512) NOT NULL,
     `film_id` INTEGER NOT NULL DEFAULT 0,
     `id` INTEGER UNSIGNED NOT NULL AUTO_INCREMENT,
     `link` TEXT NULL,
     `image_url` TEXT NOT NULL,
 
+    UNIQUE INDEX `name`(`name`),
     INDEX `FK1_actors_films`(`film_id`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;

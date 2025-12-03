@@ -142,16 +142,15 @@ model users {
   @@index([role_id], map: "FK_users_roles")
 }
 
-/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
 model actors {
-  name      String  @db.Text
+  name      String  @unique(map: "name") @db.VarChar(512)
   film_id   Int     @default(0)
   id        Int     @id @default(autoincrement()) @db.UnsignedInt
   link      String? @db.Text
   image_url String  @db.Text
   films     films   @relation(fields: [film_id], references: [id], onDelete: Cascade, map: "FK1_actors_films")
 
-  @@index([film_id], map: "FK1_actors_films")  
+  @@index([film_id], map: "FK1_actors_films")
 }
 
 enum orders_status {
