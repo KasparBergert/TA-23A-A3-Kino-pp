@@ -4,7 +4,7 @@ import emailUtils from '../../../utils/EmailUtils'
 
 export default function validateEmailAndPassword(req: Request, res: Response, next: NextFunction) {
   const body = req.body
-  if (typeof body !== 'object' || body == 'null') {
+  if (!body || typeof body !== 'object') {
     return res.status(400).send("Body not sent '{email, password}'")
   }
 
@@ -13,7 +13,6 @@ export default function validateEmailAndPassword(req: Request, res: Response, ne
   if(typeof email !== 'string' || typeof password !== 'string'){
     return res.status(400).send('email or password are required to be strings')
   }
-
 
   const isEmailValid = emailUtils.validate(email)
   const isPasswordValid = passwordUtils.validate(password)
