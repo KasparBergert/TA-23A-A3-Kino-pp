@@ -20,6 +20,20 @@ class FilmRepository {
       where: { id: { in: film_ids } },
     })
   }
+
+  async getFilmsByTitle(title: string): Promise<films[]> {
+    return await prisma.films.findMany({
+      where: { title },
+    })
+  }
+
+  async createMany(films: Omit<films, 'id'>[]){
+    await prisma.films.createMany({
+      data: films,
+      skipDuplicates: true
+    })
+  }
+
 }
 
 const filmRepository = new FilmRepository()

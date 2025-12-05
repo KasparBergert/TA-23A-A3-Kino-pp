@@ -16,6 +16,14 @@ class ShowtimeRepository {
       },
     })
   }
+
+  async createMany(showtimes: Omit<showtimes, 'id'>[]){
+    await prisma.showtimes.createMany({
+      data: showtimes,
+      skipDuplicates: true
+    })
+  }
+
 }
 
 const showtimeRepository = new ShowtimeRepository()

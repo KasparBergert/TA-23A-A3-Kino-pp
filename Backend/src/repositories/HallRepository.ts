@@ -20,6 +20,13 @@ class HallRepositroy {
       where: { id: { in: hall_ids } },
     })
   }
+
+  async createMany(halls: Omit<halls, 'id'>[]){
+    await prisma.halls.createMany({
+      data:halls,
+      skipDuplicates: true
+    })
+  }
 }
 
 const hallRepositroy = new HallRepositroy()

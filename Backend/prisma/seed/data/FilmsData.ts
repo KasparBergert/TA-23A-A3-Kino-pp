@@ -1,6 +1,6 @@
-import prisma from '../../../Backend/db'
+import { films } from "@prisma/client"
 
-export const filmSeed = [
+export const filmsSeed: Omit<films, 'id'>[] = [
   {
     title: 'The Dark Knight',
     description: 'Gotham descends into chaos as Batman faces the Joker in a clash of ideals, sacrifice, and fragile hope.',
@@ -79,10 +79,3 @@ export const filmSeed = [
     poster_url: 'https://image.tmdb.org/t/p/w500/n0ybibhJtQ5icDqTp8eRytcIHJx.jpg',
   },
 ]
-
-export async function createFilms() {
-  await prisma.films.createMany({
-    data: filmSeed,
-    skipDuplicates: true,
-  })
-}

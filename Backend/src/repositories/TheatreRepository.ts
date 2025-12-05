@@ -20,6 +20,14 @@ class TheatreRepository {
       where: { id: {in: theatre_ids} },
     })
   }
+
+  async createMany(theatres: Omit<theatres, 'id'>[]){
+    await prisma.theatres.createMany({
+      data: theatres,
+      skipDuplicates: true
+    })
+  }
+
 }
 
 const theatreRepository = new TheatreRepository()
