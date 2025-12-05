@@ -66,17 +66,25 @@ model orders {
   @@index([user_id, status, created_at], map: "user_id")
 }
 
-model seats {
-  id                     Int                      @id @default(autoincrement())
-  hall_id                Int                      @db.UnsignedSmallInt
-  is_available           Int                      @db.TinyInt
-  price                  Int                      @default(10)
-  type                   seats_type
-  hall_seating_locations hall_seating_locations[]
-  halls                  halls                    @relation(fields: [hall_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "seats_ibfk_1")
-  tickets                tickets[]
+model roles {
+  id    Int     @id @default(autoincrement()) @db.UnsignedTinyInt
+  code  String  @unique(map: "code") @db.VarChar(32)
+  users users[]
+}
 
-  @@index([hall_id], map: "hall_id")
+model seats {
+  id           Int        @id @default(autoincrement())
+  hall_id      Int        @db.UnsignedSmallInt
+  row_label    String     @db.VarChar(5)
+  seat_number  Int        @db.UnsignedSmallInt
+  is_available Int        @db.TinyInt
+  price        Int        @default(10)
+  type         seats_type
+  halls        halls      @relation(fields: [hall_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "seats_ibfk_1")
+  tickets      tickets[]
+
+  @@unique([hall_id, row_label, seat_number], map: "hall_id")
+  @@index([hall_id], map: "hall_id_2")
 }
 
 model showtimes {
@@ -85,6 +93,7 @@ model showtimes {
   hall_id     Int       @db.UnsignedSmallInt
   starts_at   DateTime  @db.DateTime(0)
   ends_at     DateTime? @db.DateTime(0)
+  price       Decimal   @db.Decimal(10, 2)
   is_canceled Boolean   @default(false)
   films       films     @relation(fields: [film_id], references: [id], onUpdate: Restrict, map: "showtimes_ibfk_1")
   halls       halls     @relation(fields: [hall_id], references: [id], onUpdate: Restrict, map: "showtimes_ibfk_2")
@@ -124,12 +133,15 @@ model tickets {
 }
 
 model users {
-  id         Int        @id @default(autoincrement())
-  email      String     @unique(map: "email") @db.VarChar(128)
-  updated_at DateTime?  @db.Timestamp(0)
-  role       users_role @default(user)
-  password   String     @db.VarChar(512)
+  id         Int       @id @default(autoincrement())
+  email      String    @unique(map: "email") @db.VarChar(128)
+  updated_at DateTime? @db.Timestamp(0)
+  role_id    Int       @db.UnsignedTinyInt
+  password   String    @db.VarChar(512)
   orders     orders[]
+  roles      roles     @relation(fields: [role_id], references: [id], map: "FK_users_roles")
+
+  @@index([role_id], map: "FK_users_roles")
 }
 
 model actors {
@@ -141,17 +153,6 @@ model actors {
   films     films   @relation(fields: [film_id], references: [id], onDelete: Cascade, map: "FK1_actors_films")
 
   @@index([film_id], map: "FK1_actors_films")
-}
-
-/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
-model hall_seating_locations {
-  id      Int    @id
-  seat_id Int?
-  column  Int
-  row     String @default("") @db.VarChar(3)
-  seats   seats? @relation(fields: [seat_id], references: [id], map: "FK_seats_seating_locations")
-
-  @@index([seat_id], map: "FK_seats_seating_locations")
 }
 
 enum orders_status {
@@ -171,9 +172,4 @@ enum seats_type {
   Premium
   Double
   Filler
-}
-
-enum users_role {
-  user
-  admin
 }
