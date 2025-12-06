@@ -1,47 +1,87 @@
-import { seats, seats_type } from '@prisma/client'
-import { allHalls } from '../utils/fetch'
+import { seats, seats_type, seatLocation, halls } from '@prisma/client'
+import seatRepository from '../../../src/repositories/SeatRepository'
+import seatLocationsRepository from '../../../src/repositories/SeatLocationsRepository'
 
-const generateRandomSeatType = (): seats_type => {
-  const types = [seats_type.Double, seats_type.Premium, seats_type.Standard]
-  return types[Math.floor(Math.random() * types.length)]
+function letterForRow(r: number): string {
+  return String.fromCharCode('A'.charCodeAt(0) + r)
 }
 
-function createSeatMatrix(
-  rows: string[],
-  columns: number,
-  rows_seat_types: seats_type[],
-): Omit<seats, 'id'>[] {
+//creates location
+function location(row: string, col: number, seat: seats): Omit<seatLocation, 'id'> {
+  return {
+    seat_id: seat.id,
+    row_label: row,
+    column: col,
+  }
+}
 
-  const seatMatrix: Omit<seats, 'id'>[] = [];
+function createSeatMatrix(hall_id: number, rows_types: seats_type[]): Omit<seats, 'id'>[] {
+  return rows_types.map((type) => ({
+    type,
+    price: 20,
+    is_available: Math.floor(Math.random() * 2),
+    hall_id,
+  }))
+}
 
-  allHalls.forEach((hall) => {
-    for (let row = 0; row < rows.length; row++) {
-      const seatTypes = rows_seat_types[row]
-      for (let column = 0; column < columns; column++) {
-        const seat: Omit<seats, 'id'> = {
-          hall_id: hall.id,
-          row_label: rows[row],
-          seat_number: row,
-          is_available: Math.floor(Math.random() * 2),
-          price: 20,
-          type: seatTypes,
-        }
-        seatMatrix.push(seat);
+function createSeatLocationsMatrix(
+  seats: seats[],
+  rowCount: number,
+  colCount: number,
+): Omit<seatLocation, 'id'>[] {
+  const out: Omit<seatLocation, 'id'>[] = []
+  let seatIndex = 0
+
+  for (let r = 0; r < rowCount; r++) {
+    const rowLabel = letterForRow(r)
+
+    for (let col = 1; col <= colCount; col++) {
+      const seat = seats[seatIndex]
+      if (!seat) break
+
+      if (seat.type === seats_type.Double) {
+        out.push(location(rowLabel, col, seat))
+        out.push(location(rowLabel, col + 1, seat))
+        col++
+      } else {
+        out.push(location(rowLabel, col, seat))
       }
+
+      seatIndex++
     }
+  }
+
+  return out
+}
+
+export default async function genereateHallSeating(halls: halls[]) {
+  const rows = [
+    seats_type.Standard,
+    seats_type.Standard,
+    seats_type.Standard,
+    seats_type.Standard,
+    seats_type.Standard,
+    seats_type.Standard,
+    seats_type.Standard,
+    seats_type.Double,
+    seats_type.Double,
+    seats_type.Premium,
+    seats_type.Premium,
+  ]
+
+  const columns: number = 20
+
+  //is is a flat map, but when ordered or put in a grid, it would fit like a rectangle
+  const seatMatrix = halls.flatMap((hall) => {
+    for (let i = 0; i < columns; i++) {
+      return createSeatMatrix(hall.id, Object.values(rows))
+    }
+    return [] // only returned when columns is 0
   })
 
-  return seatMatrix;
+  await seatRepository.createMany(seatMatrix)
+  const allSeats = await seatRepository.getAll()
+
+  const locationMatrix = createSeatLocationsMatrix(allSeats, rows.length, columns)
+  await seatLocationsRepository.createMany(locationMatrix)
 }
-const rows = ['A', 'B', 'C', 'D', 'E']
-
-createSeatMatrix(rows, rows.length, rows.map(row => {
-  return
-}))
-
-//makes a seat map for each hall
-return allHalls.flatMap((hall) => {
-  return createSeatMatrix(hall.id, rows, rows.length)
-})
-
-export const seatsSeed: Omit<seats, 'id'>[] = createSeatMatrix()

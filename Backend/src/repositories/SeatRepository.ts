@@ -1,23 +1,15 @@
 import prisma from '../../db'
-import { seats, seats_type } from '@prisma/client'
+import { seats } from '@prisma/client'
+import seatLocationsRepository from './SeatLocationsRepository'
 
 class SeatRepository {
-  /**
-   * @param hall_id halls id in the database
-   * @returns seats with the hall_id
-   */
-  async getAllByHallId(hall_id: number): Promise<seats[]> {
-    return await prisma.seats.findMany({
-      where: {
-        hall_id: hall_id,
-        NOT: {
-          type: seats_type.Filler,
-        },
-      },
-    })
+  async getAll() {
+    return await prisma.seats.findMany()
   }
 
-
+  async getByHallId(hall_id: number) {
+    return await prisma.seats.findMany({ where: { hall_id } })
+  }
 
   async createMany(seats: Omit<seats, 'id'>[]) {
     await prisma.seats.createMany({

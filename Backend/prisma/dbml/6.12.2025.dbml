@@ -1,0 +1,186 @@
+//// ------------------------------------------------------
+//// THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+//// ------------------------------------------------------
+
+Table film_genres {
+  film_id Int [not null]
+  genre_id Int [not null]
+  films films [not null]
+  genres genres [not null]
+
+  indexes {
+    (film_id, genre_id) [pk]
+  }
+}
+
+Table films {
+  id Int [pk, increment]
+  title String [not null]
+  description String
+  release_date DateTime
+  duration_min Int
+  poster_url String
+  actors actors [not null]
+  film_genres film_genres [not null]
+  showtimes showtimes [not null]
+
+  indexes {
+    (title, release_date) [unique]
+  }
+}
+
+Table genres {
+  id Int [pk, increment]
+  name String [unique, not null]
+  film_genres film_genres [not null]
+}
+
+Table orders {
+  id BigInt [pk, increment]
+  user_id Int [not null]
+  status orders_status [not null, default: 'pending']
+  created_at DateTime [default: `now()`, not null]
+  expires_at DateTime
+  users users [not null]
+  tickets tickets [not null]
+}
+
+Table halls {
+  id Int [pk, increment]
+  theatre_id Int [not null, default: 0]
+  name String [unique, not null]
+  capacity Int [not null]
+  theatres theatres [not null]
+  showtimes showtimes [not null]
+  seats seats [not null]
+}
+
+Table seats {
+  id Int [pk, increment]
+  hallId Int [not null]
+  is_available Int [not null]
+  price Int [not null, default: 10]
+  type seats_type [not null]
+  seatLocation seatLocation [not null]
+  tickets tickets [not null]
+  halls halls [not null]
+
+  Note: 'Representation of a seat in the hall'
+}
+
+Table seatLocation {
+  id Int [pk, increment]
+  seat_id Int [not null]
+  column Int [not null]
+  row_label String [not null, default: '']
+  seats seats [not null]
+
+  Note: 'This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments'
+}
+
+Table showtimes {
+  id Int [pk, increment]
+  film_id Int [not null]
+  hall_id Int [not null]
+  starts_at DateTime [not null]
+  ends_at DateTime
+  is_canceled Boolean [not null, default: false]
+  films films [not null]
+  halls halls [not null]
+  tickets tickets [not null]
+
+  indexes {
+    (hall_id, starts_at) [unique]
+  }
+}
+
+Table theatres {
+  id Int [pk, increment]
+  name String [unique, not null]
+  halls halls [not null]
+}
+
+Table tickets {
+  id BigInt [pk, increment]
+  order_id BigInt
+  showtime_id Int [not null]
+  seat_id Int [not null]
+  status tickets_status [not null, default: 'reserved']
+  unit_price Decimal [not null]
+  reserved_at DateTime [default: `now()`, not null]
+  paid_at DateTime
+  ticket_code String [unique]
+  orders orders
+  showtimes showtimes [not null]
+  seats seats [not null]
+
+  indexes {
+    (showtime_id, seat_id) [unique]
+  }
+}
+
+Table users {
+  id Int [pk, increment]
+  email String [unique, not null]
+  updated_at DateTime
+  role users_role [not null, default: 'user']
+  password String [not null]
+  orders orders [not null]
+}
+
+Table actors {
+  name String [unique, not null]
+  film_id Int [not null, default: 0]
+  id Int [pk, increment]
+  link String
+  image_url String [not null]
+  films films [not null]
+}
+
+Enum orders_status {
+  pending
+  paid
+  expired
+}
+
+Enum tickets_status {
+  reserved
+  paid
+  expired
+}
+
+Enum seats_type {
+  Standard
+  Premium
+  Double
+  Filler
+}
+
+Enum users_role {
+  user
+  admin
+}
+
+Ref: film_genres.film_id > films.id [delete: Cascade]
+
+Ref: film_genres.genre_id > genres.id
+
+Ref: orders.user_id > users.id [delete: Cascade]
+
+Ref: halls.theatre_id > theatres.id [delete: Cascade]
+
+Ref: seats.hallId > halls.id
+
+Ref: seatLocation.seat_id > seats.id
+
+Ref: showtimes.film_id > films.id
+
+Ref: showtimes.hall_id > halls.id
+
+Ref: tickets.order_id > orders.id
+
+Ref: tickets.showtime_id > showtimes.id
+
+Ref: tickets.seat_id > seats.id
+
+Ref: actors.film_id > films.id [delete: Cascade]

@@ -8,29 +8,36 @@ import genreRepository from '../../src/repositories/GenreRepositroy'
 import userRepository from '../../src/repositories/UserRepository'
 import filmRepository from '../../src/repositories/FilmRepository'
 import hallRepositroy from '../../src/repositories/HallRepository'
-import { showtimeSeed } from './data/ShowtimesData'
-import { genresSeed } from './data/genresData'
-import { actorsSeed } from './data/ActorsData'
+import { createShowtimeSeed } from './data/ShowtimesData'
+import { createOrdersSeed } from './data/OrdersData'
+import genereateHallSeating from './data/SeatsData'
+import { createHallsSeed } from './data/HallsData'
 import { theatreSeed } from './data/TheatresData'
-import { ordersSeed } from './data/OrdersData'
-import { usersSeed } from './data/UsersData'
+import { genresSeed } from './data/genresData'
 import { filmsSeed } from './data/FilmsData'
-import { hallsSeed } from './data/HallsData'
+import { usersSeed } from './data/UsersData'
 import prisma from '../../db'
+import { createActorsSeed } from './data/ActorsData'
 
 async function runSeed() {
   // -- DATA --
+
+  await theatreRepository.createMany(theatreSeed)
+  const hallsSeed = await createHallsSeed()
+  await hallRepositroy.createMany(hallsSeed)
+  await genereateHallSeating(await hallRepositroy.getAll())
+
   await filmRepository.createMany(filmsSeed)
   await genreRepository.createMany(genresSeed)
   await assignRandomGenresToFilms()
-
+  const actorsSeed = await createActorsSeed()
   await actorRepository.createMany(actorsSeed)
 
-  await theatreRepository.createMany(theatreSeed)
-  await hallRepositroy.createMany(hallsSeed)
+  const showtimeSeed = await createShowtimeSeed()
   await showtimeRepositroy.createMany(showtimeSeed)
 
   await userRepository.createMany(usersSeed)
+  const ordersSeed = await createOrdersSeed()
   await orderRepository.createMany(ordersSeed)
 
   // -- TRIGGERS --

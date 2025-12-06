@@ -1,7 +1,7 @@
 import prisma from "../../../db"
 
 
-export async function preventAdminBuyTickets() {
+export async function prevent_admin_buy_tickets() {
   await prisma.$executeRawUnsafe(`DROP TRIGGER IF EXISTS prevent_admin_buy_tickets;`)
   await prisma.$executeRawUnsafe(`
     CREATE TRIGGER prevent_admin_buy_tickets

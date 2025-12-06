@@ -1,13 +1,5 @@
 import { theatres, users, films, halls } from '@prisma/client'
 import filmRepository from '../../../src/repositories/FilmRepository'
-import theatreRepository from '../../../src/repositories/TheatreRepository'
-import userRepository from '../../../src/repositories/UserRepository'
-import hallRepositroy from '../../../src/repositories/HallRepository'
-
-export const allTheatres = await theatreRepository.getAll()
-export const allUsers = await userRepository.getAll()
-export const allFilms = await filmRepository.getAll()
-export const allHalls = await hallRepositroy.getAll()
 
 //gets the first film_id that has the same title.
 export async function getExistingFilmIdByTitle(title: string): Promise<number> {
@@ -18,22 +10,9 @@ export async function getExistingFilmIdByTitle(title: string): Promise<number> {
   return films[0].id
 }
 
-export function getRandomTheatre(): theatres {
-  const randomIndex = Math.floor(Math.random() * allTheatres.length)
-  return allTheatres[randomIndex]
+export function getRandom(arr: any[]): any {
+  console.log(arr)
+  const randomIndex = Math.floor(Math.random() * arr.length)
+  return arr[randomIndex]
 }
 
-export function getRandomUser(): users {
-  const randomIndex = Math.floor(Math.random() * allUsers.length)
-  return allUsers[randomIndex]
-}
-
-export function getRandomFilm(): films {
-  const randomIndex = Math.floor(Math.random() * allFilms.length)
-  return allFilms[randomIndex]
-}
-
-export function getRandomHall(): halls {
-  const randomIndex = Math.floor(Math.random() * allHalls.length)
-  return allHalls[randomIndex]
-}

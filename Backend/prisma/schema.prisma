@@ -1,5 +1,5 @@
 generator client {
-  provider               = "prisma-client-js"
+  provider               = "prisma-client-js" //prisma-dbml-generator to get new dbml
   generatedFileExtension = "ts"
   moduleFormat           = "esm"
   runtime                = "bun"
@@ -42,17 +42,6 @@ model genres {
   film_genres film_genres[]
 }
 
-model halls {
-  id         Int         @id @default(autoincrement()) @db.UnsignedSmallInt
-  theatre_id Int         @default(0) @db.UnsignedSmallInt
-  name       String      @unique(map: "name") @db.VarChar(50)
-  capacity   Int         @db.UnsignedSmallInt
-  theatres   theatres    @relation(fields: [theatre_id], references: [id], onDelete: Cascade, map: "FK_halls_theatres")
-  seats      seats[]
-  showtimes  showtimes[]
-
-  @@index([theatre_id], map: "theatre_id")
-}
 
 model orders {
   id         BigInt        @id @default(autoincrement())
@@ -66,17 +55,39 @@ model orders {
   @@index([user_id, status, created_at], map: "user_id")
 }
 
+model halls {
+  id                     Int                      @id @default(autoincrement()) @db.UnsignedSmallInt
+  theatre_id             Int                      @default(0) @db.UnsignedSmallInt
+  name                   String                   @unique(map: "name") @db.VarChar(50)
+  capacity               Int                      @db.UnsignedSmallInt  
+  theatres               theatres                 @relation(fields: [theatre_id], references: [id], onDelete: Cascade, map: "FK_halls_theatres")
+  showtimes              showtimes[]
+  seats                  seats[]
+
+  @@index([theatre_id], map: "theatre_id")
+}
+
+/// Representation of a seat in the hall
 model seats {
   id                     Int                      @id @default(autoincrement())
   hall_id                Int                      @db.UnsignedSmallInt
   is_available           Int                      @db.TinyInt
   price                  Int                      @default(10)
   type                   seats_type
-  hall_seating_locations hall_seating_locations[]
-  halls                  halls                    @relation(fields: [hall_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "seats_ibfk_1")
+  seatLocation           seatLocation[]
   tickets                tickets[]
+  halls                  halls                     @relation(fields: [hall_id], references: [id], map: "FK_seats_halls")
+}
 
-  @@index([hall_id], map: "hall_id")
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model seatLocation {
+  id        Int    @id @default(autoincrement()) @db.UnsignedInt  
+  seat_id   Int
+  column    Int
+  row_label String @default("") @db.VarChar(3)  
+  seats     seats @relation(fields: [seat_id], references: [id], map: "FK_seatLocation_seats")
+
+  @@index([seat_id], map: "FK_seatLocation_seats")
 }
 
 model showtimes {
@@ -143,16 +154,7 @@ model actors {
   @@index([film_id], map: "FK1_actors_films")
 }
 
-/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
-model hall_seating_locations {
-  id      Int    @id
-  seat_id Int?
-  column  Int
-  row     String @default("") @db.VarChar(3)
-  seats   seats? @relation(fields: [seat_id], references: [id], map: "FK_seats_seating_locations")
 
-  @@index([seat_id], map: "FK_seats_seating_locations")
-}
 
 enum orders_status {
   pending
@@ -169,8 +171,7 @@ enum tickets_status {
 enum seats_type {
   Standard
   Premium
-  Double
-  Filler
+  Double  
 }
 
 enum users_role {

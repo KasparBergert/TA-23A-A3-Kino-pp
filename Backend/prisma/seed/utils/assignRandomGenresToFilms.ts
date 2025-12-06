@@ -1,4 +1,4 @@
-import prisma from '../../../Backend/db'
+import prisma from "../../../db"
 
 export async function assignRandomGenresToFilms() {
   // get all films + all genres
