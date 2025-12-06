@@ -44,10 +44,6 @@ function handleBook() {
             <span class="font-semibold text-slate-300">Saal:</span>
             {{ showtime.hall.name }}
           </p>
-
-          <p class="text-lg font-extrabold text-green-400 pt-1">
-            {{ showtime.price }} €
-          </p>
         </div>
       </div>
     </RouterLink>

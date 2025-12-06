@@ -11,7 +11,7 @@ async function fetchSeats(hall_id: number): Promise<SeatDTO[]> {
   return res
 }
 
-async function getSeatsByRow(hall_id: number): Promise<SeatDTO[][]> {
+async function getByRow(hall_id: number): Promise<SeatDTO[][]> {
   const seats = await fetchSeats(hall_id)
 
   const seatRows: SeatDTO[][] = []
@@ -31,5 +31,5 @@ async function getSeatsByRow(hall_id: number): Promise<SeatDTO[][]> {
 
 export const seatService = {
   fetchSeats,
-  getSeatsByRow,
+  getByRow,
 }

@@ -16,7 +16,6 @@ function setTheatres(list: theatres[]) {
 }
 
 function onShowtimesClicked() {
-
   if (selectedTheatre.value === null) {
     toast.error('Palun vali kino.')
     return;
@@ -27,8 +26,8 @@ function onShowtimesClicked() {
 
 onMounted(async () => {
   try {
-    const res = await theatreService.getAllTheatres()
-    setTheatres(res.theatres)
+    const theatres = await theatreService.getAll()
+    setTheatres(theatres)
   } catch (err) {
     toast.error(err)
   }

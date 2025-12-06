@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { onMounted, ref } from "vue";
-import { filmsService } from "../entities/FilmsService";
+import { filmsService } from "../entities/FilmService";
 import type { films } from "@prisma/client";
 import HeroFilms from "../features/film/HeroFilms.vue";
 import FilmsGrid from "../features/film/FilmsGrid.vue";
@@ -11,14 +11,10 @@ import BackgroundGlow from "../widgets/BackgroundGlow.vue";
 const films = ref<films[]>([]);
 const top3films = ref<films[]>([]);
 
-async function setFilms(films_fetched: films[]) {
-  films.value = films_fetched;
-}
-
 onMounted(async () => {
   try {
-    const films_fetched = await filmsService.getAllFilms();
-    await setFilms(films_fetched);
+    const films_fetched = await filmsService.getAll();
+    films.value = films_fetched;
     top3films.value = films.value.slice(0, 3);
   } catch (err) {
     console.error("Error fetching films:", err);
