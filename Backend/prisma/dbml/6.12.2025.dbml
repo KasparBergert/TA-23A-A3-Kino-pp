@@ -57,7 +57,7 @@ Table halls {
 
 Table seats {
   id Int [pk, increment]
-  hallId Int [not null]
+  hall_id Int [not null]
   is_available Int [not null]
   price Int [not null, default: 10]
   type seats_type [not null]
@@ -153,7 +153,6 @@ Enum seats_type {
   Standard
   Premium
   Double
-  Filler
 }
 
 Enum users_role {
@@ -169,7 +168,7 @@ Ref: orders.user_id > users.id [delete: Cascade]
 
 Ref: halls.theatre_id > theatres.id [delete: Cascade]
 
-Ref: seats.hallId > halls.id
+Ref: seats.hall_id > halls.id
 
 Ref: seatLocation.seat_id > seats.id
 
