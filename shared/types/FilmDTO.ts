@@ -3,7 +3,7 @@ interface FilmDTO {
   title: string
   description: string | null
   duration_min: number | null
-  poster_url: string
+  poster_url: string | null
   release_date: Date | null
 }
 

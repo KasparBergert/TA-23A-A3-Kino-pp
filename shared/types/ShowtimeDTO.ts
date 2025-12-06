@@ -3,7 +3,6 @@ interface ShowtimeDTO {
   id: number
   ends_at: Date | null
   is_canceled: boolean
-  price: number
   starts_at: Date
 
   film: FilmDTO

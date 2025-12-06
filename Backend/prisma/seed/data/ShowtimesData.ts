@@ -10,19 +10,22 @@ export async function createShowtimeSeed(): Promise<Omit<showtimes, 'id'>[]> {
   if (films.length === 0) throw new Error("No films exist for showtimes")
   if (halls.length === 0) throw new Error("No halls exist for showtimes")
 
+  const future_start_at: Date = new Date('2055-11-01T20:00:00');
+  const future_end_at: Date = new Date('2065-11-01T20:00:00');
+
   return [
     {
       film_id: getRandom(films).id,
       hall_id: getRandom(halls).id,
-      starts_at: new Date('2025-11-01T18:00:00'),
-      ends_at: new Date('2025-11-01T20:00:00'),
+      starts_at: future_end_at,
+      ends_at: future_end_at,
       is_canceled: false,
     },
     {
       film_id: getRandom(films).id,
       hall_id: getRandom(halls).id,
-      starts_at: new Date('2025-11-01T20:30:00'),
-      ends_at: new Date('2025-11-01T22:45:00'),
+      starts_at: future_start_at,
+      ends_at: future_end_at,
       is_canceled: false,
     },
   ]

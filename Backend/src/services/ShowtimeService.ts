@@ -92,7 +92,6 @@ class ShowtimeService {
         id: st.id,
         ends_at: st.ends_at,
         is_canceled: st.is_canceled,
-        price: Number(st.price),
         starts_at: st.starts_at,
         film: {
           id: film.id,
