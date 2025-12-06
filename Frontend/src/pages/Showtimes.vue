@@ -7,8 +7,6 @@ import type { theatres } from '@prisma/client';
 import type ShowtimeDTO from '../../../shared/types/ShowtimeDTO';
 import ShowtimesGrid from '../features/showtimes/ShowtimesGrid/ShowtimesGrid.vue';
 
-
-
 const route = useRoute();
 const theatreId = route.query.theatre_id as string;
 
@@ -18,21 +16,17 @@ const theatre = ref<theatres>({
 });
 const showtimesList = ref<ShowtimeDTO[]>([]);
 
-function setTheatres(theatreData: theatres) {
-  theatre.value = theatreData;
-}
-
-function setShowtimes(showtimeData: ShowtimeDTO[]) {
-  showtimesList.value = showtimeData;
-}
-
 onMounted(async () => {
   const theatre_id = Number(theatreId);
 
   const theatreRes = await theatreService.getTheatreDetails(theatre_id);
-  const showtimesRes = await showtimeService.getShowtimes({ theatre_id: theatre_id })
-  setTheatres(theatreRes.theatre);
-  setShowtimes(showtimesRes.showtimes);
+  const showtimesRes = await showtimeService.getShowtimes({ theatre_id })
+
+  console.log(theatreRes)
+  console.log(showtimesRes)
+
+  theatre.value = theatreRes;
+  showtimesList.value = showtimesRes;
 });
 
 
@@ -46,11 +40,9 @@ onMounted(async () => {
     <div class="relative z-10 flex flex-col w-full max-w-7xl space-y-12">
 
       <div class="flex items-center justify-start">
-        <button
-          type="button"
+        <button type="button"
           class="px-4 py-2 rounded-lg bg-slate-800 border border-slate-700 text-slate-200 hover:bg-slate-700 hover:border-blue-500 transition-colors shadow-md"
-          @click="$router.push({ name: 'home' })"
-        >
+          @click="$router.push({ name: 'home' })">
           Tagasi
         </button>
       </div>
