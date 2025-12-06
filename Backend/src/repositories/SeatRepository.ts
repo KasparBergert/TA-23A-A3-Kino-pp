@@ -1,6 +1,5 @@
 import prisma from '../../db'
 import { seats } from '@prisma/client'
-import seatLocationsRepository from './SeatLocationsRepository'
 
 class SeatRepository {
   async getAll() {

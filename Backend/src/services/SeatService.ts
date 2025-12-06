@@ -3,7 +3,7 @@ import SeatDTO from '../../../shared/types/SeatDTO'
 
 class SeatService {
   async getAllByHallId(hall_id: number): Promise<SeatDTO[]> {
-    return await seatRepository.getAllByHallId(hall_id)
+    return await seatRepository.getByHallId(hall_id)
   }
 }
 
