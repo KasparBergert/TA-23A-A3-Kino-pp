@@ -5,9 +5,9 @@ import refresh from './controllers/auth/refresh.ts'
 import getShowtimes from './controllers/getShowtimes.ts'
 import validateEmailAndPassword from './controllers/middleware/validateEmailAndPassword.ts'
 import getTheatres from './controllers/getTheatres.ts'
-import getFilms from './controllers/getFIlms.ts'
-import getFilmById from './controllers/getFilmById.ts'
 import getSeats from './controllers/getSeats.ts'
+import getActors from './controllers/getActors.ts'
+import getFilms from './controllers/getFilms.ts'
 
 export default function ApiRoutes(): Router {
   const routes = Router()
@@ -21,8 +21,8 @@ export default function ApiRoutes(): Router {
   routes.get('/theatres', getTheatres)
   routes.get('/showtimes', getShowtimes)
   routes.get('/showtimes/:hall_id/seats', getSeats)
-  routes.get('/films/:id', getFilmById)
   routes.get('/films', getFilms)
+  routes.get('/actors', getActors)
 
   return routes
 }
