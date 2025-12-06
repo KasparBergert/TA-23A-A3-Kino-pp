@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useRouter, RouterLink } from 'vue-router'
-import orderStore from '../../store/OrderStore'
-import ShowtimeDTO from '../../../../shared/types/ShowtimeDTO'
+import orderStore from '../../../store/OrderStore'
+import ShowtimeDTO from '../../../../../shared/types/ShowtimeDTO'
 
 const props = defineProps<{
   showtime: ShowtimeDTO

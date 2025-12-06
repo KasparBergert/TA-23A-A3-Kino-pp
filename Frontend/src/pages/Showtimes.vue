@@ -5,7 +5,7 @@ import { showtimeService } from '../entities/ShowtimeService';
 import { theatreService } from '../entities/TheatreService';
 import type { theatres } from '@prisma/client';
 import type ShowtimeDTO from '../../../shared/types/ShowtimeDTO';
-import ShowtimesGrid from '../features/showtimes/ShowtimesGrid/ShowtimesGrid.vue';
+import ShowtimesGrid from '../features/showtimes/ShowtimesGrid.vue';
 
 const route = useRoute();
 const theatreId = route.query.theatre_id as string;
@@ -19,8 +19,8 @@ const showtimesList = ref<ShowtimeDTO[]>([]);
 onMounted(async () => {
   const theatre_id = Number(theatreId);
 
-  const theatreRes = await theatreService.getTheatreDetails(theatre_id);
-  const showtimesRes = await showtimeService.getShowtimes({ theatre_id })
+  const theatreRes: theatres = await theatreService.getTheatreDetails(theatre_id);
+  const showtimesRes: ShowtimeDTO[] = await showtimeService.getShowtimes({ theatre_id })
 
   console.log(theatreRes)
   console.log(showtimesRes)

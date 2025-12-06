@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import ShowtimeDTO from '../../../../../shared/types/ShowtimeDTO';
-import ShowtimeCard from '../ShowtimeCard.vue';
+import ShowtimeDTO from '../../../../shared/types/ShowtimeDTO';
+import ShowtimeCard from './ShowtimeCard/ShowtimeCard.vue';
 defineProps<{
   showtimes: ShowtimeDTO[]
 }>();
