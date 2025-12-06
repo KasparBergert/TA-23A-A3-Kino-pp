@@ -11,7 +11,6 @@ export async function getExistingFilmIdByTitle(title: string): Promise<number> {
 }
 
 export function getRandom(arr: any[]): any {
-  console.log(arr)
   const randomIndex = Math.floor(Math.random() * arr.length)
   return arr[randomIndex]
 }

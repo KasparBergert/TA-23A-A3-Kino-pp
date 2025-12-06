@@ -47,14 +47,6 @@ class ShowtimeService {
     return await this.loadEntities(hall_ids, hallRepositroy.getByIds, 'HALL_NOT_FOUND')
   }
 
-  private async getShowtimeSeats(hall_ids: number[]): Promise<seats[][]> {
-    const seats = await this.loadEntityArrays(
-      hall_ids,
-      seatRepository.getByHallId,
-      'SEATS_NOT_FOUND',
-    )
-    return seats as NonEmptyArray<seats>[]
-  }
 
   private async getShowtimeTheatres(hall_ids: number[]): Promise<theatres[]> {
     return await this.loadEntities(hall_ids, theatreRepository.getByIds, 'THEATRE_NOT_FOUND')

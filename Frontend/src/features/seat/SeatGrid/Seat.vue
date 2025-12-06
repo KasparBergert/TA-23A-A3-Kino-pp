@@ -11,59 +11,54 @@ const emit = defineEmits<{
 }>();
 
 enum SeatStatus {
-  Available = 0,
-  Taken = 1,
-  Selected = 2
+  available = 'available',
+  taken = 'taken',
+  selected = 'selected'
 }
 
-const status = ref<SeatStatus>(props.seat.is_available as SeatStatus);
+const status = ref<SeatStatus>(props.seat.status as SeatStatus);
 const color = ref<string>(getColor(status.value));
 
-watch(() => status.value,
+watch(
+  () => status.value,
   (newStatus: SeatStatus) => {
     color.value = getColor(newStatus);
   }
 );
 
-// Assuming SeatStatus is an enum or constant:
-// export enum SeatStatus { Available, Taken, Selected }
-
 function getColor(status: SeatStatus): string {
   switch (status) {
-    case SeatStatus.Available:
+    case SeatStatus.available:
       return '#FFFFFF';
-    case SeatStatus.Taken:
+    case SeatStatus.taken:
       return '#333333';
-    case SeatStatus.Selected:
+    case SeatStatus.selected:
       return '#2563EB';
     default:
-      return '#000000';
+      return '#FAFAF0';
   }
 }
 
 function handleSeatClick() {
-  const currentStatus = status.value;
+  const current = status.value;
 
-  switch (currentStatus) {
-    case SeatStatus.Available:
-      status.value = SeatStatus.Selected;
+  switch (current) {
+    case SeatStatus.available:
+      status.value = SeatStatus.selected;
       emit('seat-clicked');
       break;
 
-    case SeatStatus.Selected:
-      status.value = SeatStatus.Available;
+    case SeatStatus.selected:
+      status.value = SeatStatus.available;
       emit('seat-clicked');
       break;
 
-    case SeatStatus.Taken:
-      break;
-
-    default:
+    case SeatStatus.taken:
       break;
   }
 }
-
 </script>
+
 <template>
   <svg class="w-7 cursor-pointer" @click="handleSeatClick()" id="Layer_1" data-name="Layer 1"
     xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 25 24.999">

@@ -8,10 +8,6 @@ class Api {
     }
   }
 
-  private handleError(err: unknown) {
-    console.log(err)
-  }
-
   private makeURL(path: string) {
     return `${VITE_URI}:${VITE_PORT}/api${path}`
   }
@@ -25,7 +21,7 @@ class Api {
       })
       return await res.json()
     } catch (err) {
-      this.handleError(err)
+      console.log(err)
     }
   }
 
@@ -39,7 +35,7 @@ class Api {
       })
       return await res.json()
     } catch (err) {
-      this.handleError(err)
+      console.log(err)
     }
   }
 }

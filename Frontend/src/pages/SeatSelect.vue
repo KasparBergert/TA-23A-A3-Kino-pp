@@ -38,7 +38,7 @@ function proceedToPayment() {
         class="bg-slate-800/60 backdrop-blur-sm rounded-2xl shadow-2xl shadow-black/20 border border-slate-700/50 p-4 md:p-8 flex flex-col items-center justify-start min-h-[500px]">
         <Screen />
         <div class="w-full overflow-x-auto flex justify-center">
-          <SeatGrid :hallId="hall_id" v-model:selected-seats="selectedSeats" />
+          <SeatGrid :hall_id="hall_id" v-model:selected-seats="selectedSeats" />
         </div>
       </div>
 

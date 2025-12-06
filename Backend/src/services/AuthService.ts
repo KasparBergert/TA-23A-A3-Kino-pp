@@ -1,4 +1,4 @@
-import userManager from "../repositories/UserRepository";
+import userRepository from "../repositories/UserRepository";
 import type TokenPair from "../../types/TokenPair";
 import tokenService from "./TokenService";
 import passwordUtils from "../../utils/passwordUtils";
@@ -8,7 +8,7 @@ class AuthService {
   //validates if user entered the right password
   private async validatePassword(email: string, entered_password: string): Promise<Boolean> {
     //search the database for a user, get the password hash and determine if the password is the same
-    const user = await userManager.getUserByEmail(email);
+    const user = await userRepository.getByEmail(email);
     //check if user was found
     if (user === null) return false;
 

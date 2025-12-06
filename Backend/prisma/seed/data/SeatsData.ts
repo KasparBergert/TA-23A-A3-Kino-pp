@@ -1,4 +1,4 @@
-import { seats, seats_type, seatLocation, halls } from '@prisma/client'
+import { seats, seats_type, seatlocation, halls, seats_status } from '@prisma/client'
 import seatRepository from '../../../src/repositories/SeatRepository'
 import seatLocationsRepository from '../../../src/repositories/SeatLocationsRepository'
 
@@ -7,7 +7,7 @@ function letterForRow(r: number): string {
 }
 
 //creates location
-function location(row: string, col: number, seat: seats): Omit<seatLocation, 'id'> {
+function location(row: string, col: number, seat: seats): Omit<seatlocation, 'id'> {
   return {
     seat_id: seat.id,
     row_label: row,
@@ -16,10 +16,10 @@ function location(row: string, col: number, seat: seats): Omit<seatLocation, 'id
 }
 
 function createSeatMatrix(hall_id: number, rows_types: seats_type[]): Omit<seats, 'id'>[] {
-  return rows_types.map((type) => ({
+  return rows_types.flatMap((type) => ({
     type,
     price: 20,
-    is_available: Math.floor(Math.random() * 2),
+    status: Math.floor(Math.random() * 2) === 0 ? seats_status.available : seats_status.taken,
     hall_id,
   }))
 }
@@ -28,8 +28,8 @@ function createSeatLocationsMatrix(
   seats: seats[],
   rowCount: number,
   colCount: number,
-): Omit<seatLocation, 'id'>[] {
-  const out: Omit<seatLocation, 'id'>[] = []
+): Omit<seatlocation, 'id'>[] {
+  const out: Omit<seatlocation, 'id'>[] = []
   let seatIndex = 0
 
   for (let r = 0; r < rowCount; r++) {

@@ -1,18 +1,15 @@
-import { seatLocation } from '@prisma/client'
+import { seatlocation } from '@prisma/client'
 import prisma from '../../db'
 
 class SeatLocationsRepository {
-  async getByHallId(seat_id: number): Promise<seatLocation[]> {
-    return await prisma.seatLocation.findMany({ where: { seat_id } })
+  async getManylocations(seat_ids: number[]) {
+    return await prisma.seatlocation.findMany({
+      where: { seat_id: { in: seat_ids } },
+    })
   }
 
-  async getbySeatId(seat_id: number): Promise<number[]> {
-    const result = await prisma.seatLocation.findMany({ where: { seat_id }, select: { id: true } })
-    return result.map((obj) => obj.id)
-  }
-
-  async createMany(locations: Omit<seatLocation, 'id'>[]) {
-    await prisma.seatLocation.createMany({
+  async createMany(locations: Omit<seatlocation, 'id'>[]) {
+    await prisma.seatlocation.createMany({
       data: locations,
       skipDuplicates: true,
     })

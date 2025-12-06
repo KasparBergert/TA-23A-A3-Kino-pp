@@ -1,5 +1,5 @@
 generator client {
-  provider               = "prisma-client-js" //prisma-dbml-generator to get new dbml
+  provider               = "prisma-client-js"  //prisma-dbml-generator to get new dbml
   generatedFileExtension = "ts"
   moduleFormat           = "esm"
   runtime                = "bun"
@@ -42,7 +42,6 @@ model genres {
   film_genres film_genres[]
 }
 
-
 model orders {
   id         BigInt        @id @default(autoincrement())
   user_id    Int
@@ -56,38 +55,29 @@ model orders {
 }
 
 model halls {
-  id                     Int                      @id @default(autoincrement()) @db.UnsignedSmallInt
-  theatre_id             Int                      @default(0) @db.UnsignedSmallInt
-  name                   String                   @unique(map: "name") @db.VarChar(50)
-  capacity               Int                      @db.UnsignedSmallInt  
-  theatres               theatres                 @relation(fields: [theatre_id], references: [id], onDelete: Cascade, map: "FK_halls_theatres")
-  showtimes              showtimes[]
-  seats                  seats[]
+  id         Int         @id @default(autoincrement()) @db.UnsignedSmallInt
+  theatre_id Int         @default(0) @db.UnsignedSmallInt
+  name       String      @unique(map: "name") @db.VarChar(50)
+  capacity   Int         @db.UnsignedSmallInt
+  theatres   theatres    @relation(fields: [theatre_id], references: [id], onDelete: Cascade, map: "FK_halls_theatres")
+  seats      seats[]
+  showtimes  showtimes[]
 
   @@index([theatre_id], map: "theatre_id")
 }
 
 /// Representation of a seat in the hall
 model seats {
-  id                     Int                      @id @default(autoincrement())
-  hall_id                Int                      @db.UnsignedSmallInt
-  is_available           Int                      @db.TinyInt
-  price                  Int                      @default(10)
-  type                   seats_type
-  seatLocation           seatLocation[]
-  tickets                tickets[]
-  halls                  halls                     @relation(fields: [hall_id], references: [id], map: "FK_seats_halls")
-}
+  id           Int            @id @default(autoincrement())
+  hall_id      Int            @db.UnsignedSmallInt
+  status       seats_status   @default(available)
+  price        Int            @default(10)
+  type         seats_type
+  seatlocation seatlocation[]
+  halls        halls          @relation(fields: [hall_id], references: [id], map: "FK_seats_halls")
+  tickets      tickets[]
 
-/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
-model seatLocation {
-  id        Int    @id @default(autoincrement()) @db.UnsignedInt  
-  seat_id   Int
-  column    Int
-  row_label String @default("") @db.VarChar(3)  
-  seats     seats @relation(fields: [seat_id], references: [id], map: "FK_seatLocation_seats")
-
-  @@index([seat_id], map: "FK_seatLocation_seats")
+  @@index([hall_id], map: "FK_seats_halls")
 }
 
 model showtimes {
@@ -154,7 +144,15 @@ model actors {
   @@index([film_id], map: "FK1_actors_films")
 }
 
+model seatlocation {
+  id        Int    @id @default(autoincrement()) @db.UnsignedInt
+  seat_id   Int
+  column    Int
+  row_label String @default("") @db.VarChar(3)
+  seats     seats  @relation(fields: [seat_id], references: [id], map: "FK_seatLocation_seats")
 
+  @@index([seat_id], map: "FK_seatLocation_seats")
+}
 
 enum orders_status {
   pending
@@ -171,10 +169,15 @@ enum tickets_status {
 enum seats_type {
   Standard
   Premium
-  Double  
+  Double
 }
 
 enum users_role {
   user
   admin
+}
+
+enum seats_status {
+  available
+  taken
 }
