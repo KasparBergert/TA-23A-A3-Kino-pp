@@ -16,7 +16,7 @@ defineProps<{
     <div class="bg-slate-800 rounded-2xl shadow-xl border border-slate-700 p-6">
       <div v-if="film" class="flex flex-col items-center text-center space-y-5">
 
-        <div class="relative group">
+        <div class="relative group select-none">
           <img :src="film.poster_url"
             class="w-full h-auto rounded-xl shadow-lg shadow-black/40 object-cover max-w-[200px] transition-transform group-hover:scale-105 duration-300"
             alt="Movie Poster" />
