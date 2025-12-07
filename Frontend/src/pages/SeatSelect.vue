@@ -33,7 +33,6 @@ function proceedToPayment() {
     class="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-gray-100 flex items-center justify-center p-4 md:p-6">
 
     <div class="w-full max-w-6xl grid grid-cols-1 lg:grid-cols-[1fr_25%] gap-6 lg:gap-8 relative">
-
       <div
         class="bg-slate-800/60 backdrop-blur-sm rounded-2xl shadow-2xl shadow-black/20 border border-slate-700/50 p-4 md:p-8 flex flex-col items-center justify-start min-h-[500px]">
         <Screen />
@@ -42,9 +41,7 @@ function proceedToPayment() {
         </div>
       </div>
 
-      <div>
-        <TheSummaryCard :film="film" :seats="selectedSeats" />
-      </div>
+      <TheSummaryCard :film="film" :seats="selectedSeats" />
 
       <button @click="proceedToPayment"
         class="lg:col-start-2 w-full py-3 px-6 text-sm font-bold text-white bg-gradient-to-r from-indigo-500 to-blue-600 hover:from-indigo-600 hover:to-blue-700 rounded-xl shadow-lg shadow-indigo-500/20 transition-all transform hover:-translate-y-0.5 active:translate-y-0 focus:ring-4 focus:ring-indigo-500/30 outline-none">
