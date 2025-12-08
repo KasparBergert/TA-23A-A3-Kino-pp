@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import { reactive } from 'vue';
 import SeatDTO from '../../../../../shared/types/SeatDTO';
 import Double from '../../../assets/Double.svg'
 import Premium from '../../../assets/Premium.svg'
 import Standard from '../../../assets/Standard.svg'
 import { seats_status, seats_type } from '@prisma/client';
+
 
 interface localSeatDTO extends Omit<SeatDTO, 'status'> {
   status: seats_status | 'selected'
@@ -41,10 +41,11 @@ function icon(): string {
     default:
       return 'Type not identified'
   }
+
 }
 
 function setStatus(new_status: seats_status | 'selected') {
-  this.seat.status = new_status;
+  props.seat.status = new_status;
 }
 
 function handleClick() {
@@ -73,14 +74,10 @@ function size() {
   }
 }
 
-console.log(icon())
 
 </script>
 <template>
-  <div @click="handleClick()" :class="[
-    size(),
-    'bg-no-repeat',
-    'bg-contain',
-    'bg-center'
-  ]" :style="{ backgroundImage: `url('${icon}')` }" :color="color()" />
+  <component @click="handleClick()" :is="icon()" :color="color()"
+    :class="[size(), 'bg-no-repeat', 'bg-contain', 'bg-center']">
+  </component>
 </template>
