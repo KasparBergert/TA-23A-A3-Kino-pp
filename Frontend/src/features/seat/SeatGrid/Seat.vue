@@ -1,83 +1,62 @@
 <script setup lang="ts">
-import SeatDTO from '../../../../../shared/types/SeatDTO';
-import Double from '../../../assets/Double.svg'
-import Premium from '../../../assets/Premium.svg'
-import Standard from '../../../assets/Standard.svg'
-import { seats_status, seats_type } from '@prisma/client';
+import SeatDTO from "../../../../../shared/types/SeatDTO";
+import { seats_status, seats_type } from "@prisma/client";
 
-
-interface localSeatDTO extends Omit<SeatDTO, 'status'> {
-  status: seats_status | 'selected'
+interface localSeatDTO extends Omit<SeatDTO, "status"> {
+  status: seats_status | "selected";
 }
 
 const props = defineProps<{
-  seat: localSeatDTO
+  seat: localSeatDTO;
 }>();
 
 const emit = defineEmits<{
-  (e: 'seat-clicked'): void
+  (e: "seat-clicked"): void;
 }>();
-
 
 function color() {
   switch (props.seat.status) {
-    case 'available':
-      return '#ffec99'
-    case 'taken':
-      return '#e03131'
-    case 'selected':
-      return '#2f9e44'
+    case "available":
+      return "#dbc76e";
+    case "taken":
+      return "#e03131";
+    case "selected":
+      return "#2f9e44";
   }
 }
 
-function icon(): string {
-  switch (props.seat.type) {
-    case seats_type.Double:
-      return Double
-    case seats_type.Premium:
-      return Premium
-    case seats_type.Standard:
-      return Standard
-    default:
-      return 'Type not identified'
-  }
-
-}
-
-function setStatus(new_status: seats_status | 'selected') {
+//this exists only because of strong type checking. otherwise, its abstraction.
+function setStatus(new_status: seats_status | "selected") {
   props.seat.status = new_status;
 }
 
 function handleClick() {
-  const seat_status = props.seat.status
+  //changing status chanes color
+  const seat_status = props.seat.status;
   switch (seat_status) {
-    case 'available':
-      setStatus('selected');
-      emit('seat-clicked');
+    case "available":
+      setStatus("selected");
       break;
-    case 'selected':
-      setStatus('available');
-      emit('seat-clicked');
+    case "selected":
+      setStatus("available");
       break;
-    case 'taken':
+    case "taken":
       break;
   }
+  emit("seat-clicked");
 }
 
 function size() {
   switch (props.seat.type) {
     case seats_type.Standard:
     case seats_type.Premium:
-      return 'h-8 w-8'
+      return "h-6 w-6";
     case seats_type.Double:
-      return 'h-8 w-16'
+      return "h-6 w-12";
   }
 }
-
-
 </script>
 <template>
-  <component @click="handleClick()" :is="icon()" :color="color()"
-    :class="[size(), 'bg-no-repeat', 'bg-contain', 'bg-center']">
-  </component>
+  <div @click="handleClick()" :class="[size(), 'bg-no-repeat', 'bg-contain', 'bg-center', 'border-2', 'my-[0.2px]']"
+    :style="{ backgroundColor: `${color()}` }"></div>
 </template>
