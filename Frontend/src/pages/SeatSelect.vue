@@ -9,6 +9,7 @@ import useSafeBack from '../utils/useSafeBack';
 import Screen from '../widgets/Screen.vue';
 import TheSummaryCard from '../features/booking/TheSummaryCard.vue';
 import { useRouter } from 'vue-router';
+import client from '../utils/api';
 
 const { safeBack } = useSafeBack();
 const router = useRouter();
@@ -26,8 +27,7 @@ function getFilmOrRedirect(): FilmDTO {
 
 const selectedSeatsIds = ref<number[]>([]);
 function proceedToPayment() {
-  orderStore.setChosenSeats(selectedSeatsIds.value);
-  //should send a notification to the database that the seats are being booked.
+  orderStore.setChosenSeats(selectedSeatsIds.value);  
   router.push({ name: 'payment' });
 }
 

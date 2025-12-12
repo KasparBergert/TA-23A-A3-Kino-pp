@@ -2,6 +2,7 @@ import seatRepository from '../repositories/SeatRepository'
 import SeatDTO from '../../../shared/types/SeatDTO'
 import seatLocationsRepository from '../repositories/SeatLocationsRepository'
 
+
 class SeatService {
   async getAllByHallId(hall_id: number): Promise<SeatDTO[]> {
     const seats = await seatRepository.getByHallId(hall_id)
@@ -28,6 +29,9 @@ class SeatService {
       return seats
     })
   }
+
+
+
 }
 
 const seatService = new SeatService()
