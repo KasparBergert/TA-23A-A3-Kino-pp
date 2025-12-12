@@ -3,31 +3,29 @@ import SeatDTO from '../../../shared/types/SeatDTO'
 import ShowtimeDTO from '../../../shared/types/ShowtimeDTO'
 
 class OrderStore {
-  private chosenShowtime: ShowtimeDTO | null = null
-  private chosenSeats: SeatDTO[] = []
+  private showtime: ShowtimeDTO | null = null
+  private seat_ids: number[] = []
 
   setShowtime(showtime: ShowtimeDTO) {
-    this.chosenShowtime = { ...showtime }
+    this.showtime = { ...showtime }
   }
 
   getShowtime(): ShowtimeDTO | null {
-    return this.chosenShowtime
+    return this.showtime
   }
 
   getFilm(): FilmDTO | null {
-    return this.chosenShowtime?.film
-    ? this.chosenShowtime?.film
+    return this.showtime?.film
+    ? this.showtime?.film
     : null;
   }
 
-  setChosenSeats(seats: SeatDTO[]) {
-    this.chosenSeats = seats.map((seat) => {
-      return { ...seat }
-    })
+  setChosenSeats(seat_ids_p: number[]) {
+    this.seat_ids = seat_ids_p;
   }
 
   getChosenSeats() {
-    return this.chosenSeats
+    return this.seat_ids
   }
 }
 

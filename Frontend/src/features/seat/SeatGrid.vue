@@ -4,23 +4,27 @@ import Seat from "./SeatGrid/Seat.vue";
 import { seatService } from "../../entities/SeatService";
 import SeatDTO from "../../../../shared/types/SeatDTO";
 import { toast } from "@steveyuowo/vue-hot-toast";
-import { seats_type } from "@prisma/client";
 
 const props = defineProps<{
   hall_id: number;
 }>();
 
 const emit = defineEmits<{
-  (e: "update:selected-seats", seats: SeatDTO[]): void;
+  (e: "update:selected-seats-ids", seats_ids: number[]): void;
 }>();
 
-const seatGrid = ref<Record<string, Set<SeatDTO>>>({});
-const selectedSeats = ref<Set<SeatDTO>>(new Set());
+const seatGrid = ref<Record<string, Set<SeatDTO>>>({}); //used for rendering only
+const selectedSeatsIds = ref<Set<number>>(new Set());
 
+
+//builds the seat grid for rendering only
 function buildSeatGrid(seats: SeatDTO[]): Record<string, Set<SeatDTO>> {
+  const existing_seats = new Set();
   const seatGrid: Record<string, Set<SeatDTO>> = {};
   seats.forEach((seat) => {
-    (seatGrid[seat.row_label] ??= new Set()).add(seat);
+    const seat_set = seatGrid[seat.row_label] ??= new Set();
+    if(!existing_seats.has(seat.id)){seat_set.add(seat);}
+    existing_seats.add(seat.id);
   });
   return seatGrid;
 }
@@ -38,43 +42,24 @@ onMounted(async () => {
   }
 });
 
-function handleSeatClick(clicked_seat: SeatDTO) {
-  //if type is double, then finds a seat with the same id as the param seat
-  if (selectedSeats.value.has(clicked_seat)) {
-    selectedSeats.value.delete(clicked_seat);
-  } else {
-    selectedSeats.value.add(clicked_seat);
-    // when double seat, select the second seat too
-    if (clicked_seat.type == seats_type.Double) {
-      console.log(seatGrid[clicked_seat.row_label]);
-      const seat_row: SeatDTO[] = seatGrid[clicked_seat.row_label];
-      seat_row.forEach((seat: SeatDTO) => {
-        if (seat.id === clicked_seat.id) {
-          selectedSeats.value.add(seat);
-        }
-      });
-    }
-  }
-
-  emit("update:selected-seats", Array.from(selectedSeats.value));
-  console.log(selectedSeats.value);
+function handleSeatClick(seat_id: number) {
+  selectedSeatsIds.value.has(seat_id)
+    ? selectedSeatsIds.value.delete(seat_id)
+    : selectedSeatsIds.value.add(seat_id);
+  emit("update:selected-seats-ids", Array.from(selectedSeatsIds.value));
+  console.log(seat_id)
 }
+
 </script>
 <template>
-  <div
-    class="w-full h-full flex flex-col items-center">
-    <div
-      v-for="(seats, row) in seatGrid"
-
-      :key="row"
-      class="relative flex justify-center w-full **min-w-fit**"
-    >
+  <div class="w-full h-full flex flex-col items-center">
+    <div v-for="(seats, row) in seatGrid" :key="row" class="relative flex justify-center w-full **min-w-fit**">
       <p class="select-none font-bold text-md absolute left-0">
         {{ row }}
       </p>
 
       <div class="flex justify-center gap-1 scale-[60%] md:scale-[100%]">
-        <Seat v-for="seat in seats" :key="seat.id" :seat="seat" @seat-clicked="handleSeatClick(seat)" />
+        <Seat v-for="seat in seats" :key="seat.id" :seat="seat" @seat-clicked="handleSeatClick(seat.id)" />
       </div>
     </div>
   </div>

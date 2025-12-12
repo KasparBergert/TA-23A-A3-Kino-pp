@@ -5,8 +5,8 @@ import Summary from './TheSummaryCard/Summary.vue';
 import FilmDetails from './TheSummaryCard/FilmDetails.vue';
 
 defineProps<{
-  film: FilmDTO | null,
-  seats: SeatDTO[]
+  film: FilmDTO,
+  seats: number[]
 }>();
 
 

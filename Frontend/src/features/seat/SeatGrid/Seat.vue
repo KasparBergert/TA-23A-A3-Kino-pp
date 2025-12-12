@@ -57,6 +57,6 @@ function size() {
 }
 </script>
 <template>
-  <div @click="handleClick()" :class="[size(), 'bg-no-repeat', 'bg-contain', 'bg-center', 'border-2', 'my-[0.2px]']"
+  <div @click="handleClick()" :class="`${size()} bg-no-repeat bg-contain bg-center border-2 my-[0.2px] select-none cursor-pointer`"
     :style="{ backgroundColor: `${color()}` }"></div>
 </template>

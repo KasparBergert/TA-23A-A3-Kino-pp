@@ -1,10 +1,9 @@
 <script setup lang="ts">
-import type SeatDTO from '../../../../../shared/types/SeatDTO';
 
 const seat_price_tmp = 12.5
 
 defineProps<{
-  seats: SeatDTO[]
+  seats: number[]
 }>();
 
 </script>
