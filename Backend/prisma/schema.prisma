@@ -1,5 +1,5 @@
 generator client {
-  provider               = "prisma-client-js"  //prisma-dbml-generator to get new dbml
+  provider               = "prisma-client-js"
   generatedFileExtension = "ts"
   moduleFormat           = "esm"
   runtime                = "bun"
@@ -26,7 +26,7 @@ model films {
   description  String?       @db.Text
   release_date DateTime?     @db.Date
   duration_min Int?          @db.UnsignedSmallInt
-  poster_url   String?       @db.VarChar(500)
+  poster_url   String        @db.VarChar(500)
   actors       actors[]
   film_genres  film_genres[]
   showtimes    showtimes[]
@@ -70,9 +70,9 @@ model halls {
 model seats {
   id           Int            @id @default(autoincrement())
   hall_id      Int            @db.UnsignedSmallInt
-  status       seats_status   @default(available)
   price        Int            @default(10)
   type         seats_type
+  status       seats_status   @default(available)
   seatlocation seatlocation[]
   halls        halls          @relation(fields: [hall_id], references: [id], map: "FK_seats_halls")
   tickets      tickets[]
