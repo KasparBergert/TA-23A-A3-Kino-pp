@@ -6,9 +6,10 @@ class SeatService {
   async getAllByHallId(hall_id: number): Promise<SeatDTO[]> {
     const seats = await seatRepository.getByHallId(hall_id)
     const seat_ids = seats.map((seat) => seat.id)
-    const seatLocations = await seatLocationsRepository.getManylocations(seat_ids)
+    const seatLocations = await seatLocationsRepository.getMany(seat_ids)
 
     //link seat locations with seats
+    //not removing duplicate seats, because coulumn and row values are needed in the frontend (even for double seats)
     return seats.flatMap((seat) => {
       const seats: SeatDTO[] = []
       for (let i = 0; i < seatLocations.length; i++) {
@@ -22,7 +23,6 @@ class SeatService {
             row_label: location.row_label,
             column: location.column,
           })
-          continue // already found the seat location, so move on to the next one
         }
       }
       return seats

@@ -2,7 +2,7 @@ import { seatlocation } from '@prisma/client'
 import prisma from '../../db'
 
 class SeatLocationsRepository {
-  async getManylocations(seat_ids: number[]) {
+  async getMany(seat_ids: number[]) {
     return await prisma.seatlocation.findMany({
       where: { seat_id: { in: seat_ids } },
     })
