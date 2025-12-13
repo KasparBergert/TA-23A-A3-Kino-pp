@@ -1,4 +1,3 @@
-import { prevent_admin_buy_tickets } from './triggers/prevent_admin_buy_tickets'
 import { assignRandomGenresToFilms } from './utils/assignRandomGenresToFilms'
 import showtimeRepositroy from '../../src/repositories/ShowtimeRepository'
 import theatreRepository from '../../src/repositories/TheatreRepository'
@@ -40,8 +39,6 @@ async function runSeed() {
   const ordersSeed = await createOrdersSeed()
   await orderRepository.createMany(ordersSeed)
 
-  // -- TRIGGERS --
-  await prevent_admin_buy_tickets()
 }
 
 ;(async () => {
