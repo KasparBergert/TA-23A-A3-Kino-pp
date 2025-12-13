@@ -19,7 +19,7 @@ Table films {
   description String
   release_date DateTime
   duration_min Int
-  poster_url String
+  poster_url String [not null]
   actors actors [not null]
   film_genres film_genres [not null]
   showtimes showtimes [not null]
@@ -51,31 +51,21 @@ Table halls {
   name String [unique, not null]
   capacity Int [not null]
   theatres theatres [not null]
-  showtimes showtimes [not null]
   seats seats [not null]
+  showtimes showtimes [not null]
 }
 
 Table seats {
   id Int [pk, increment]
   hall_id Int [not null]
-  is_available Int [not null]
   price Int [not null, default: 10]
   type seats_type [not null]
-  seatLocation seatLocation [not null]
-  tickets tickets [not null]
+  status seats_status [not null, default: 'available']
+  seatlocation seatlocation [not null]
   halls halls [not null]
+  tickets tickets [not null]
 
   Note: 'Representation of a seat in the hall'
-}
-
-Table seatLocation {
-  id Int [pk, increment]
-  seat_id Int [not null]
-  column Int [not null]
-  row_label String [not null, default: '']
-  seats seats [not null]
-
-  Note: 'This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments'
 }
 
 Table showtimes {
@@ -137,6 +127,14 @@ Table actors {
   films films [not null]
 }
 
+Table seatlocation {
+  id Int [pk, increment]
+  seat_id Int [not null]
+  column Int [not null]
+  row_label String [not null, default: '']
+  seats seats [not null]
+}
+
 Enum orders_status {
   pending
   paid
@@ -160,6 +158,11 @@ Enum users_role {
   admin
 }
 
+Enum seats_status {
+  available
+  taken
+}
+
 Ref: film_genres.film_id > films.id [delete: Cascade]
 
 Ref: film_genres.genre_id > genres.id
@@ -169,8 +172,6 @@ Ref: orders.user_id > users.id [delete: Cascade]
 Ref: halls.theatre_id > theatres.id [delete: Cascade]
 
 Ref: seats.hall_id > halls.id
-
-Ref: seatLocation.seat_id > seats.id
 
 Ref: showtimes.film_id > films.id
 
@@ -183,3 +184,5 @@ Ref: tickets.showtime_id > showtimes.id
 Ref: tickets.seat_id > seats.id
 
 Ref: actors.film_id > films.id [delete: Cascade]
+
+Ref: seatlocation.seat_id > seats.id
