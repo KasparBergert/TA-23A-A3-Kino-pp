@@ -7,7 +7,7 @@ export default async function login(req: Request, res: Response) {
   const { email, password } = req.body //already gets validated in validateBody.ts middleware
 
   //if database cannot find a user with the email then send error
-  const found = await userRepository.getUserByEmail(email)
+  const found = await userRepository.getByEmail(email)
   if (!found) {
     console.info("account doesn't exist")
     return res.status(401).send('Login failed') //account doesn't exist

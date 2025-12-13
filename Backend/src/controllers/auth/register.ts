@@ -5,7 +5,7 @@ import { users_role } from '@prisma/client'
 
 export default async function register(req: Request, res: Response) {
   const { email, password } = req.body //validated in middleware
-  const found = await userManager.getUserByEmail(email)
+  const found = await userManager.getByEmail(email)
   if (found) {
     console.info('account already exists')
     return res.status(401).send('failed to create account')
