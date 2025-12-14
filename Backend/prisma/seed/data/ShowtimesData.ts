@@ -1,9 +1,9 @@
-import { showtimes } from '@prisma/client'
+import { showtime } from '@prisma/client'
 import { getRandom } from '../utils/fetch.ts'
 import filmRepository from '../../../src/repositories/FilmRepository.ts'
 import hallRepository from '../../../src/repositories/HallRepository.ts'
 
-export async function createShowtimeSeed(): Promise<Omit<showtimes, 'id'>[]> {
+export async function createShowtimeSeed(): Promise<Omit<showtime, 'id'>[]> {
   const films = await filmRepository.getAll()
   const halls = await hallRepository.getAll()
 
@@ -15,18 +15,18 @@ export async function createShowtimeSeed(): Promise<Omit<showtimes, 'id'>[]> {
 
   return [
     {
-      film_id: getRandom(films).id,
-      hall_id: getRandom(halls).id,
-      starts_at: future_end_at,
-      ends_at: future_end_at,
-      is_canceled: false,
+      filmId: getRandom(films).id,
+      hallId: getRandom(halls).id,
+      startsAt: future_end_at,
+      endsAt: future_end_at,
+      isCanceled: false,
     },
     {
-      film_id: getRandom(films).id,
-      hall_id: getRandom(halls).id,
-      starts_at: future_start_at,
-      ends_at: future_end_at,
-      is_canceled: false,
+      filmId: getRandom(films).id,
+      hallId: getRandom(halls).id,
+      startsAt: future_start_at,
+      endsAt: future_end_at,
+      isCanceled: false,
     },
   ]
 }

@@ -4,13 +4,13 @@ import { toast } from '@steveyuowo/vue-hot-toast'
 import { useRouter } from 'vue-router'
 import TheDropdown from './TheTheatreSelector/TheDropdown.vue'
 import { theatreService } from '../../entities/TheatreService'
-import { theatres } from '@prisma/client'
+import { theatre } from '@prisma/client'
 
-const fetchedTheatres = ref<theatres[]>([])
-const selectedTheatre = ref<theatres | null>(null)
+const fetchedTheatres = ref<theatre[]>([])
+const selectedTheatre = ref<theatre | null>(null)
 const router = useRouter()
 
-function setTheatres(list: theatres[]) {
+function setTheatres(list: theatre[]) {
   if (list.length === 0) { throw new Error("Error occured fetching theatres") }
   fetchedTheatres.value = list
 }
@@ -21,13 +21,13 @@ function onShowtimesClicked() {
     return;
   }
 
-  router.push(`/showtimes?theatre_id=${selectedTheatre.value?.id}`)
+  router.push(`/showtimes?theatreId=${selectedTheatre.value?.id}`)
 }
 
 onMounted(async () => {
   try {
-    const theatres = await theatreService.getAll()
-    setTheatres(theatres)
+    const theatre = await theatreService.getAll()
+    setTheatres(theatre)
   } catch (err) {
     toast.error(err)
   }

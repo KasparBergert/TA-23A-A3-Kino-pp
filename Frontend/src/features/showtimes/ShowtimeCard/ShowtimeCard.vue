@@ -9,9 +9,9 @@ const props = defineProps<{
 
 const router = useRouter()
 
-function handleBook() {
+function handleBooking() {
   orderStore.setShowtime(props.showtime)
-  router.push({ name: 'seat-select', query: { hall_id: props.showtime.hall.id } })
+  router.push({ name: 'seat-select', query: { hallId: props.showtime.hall.id } })
 }
 </script>
 <template>
@@ -21,7 +21,7 @@ function handleBook() {
     <RouterLink :to="`/films/${showtime.film.id}`" class="flex flex-1">
       <div class="w-32 flex-shrink-0 overflow-hidden relative rounded-l-xl">
         <img
-          :src="showtime.film.poster_url ?? ''"
+          :src="showtime.film.posterUrl ?? ''"
           class="w-full h-full object-cover"
           :alt="`Plakat filmile: ${showtime.film.title}`"
         />
@@ -37,7 +37,7 @@ function handleBook() {
         <div class="space-y-1">
           <p class="text-base text-slate-300">
             <span class="font-semibold text-blue-400">Aeg:</span>
-            {{ new Date(showtime.starts_at).toLocaleString('et-EE', { dateStyle: 'short', timeStyle: 'short' }) }}
+            {{ new Date(showtime.startsAt).toLocaleString('et-EE', { dateStyle: 'long', timeStyle: 'short' }) }}
           </p>
 
           <p class="text-sm text-slate-400">
@@ -51,7 +51,7 @@ function handleBook() {
       <button
         type="button"
         class="px-4 py-2 rounded-lg bg-blue-600 text-white font-semibold shadow-md hover:bg-blue-500 transition-colors"
-        @click.stop="handleBook"
+        @click.stop="handleBooking"
       >
         Broneeri
       </button>

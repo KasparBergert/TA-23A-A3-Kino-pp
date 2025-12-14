@@ -1,14 +1,14 @@
-import { genres } from '@prisma/client'
+import { genre } from '@prisma/client'
 import prisma from '../../db'
 
 class GenreRepository {
   async getAll() {
-    return await prisma.genres.findMany({})
+    return await prisma.genre.findMany({})
   }
 
-  async createMany(genres: Omit<genres, 'id'>[]) {
-    await prisma.genres.createMany({
-      data: genres,
+  async createMany(genre: Omit<genre, 'id'>[]) {
+    await prisma.genre.createMany({
+      data: genre,
       skipDuplicates: true,
     })
   }

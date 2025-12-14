@@ -1,29 +1,29 @@
 import prisma from '../../db'
-import type { halls } from '@prisma/client'
+import type { hall } from '@prisma/client'
 
 class HallRepositroy {
   /**
    * @returns all halls
    */
-  async getAll(): Promise<halls[]> {
-    return await prisma.halls.findMany()
+  async getAll(): Promise<hall[]> {
+    return await prisma.hall.findMany()
   }
 
-  async getById(hall_id: number): Promise<halls | null> {
-    return await prisma.halls.findUnique({
-      where: { id: hall_id },
+  async getById(hallId: number): Promise<hall | null> {
+    return await prisma.hall.findUnique({
+      where: { id: hallId },
     })
   }
 
-  async getByIds(hall_ids: number[]): Promise<halls[] | null> {
-    return await prisma.halls.findMany({
-      where: { id: { in: hall_ids } },
+  async getByIds(hallIds: number[]): Promise<hall[]> {
+    return await prisma.hall.findMany({
+      where: { id: { in: hallIds } },
     })
   }
 
-  async createMany(halls: Omit<halls, 'id'>[]){
-    await prisma.halls.createMany({
-      data:halls,
+  async createMany(hall: Omit<hall, 'id'>[]){
+    await prisma.hall.createMany({
+      data:hall,
       skipDuplicates: true
     })
   }

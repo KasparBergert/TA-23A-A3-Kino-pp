@@ -1,11 +1,11 @@
-import { halls } from '@prisma/client'
+import { hall } from '@prisma/client'
 import theatreRepository from '../../../src/repositories/TheatreRepository'
 import { getRandom } from '../utils/fetch'
 
-export async function createHallsSeed(): Promise<Omit<halls, 'id'>[]> {
+export async function createHallSeed(): Promise<Omit<hall, 'id'>[]> {
   const theatres = await theatreRepository.getAll()
   return [
-    { name: 'Hall A', theatre_id: getRandom(theatres).id, capacity: 150 },
-    { name: 'Hall B', theatre_id: getRandom(theatres).id, capacity: 80 },
+    { name: 'Hall A', theatreId: getRandom(theatres).id, capacity: 150 },
+    { name: 'Hall B', theatreId: getRandom(theatres).id, capacity: 80 },
   ]
 }

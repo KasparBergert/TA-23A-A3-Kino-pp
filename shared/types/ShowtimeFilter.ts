@@ -1,5 +1,5 @@
 interface ShowtimeFilters {
-  film_id?: number;
-  theatre_id?: number;
+  filmId?: number;
+  theatreId?: number;
 }
 export default ShowtimeFilters;

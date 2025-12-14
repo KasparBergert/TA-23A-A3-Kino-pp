@@ -1,15 +1,15 @@
 <script setup lang="ts">
 import { onMounted, ref } from "vue";
 import { filmsService } from "../entities/FilmService";
-import type { films } from "@prisma/client";
+import type { film } from "@prisma/client";
 import HeroFilms from "../features/film/HeroFilms.vue";
 import FilmsGrid from "../features/film/FilmsGrid.vue";
 import TheTheatreSelector from "../features/theatre/TheTheatreSelector.vue";
 import TheNavbar from "../widgets/TheNavbar.vue";
 import BackgroundGlow from "../widgets/BackgroundGlow.vue";
 
-const films = ref<films[]>([]);
-const top3films = ref<films[]>([]);
+const films = ref<film[]>([]);
+const top3films = ref<film[]>([]);
 
 onMounted(async () => {
   try {

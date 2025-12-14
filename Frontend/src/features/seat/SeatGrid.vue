@@ -6,7 +6,7 @@ import SeatDTO from "../../../../shared/types/SeatDTO";
 import { toast } from "@steveyuowo/vue-hot-toast";
 
 const props = defineProps<{
-  hall_id: number;
+  hallId: number;
 }>();
 
 const emit = defineEmits<{
@@ -31,10 +31,10 @@ function buildSeatGrid(seats: SeatDTO[]): Record<string, Set<SeatDTO>> {
 
 onMounted(async () => {
   try {
-    const hall_id = Number(props.hall_id);
-    if (Number.isNaN(hall_id)) throw new Error("Hall_id is not a number");
+    const hallId = Number(props.hallId);
+    if (Number.isNaN(hallId)) throw new Error("Hall_id is not a number");
 
-    const seats_fetched = await seatService.get(hall_id);
+    const seats_fetched = await seatService.get(hallId);
     seatGrid.value = buildSeatGrid(seats_fetched);
   } catch (err) {
     toast.error(err);
@@ -53,14 +53,26 @@ function handleSeatClick(seat_id: number) {
 </script>
 <template>
   <div class="w-full h-full flex flex-col items-center">
-    <div v-for="(seats, row) in seatGrid" :key="row" class="relative flex justify-center w-full **min-w-fit**">
-      <p class="select-none font-bold text-md absolute left-0">
+    <div
+      v-for="(seats, row) in seatGrid"
+      :key="row"
+      class="flex items-center"
+    >
+      <!-- row label: does NOT affect centering -->
+      <p class="w-6 text-right mr-2 select-none font-bold text-md">
         {{ row }}
       </p>
 
-      <div class="flex justify-center gap-1 scale-[60%] md:scale-[100%]">
-        <Seat v-for="seat in seats" :key="seat.id" :seat="seat" @seat-clicked="handleSeatClick(seat.id)" />
+      <!-- seats: centered by content width -->
+      <div class="flex gap-1 scale-[60%] md:scale-100">
+        <Seat
+          v-for="seat in seats"
+          :key="seat.id"
+          :seat="seat"
+          @seat-clicked="handleSeatClick(seat.id)"
+        />
       </div>
     </div>
   </div>
 </template>
+

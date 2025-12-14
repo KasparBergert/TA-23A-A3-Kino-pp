@@ -3,25 +3,25 @@ import { onMounted, ref } from 'vue';
 import { useRoute } from 'vue-router';
 import { showtimeService } from '../entities/ShowtimeService';
 import { theatreService } from '../entities/TheatreService';
-import type { theatres } from '@prisma/client';
+import type { theatre } from '@prisma/client';
 import type ShowtimeDTO from '../../../shared/types/ShowtimeDTO';
 import ShowtimesGrid from '../features/showtimes/ShowtimesGrid.vue';
-import TheatresDTO from '../../../shared/types/TheatresDTO';
+import TheatresDTO from '../../../shared/types/TheatreDTO';
 
 const route = useRoute();
-const theatreId = route.query.theatre_id as string;
+const theatreId = route.query.theatreId as string;
 
-const theatre = ref<theatres>({
+const theatre = ref<theatre>({
   name: '...',
   id: 0
 });
 const showtimesList = ref<ShowtimeDTO[]>([]);
 
 onMounted(async () => {
-  const theatre_id = Number(theatreId);
+  const id = Number(theatreId);
 
-  const theatreRes: TheatresDTO = await theatreService.getDetails(theatre_id);
-  const showtimesRes: ShowtimeDTO[] = await showtimeService.get({ theatre_id })
+  const theatreRes: TheatresDTO = await theatreService.getDetails(id);
+  const showtimesRes: ShowtimeDTO[] = await showtimeService.get({ theatreId: id })
 
   theatre.value = theatreRes;
   showtimesList.value = showtimesRes;
@@ -47,7 +47,7 @@ onMounted(async () => {
 
       <section class="flex flex-col items-center justify-center text-center mt-4 mb-8">
         <h1 class="text-5xl md:text-7xl font-extrabold tracking-tight text-white drop-shadow-2xl">
-          {{ theatre.name ?? '...' }}
+          {{ theatre.name }}
         </h1>
         <div class="h-1 w-20 bg-blue-500 rounded-full mt-6 shadow-md shadow-blue-500/50"></div>
       </section>

@@ -1,37 +1,34 @@
 import prisma from '../../db.ts'
-import type { users } from '@prisma/client'
+import type { user } from '@prisma/client'
 
 class UserRepository {
   /**
    * get 1 user based on email
-   * @param {string} email the users email
-   * @returns {Promise<users | null>} returns user if successful, null otherwise
+   * @param {string} email the user email
+   * @returns {Promise<user | null>} returns user if successful, null otherwise
    */
-  async getByEmail(email: string): Promise<users | null> {
-    return await prisma.users.findFirst({
+  async getByEmail(email: string): Promise<user | null> {
+    return await prisma.user.findFirst({
       where: {
         email: email,
       },
     })
   }
 
-  async getAll(): Promise<users[]> {
-    return await prisma.users.findMany()
+  async getAll(): Promise<user[]> {
+    return await prisma.user.findMany()
   }
 
-  /**
-   * @param {Omit<users, 'id' | 'updated_at'>} user the user to be inserted
-   * @returns returns user if successful, null otherwise
-   */
-  async create(user: Omit<users, 'id' | 'updated_at'>): Promise<users | null> {
-    return await prisma.users.create({
+
+  async create(user: Omit<user, 'id' | 'updatedAt'>): Promise<user | null> {
+    return await prisma.user.create({
       data: user,
     })
   }
 
-  async createMany(users: Omit<users, 'id' | 'updated_at'>[]) {
-    await prisma.users.createMany({
-      data: users,
+  async createMany(user: Omit<user, 'id' | 'updatedAt'>[]) {
+    await prisma.user.createMany({
+      data: user,
       skipDuplicates: true,
     })
   }

@@ -1,35 +1,35 @@
 import prisma from '../../db'
-import type { films } from '@prisma/client'
+import type { film } from '@prisma/client'
 
 class FilmRepository {
   /**
    * @returns all films
    */
-  async getAll(): Promise<films[]> {
-    return await prisma.films.findMany()
+  async getAll(): Promise<film[]> {
+    return await prisma.film.findMany()
   }
 
-  async getById(film_id: number): Promise<films | null> {
-    return await prisma.films.findUnique({
-      where: { id: film_id },
+  async getById(filmId: number): Promise<film| null> {
+    return await prisma.film.findUnique({
+      where: { id: filmId },
     })
   }
 
-  async getByIds(film_ids: number[]): Promise<films[] | null> {
-    return await prisma.films.findMany({
-      where: { id: { in: film_ids } },
+  async getByIds(filmIds: number[]): Promise<film[]> {
+    return await prisma.film.findMany({
+      where: { id: { in: filmIds } },
     })
   }
 
-  async getFilmsByTitle(title: string): Promise<films[]> {
-    return await prisma.films.findMany({
+  async getFilmsByTitle(title: string): Promise<film[]> {
+    return await prisma.film.findMany({
       where: { title },
     })
   }
 
-  async createMany(films: Omit<films, 'id'>[]){
-    await prisma.films.createMany({
-      data: films,
+  async createMany(film: Omit<film, 'id'>[]){
+    await prisma.film.createMany({
+      data: film,
       skipDuplicates: true
     })
   }

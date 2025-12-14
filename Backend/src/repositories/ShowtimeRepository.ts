@@ -1,25 +1,25 @@
 import prisma from '../../db'
-import type { showtimes } from '@prisma/client'
+import type { showtime } from '@prisma/client'
 import ShowtimeFilters from '../../../shared/types/ShowtimeFilter'
 
 class ShowtimeRepository {
   /**
    * @returns all theatres
    */
-  async getAll(where: ShowtimeFilters): Promise<showtimes[]> {
-    return await prisma.showtimes.findMany({
+  async getAll(where: ShowtimeFilters): Promise<showtime[]> {
+    return await prisma.showtime.findMany({
       where: {
         ...where,
-        starts_at: {
+        startsAt: {
           gt: new Date(), // computers time
         },
       },
     })
   }
 
-  async createMany(showtimes: Omit<showtimes, 'id'>[]){
-    await prisma.showtimes.createMany({
-      data: showtimes,
+  async createMany(showtime: Omit<showtime, 'id'>[]){
+    await prisma.showtime.createMany({
+      data: showtime,
       skipDuplicates: true
     })
   }

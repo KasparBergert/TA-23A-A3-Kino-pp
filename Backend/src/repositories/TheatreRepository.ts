@@ -1,29 +1,29 @@
 import prisma from '../../db.ts'
-import type { theatres } from '@prisma/client'
+import type { theatre } from '@prisma/client'
 
 class TheatreRepository {
   /**
-   * @returns all theatres
+   * @returns all theatre
    */
-  async getAll(): Promise<theatres[]> {
-    return await prisma.theatres.findMany()
+  async getAll(): Promise<theatre[]> {
+    return await prisma.theatre.findMany()
   }
 
-  async getById(theatre_id: number): Promise<theatres | null> {
-    return await prisma.theatres.findUnique({
-      where: { id: theatre_id },
+  async getById(theatreId: number): Promise<theatre | null> {
+    return await prisma.theatre.findUnique({
+      where: { id: theatreId },
     })
   }
 
-  async getByIds(theatre_ids: number[]): Promise<theatres[] | null> {
-    return await prisma.theatres.findMany({
-      where: { id: {in: theatre_ids} },
+  async getByIds(theatreIds: number[]): Promise<theatre[]> {
+    return await prisma.theatre.findMany({
+      where: { id: {in: theatreIds} },
     })
   }
 
-  async createMany(theatres: Omit<theatres, 'id'>[]){
-    await prisma.theatres.createMany({
-      data: theatres,
+  async createMany(theatre: Omit<theatre, 'id'>[]){
+    await prisma.theatre.createMany({
+      data: theatre,
       skipDuplicates: true
     })
   }

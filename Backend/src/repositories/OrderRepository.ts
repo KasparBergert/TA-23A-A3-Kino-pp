@@ -1,14 +1,14 @@
-import { orders } from '@prisma/client'
+import { order } from '@prisma/client'
 import prisma from '../../db'
 
 class OrderRepository {
   async getAll() {
-    return await prisma.orders.findMany({})
+    return await prisma.order.findMany({})
   }
 
-  async createMany(orders: Omit<orders, 'id' | 'created_at'>[]) {
-    await prisma.orders.createMany({
-      data: orders,
+  async createMany(order: Omit<order, 'id' | 'createdAt'>[]) {
+    await prisma.order.createMany({
+      data: order,
     })
   }
 }

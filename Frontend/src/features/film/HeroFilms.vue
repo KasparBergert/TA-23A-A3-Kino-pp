@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import type { films } from '@prisma/client'
+import type { film } from '@prisma/client'
 import LargeFilmCard from './HeroFilms/LargeFilmCard.vue';
 
 const props = defineProps<{
-  top3films: films[]
+  top3films: film[]
 }>()
 
 </script>

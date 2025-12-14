@@ -1,15 +1,15 @@
-import { users, users_role } from "@prisma/client"
+import { user, userRole } from "@prisma/client"
 
 
-export const usersSeed: Omit<users, 'id' | 'updated_at'>[] = [
+export const usersSeed: Omit<user, 'id' | 'updatedAt'>[] = [
   {
     email: 'alice@example.com',
     password: 'HASH',
-    role: users_role.admin,
+    role: userRole.admin,
   },
   {
     email: 'bob@example.com',
     password: 'HASH',
-    role: users_role.user,
+    role: userRole.user,
   },
 ]

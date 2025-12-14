@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { RouterLink } from 'vue-router'
-import type { films } from '@prisma/client'
+import type { film } from '@prisma/client'
 
 const props = defineProps<{
-  film: films
+  film: film
 }>()
 
 const isExapnded = ref(false)
@@ -22,7 +22,7 @@ function toggleExpand(event: MouseEvent) {
   >
     <div class="relative w-full aspect-[2/3] overflow-hidden">
       <img
-        :src="film.poster_url ?? ''"
+        :src="film.posterUrl ?? ''"
         :alt="film.title"
         class="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
       />

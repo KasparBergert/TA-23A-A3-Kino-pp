@@ -1,7 +1,6 @@
 <script setup lang="ts">
-import { onMounted, ref } from 'vue';
+import { ref } from 'vue';
 import SeatGrid from '../features/seat/SeatGrid.vue';
-import type SeatDTO from '../../../shared/types/SeatDTO';
 import orderStore from '../store/OrderStore';
 import { useValidation } from '../utils/useValidation';
 import type FilmDTO from '../../../shared/types/FilmDTO';
@@ -9,11 +8,10 @@ import useSafeBack from '../utils/useSafeBack';
 import Screen from '../widgets/Screen.vue';
 import TheSummaryCard from '../features/booking/TheSummaryCard.vue';
 import { useRouter } from 'vue-router';
-import client from '../utils/api';
 
 const { safeBack } = useSafeBack();
 const router = useRouter();
-const hall_id: number = useValidation.getNumberQueryParam('hall_id');
+const hallId: number = useValidation.getNumberQueryParam('hallId');
 const film: FilmDTO = getFilmOrRedirect();
 
 function getFilmOrRedirect(): FilmDTO {
@@ -27,7 +25,7 @@ function getFilmOrRedirect(): FilmDTO {
 
 const selectedSeatsIds = ref<number[]>([]);
 function proceedToPayment() {
-  orderStore.setChosenSeats(selectedSeatsIds.value);  
+  orderStore.setChosenSeats(selectedSeatsIds.value);
   router.push({ name: 'payment' });
 }
 
@@ -41,7 +39,7 @@ function proceedToPayment() {
         class="bg-slate-800/60 backdrop-blur-sm rounded-2xl shadow-2xl shadow-black/20 border border-slate-700/50 p-4 md:p-8 flex flex-col items-center justify-start min-h-[500px]">
         <Screen />
         <div class="w-full overflow-x-auto flex justify-center">
-          <SeatGrid :hall_id="hall_id" v-model:selected-seats-ids="selectedSeatsIds" />
+          <SeatGrid :hallId="hallId" v-model:selected-seats-ids="selectedSeatsIds" />
         </div>
       </div>
 

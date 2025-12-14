@@ -1,4 +1,3 @@
-import { theatres, users, films, halls } from '@prisma/client'
 import filmRepository from '../../../src/repositories/FilmRepository'
 
 //gets the first film_id that has the same title.

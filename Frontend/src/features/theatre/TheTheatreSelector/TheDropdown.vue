@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import type { theatres } from '@prisma/client'
+import type { theatre } from '@prisma/client'
 
-defineProps<{ theatres: theatres[], selectedTheatre: theatres | null }>()
+defineProps<{ theatres: theatre[], selectedTheatre: theatre | null }>()
 const emit = defineEmits<{
-  (e: 'update:selectedTheatre', value: theatres): void
+  (e: 'update:selectedTheatre', value: theatre): void
 }>()
 
 

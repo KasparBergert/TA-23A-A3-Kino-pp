@@ -9,175 +9,177 @@ datasource db {
   provider = "mysql"
 }
 
-model film_genres {
-  film_id  Int
-  genre_id Int    @db.UnsignedSmallInt
-  films    films  @relation(fields: [film_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "film_genres_ibfk_1")
-  genres   genres @relation(fields: [genre_id], references: [id], onUpdate: Restrict, map: "film_genres_ibfk_2")
+model film {
+  id           Int       @id @default(autoincrement())
+  title        String
+  description  String?
+  releaseDate  DateTime?
+  durationMin  Int?
+  posterUrl    String
 
-  @@id([film_id, genre_id])
-  @@index([film_id], map: "film_id")
-  @@index([genre_id], map: "genre_id")
+  actors       actor[]
+  filmGenres   filmGenre[]
+  showtimes    showtime[]
+
+  @@unique([title, releaseDate])
 }
 
-model films {
-  id           Int           @id @default(autoincrement())
-  title        String        @db.VarChar(200)
-  description  String?       @db.Text
-  release_date DateTime?     @db.Date
-  duration_min Int?          @db.UnsignedSmallInt
-  poster_url   String        @db.VarChar(500)
-  actors       actors[]
-  film_genres  film_genres[]
-  showtimes    showtimes[]
-
-  @@unique([title, release_date], map: "unique_title_release_date")
-  @@index([release_date], map: "release_date")
-  @@index([title], map: "title")
+model genre {
+  id         Int          @id @default(autoincrement())
+  name       String       @unique
+  filmGenres filmGenre[]
 }
 
-model genres {
-  id          Int           @id @default(autoincrement()) @db.UnsignedSmallInt
-  name        String        @unique(map: "name") @db.VarChar(60)
-  film_genres film_genres[]
+model filmGenre {
+  filmId  Int
+  genreId Int
+
+  film  film  @relation(fields: [filmId], references: [id], onDelete: Cascade)
+  genre genre @relation(fields: [genreId], references: [id])
+
+  @@id([filmId, genreId])
+  @@index([filmId])
+  @@index([genreId])
 }
 
-model orders {
-  id         BigInt        @id @default(autoincrement())
-  user_id    Int
-  status     orders_status @default(pending)
-  created_at DateTime      @default(now()) @db.Timestamp(0)
-  expires_at DateTime?     @db.Timestamp(0)
-  users      users         @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "orders_ibfk_1")
-  tickets    tickets[]
+model user {
+  id        Int       @id @default(autoincrement())
+  email     String    @unique
+  password  String
+  role      userRole  @default(user)
+  updatedAt DateTime?
 
-  @@index([user_id, status, created_at], map: "user_id")
+  orders order[]
 }
 
-model halls {
-  id         Int         @id @default(autoincrement()) @db.UnsignedSmallInt
-  theatre_id Int         @default(0) @db.UnsignedSmallInt
-  name       String      @unique(map: "name") @db.VarChar(50)
-  capacity   Int         @db.UnsignedSmallInt
-  theatres   theatres    @relation(fields: [theatre_id], references: [id], onDelete: Cascade, map: "FK_halls_theatres")
-  seats      seats[]
-  showtimes  showtimes[]
+model order {
+  id        BigInt      @id @default(autoincrement())
+  userId    Int
+  status    orderStatus @default(pending)
+  createdAt DateTime    @default(now())
+  expiresAt DateTime?
 
-  @@index([theatre_id], map: "theatre_id")
+  user    user     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tickets ticket[]
+
+  @@index([userId])
 }
 
-/// Representation of a seat in the hall
-model seats {
-  id           Int            @id @default(autoincrement())
-  hall_id      Int            @db.UnsignedSmallInt
-  price        Int            @default(10)
-  type         seats_type
-  status       seats_status   @default(available)
-  seatlocation seatlocation[]
-  halls        halls          @relation(fields: [hall_id], references: [id], map: "FK_seats_halls")
-  tickets      tickets[]
+model theatre {
+  id    Int    @id @default(autoincrement())
+  name  String @unique
 
-  @@index([hall_id], map: "FK_seats_halls")
+  halls hall[]
 }
 
-model showtimes {
-  id          Int       @id @default(autoincrement())
-  film_id     Int
-  hall_id     Int       @db.UnsignedSmallInt
-  starts_at   DateTime  @db.DateTime(0)
-  ends_at     DateTime? @db.DateTime(0)
-  is_canceled Boolean   @default(false)
-  films       films     @relation(fields: [film_id], references: [id], onUpdate: Restrict, map: "showtimes_ibfk_1")
-  halls       halls     @relation(fields: [hall_id], references: [id], onUpdate: Restrict, map: "showtimes_ibfk_2")
-  tickets     tickets[]
+model hall {
+  id        Int    @id @default(autoincrement())
+  theatreId Int
+  name      String @unique
+  capacity  Int
 
-  @@unique([hall_id, starts_at], map: "hall_id")
-  @@index([film_id, starts_at], map: "film_id")
-  @@index([starts_at], map: "starts_at")
+  theatre   theatre   @relation(fields: [theatreId], references: [id], onDelete: Cascade)
+  seats     seat[]
+  showtimes showtime[]
+
+  @@index([theatreId])
 }
 
-model theatres {
-  id    Int     @id @default(autoincrement()) @db.UnsignedSmallInt
-  name  String  @unique(map: "name") @db.VarChar(128)
-  halls halls[]
+model seat {
+  id     Int        @id @default(autoincrement())
+  hallId Int
+  type   seatType
 
-  @@index([name], map: "name_2")
+  hall    hall     @relation(fields: [hallId], references: [id])
+  tickets ticket[]
+  taken   showtimeTakenSeat[]
+
+  @@index([hallId])
 }
 
-model tickets {
-  id          BigInt         @id @default(autoincrement())
-  order_id    BigInt?
-  showtime_id Int
-  seat_id     Int
-  status      tickets_status @default(reserved)
-  unit_price  Decimal        @db.Decimal(10, 2)
-  reserved_at DateTime       @default(now()) @db.Timestamp(0)
-  paid_at     DateTime?      @db.Timestamp(0)
-  ticket_code String?        @unique(map: "ticket_code") @db.VarChar(64)
-  orders      orders?        @relation(fields: [order_id], references: [id], onUpdate: Restrict, map: "tickets_ibfk_1")
-  showtimes   showtimes      @relation(fields: [showtime_id], references: [id], onUpdate: Restrict, map: "tickets_ibfk_2")
-  seats       seats          @relation(fields: [seat_id], references: [id], onUpdate: Restrict, map: "tickets_ibfk_3")
+model showtime {
+  id         Int      @id @default(autoincrement())
+  filmId     Int
+  hallId     Int
+  startsAt   DateTime
+  endsAt     DateTime
+  isCanceled Boolean  @default(false)
 
-  @@unique([showtime_id, seat_id], map: "showtime_id")
-  @@index([order_id], map: "order_id")
-  @@index([seat_id], map: "seat_id")
-  @@index([showtime_id, status], map: "showtime_id_2")
+  film     film    @relation(fields: [filmId], references: [id])
+  hall     hall    @relation(fields: [hallId], references: [id])
+  tickets  ticket[]
+  taken    showtimeTakenSeat[]
+
+  @@unique([hallId, startsAt])
+  @@index([filmId])
+  @@index([hallId])
 }
 
-model users {
-  id         Int        @id @default(autoincrement())
-  email      String     @unique(map: "email") @db.VarChar(128)
-  updated_at DateTime?  @db.Timestamp(0)
-  role       users_role @default(user)
-  password   String     @db.VarChar(512)
-  orders     orders[]
+model ticket {
+  id         BigInt       @id @default(autoincrement())
+  orderId    BigInt?
+  showtimeId Int
+  seatId     Int
+  status     ticketStatus @default(reserved)
+  unitPrice  Decimal
+  reservedAt DateTime     @default(now())
+  paidAt     DateTime?
+  ticketCode String?      @unique
+
+  order    order?   @relation(fields: [orderId], references: [id])
+  showtime showtime @relation(fields: [showtimeId], references: [id])
+  seat     seat     @relation(fields: [seatId], references: [id])
+
+  @@unique([showtimeId, seatId])
+  @@index([orderId])
+  @@index([showtimeId])
+  @@index([seatId])
 }
 
-model actors {
-  name      String  @unique(map: "name") @db.VarChar(512)
-  film_id   Int     @default(0)
-  id        Int     @id @default(autoincrement()) @db.UnsignedInt
-  link      String? @db.Text
-  image_url String  @db.Text
-  films     films   @relation(fields: [film_id], references: [id], onDelete: Cascade, map: "FK1_actors_films")
+model actor {
+  id       Int     @id @default(autoincrement())
+  name     String  @unique
+  filmId   Int
+  link     String?
+  imageUrl String
 
-  @@index([film_id], map: "FK1_actors_films")
+  film film @relation(fields: [filmId], references: [id], onDelete: Cascade)
+
+  @@index([filmId])
 }
 
-model seatlocation {
-  id        Int    @id @default(autoincrement()) @db.UnsignedInt
-  seat_id   Int
-  column    Int
-  row_label String @default("") @db.VarChar(3)
-  seats     seats  @relation(fields: [seat_id], references: [id], map: "FK_seatLocation_seats")
+model showtimeTakenSeat {
+  id         Int      @id @default(autoincrement())
+  seatId     Int
+  showtimeId Int
 
-  @@index([seat_id], map: "FK_seatLocation_seats")
+  seat     seat     @relation(fields: [seatId], references: [id])
+  showtime showtime @relation(fields: [showtimeId], references: [id])
+
+  @@unique([seatId, showtimeId])
+  @@index([seatId])
+  @@index([showtimeId])
 }
 
-enum orders_status {
+enum orderStatus {
   pending
   paid
   expired
 }
 
-enum tickets_status {
+enum ticketStatus {
   reserved
   paid
   expired
 }
 
-enum seats_type {
+enum seatType {
   Standard
   Premium
   Double
 }
 
-enum users_role {
+enum userRole {
   user
   admin
-}
-
-enum seats_status {
-  available
-  taken
 }

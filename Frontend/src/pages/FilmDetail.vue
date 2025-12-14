@@ -2,7 +2,7 @@
 import { computed, onMounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { filmsService } from '../entities/FilmService'
-import type { films } from '@prisma/client'
+import type { film } from '@prisma/client'
 import type ActorDTO from '../../../shared/types/ActorDTO'
 import TheNavbar from '../widgets/TheNavbar.vue'
 import BackgroundGlow from '../widgets/BackgroundGlow.vue'
@@ -10,13 +10,13 @@ import { actorService } from '../entities/ActorsService'
 
 const route = useRoute()
 const router = useRouter()
-const film = ref<films | null>(null)
+const film = ref<film | null>(null)
 const actors = ref<ActorDTO[]>([])
 
 const releaseLabel = computed(() =>
-  film.value?.release_date ? new Date(film.value.release_date).toLocaleDateString() : 'N/A',
+  film.value?.releaseDate ? new Date(film.value.releaseDate).toLocaleDateString() : 'N/A',
 )
-const durationLabel = computed(() => (film.value?.duration_min ? `${film.value.duration_min} min` : 'N/A'))
+const durationLabel = computed(() => (film.value?.durationMin ? `${film.value.durationMin} min` : 'N/A'))
 
 onMounted(async () => {
   const filmId = Number(route.params.id)
@@ -52,7 +52,7 @@ onMounted(async () => {
             <div
               class="relative w-full max-w-xs sm:max-w-sm aspect-[2/3] overflow-hidden rounded-2xl shadow-xl shadow-blue-900/40 m-6">
               <div class="absolute inset-0 bg-gradient-to-tr from-blue-600/30 to-transparent mix-blend-screen"></div>
-              <img :src="film.poster_url ?? ''" :alt="film.title" class="absolute inset-0 w-full h-full object-cover" />
+              <img :src="film.posterUrl ?? ''" :alt="film.title" class="absolute inset-0 w-full h-full object-cover" />
             </div>
           </div>
 
@@ -102,7 +102,7 @@ onMounted(async () => {
           <article v-for="actor in actors" :key="actor.id"
             class="bg-slate-800/60 border border-slate-700 rounded-2xl overflow-hidden shadow-lg">
             <div class="relative aspect-[2/3] overflow-hidden">
-              <img :src="actor.image_url ?? ''" :alt="actor.name" class="absolute inset-0 w-full h-full object-cover" />
+              <img :src="actor.imageUrl ?? ''" :alt="actor.name" class="absolute inset-0 w-full h-full object-cover" />
             </div>
             <div class="p-3">
               <p class="text-sm font-semibold text-white">{{ actor.name }}</p>

@@ -1,18 +1,18 @@
 import prisma from '../../db'
-import { seats } from '@prisma/client'
+import { seat } from '@prisma/client'
 
 class SeatRepository {
   async getAll() {
-    return await prisma.seats.findMany()
+    return await prisma.seat.findMany()
   }
 
-  async getByHallId(hall_id: number) {
-    return await prisma.seats.findMany({ where: { hall_id } })
+  async getByHallId(hallId: number) {
+    return await prisma.seat.findMany({ where: { hallId } })
   }
 
-  async createMany(seats: Omit<seats, 'id'>[]) {
-    await prisma.seats.createMany({
-      data: seats,
+  async createMany(seat: Omit<seat, 'id'>[]) {
+    await prisma.seat.createMany({
+      data: seat,
       skipDuplicates: true,
     })
   }

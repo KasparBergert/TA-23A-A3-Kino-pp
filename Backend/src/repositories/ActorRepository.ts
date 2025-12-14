@@ -1,22 +1,22 @@
 import prisma from '../../db'
-import { actors } from '@prisma/client'
+import { actor } from '@prisma/client'
 
 class ActorRepository {
-  async getByFilmId(film_id: number): Promise<actors[]> {
-    return prisma.actors.findMany({
-      where: { film_id },
+  async getByFilmId(filmId: number): Promise<actor[]> {
+    return prisma.actor.findMany({
+      where: { filmId },
     })
   }
 
-  async getByName(name: string): Promise<actors | null> {
-    return prisma.actors.findFirst({
+  async getByName(name: string): Promise<actor | null> {
+    return prisma.actor.findFirst({
       where: { name },
     })
   }
 
-  async createMany(actors: Omit<actors, 'id'>[]): Promise<void> {
-    await prisma.actors.createMany({
-      data: actors,
+  async createMany(actor: Omit<actor, 'id'>[]): Promise<void> {
+    await prisma.actor.createMany({
+      data: actor,
       skipDuplicates: true
     })
   }

@@ -4,6 +4,7 @@ import cookieParser from 'cookie-parser'
 import ApiRoutes from './src/routes.ts'
 import chalk from 'chalk'
 import cors from 'cors'
+import { getErrorMessage } from './utils/getErrorMessage.ts'
 
 //colors the error to red
 const origError = console.error
@@ -52,12 +53,7 @@ const errorMiddleware = (
   res: Response,
   next: NextFunction,
 ) => {
-  console.error(err)
-
-  const status = err.status || 500
-  const message = err.message || 'Internal server error'
-
-  res.status(status).json({ error: message })
+  res.status(500).json({ error: getErrorMessage(err) })
 }
 
 app.use(errorMiddleware)

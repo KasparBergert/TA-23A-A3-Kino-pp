@@ -2,187 +2,191 @@
 //// THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 //// ------------------------------------------------------
 
-Table film_genres {
-  film_id Int [not null]
-  genre_id Int [not null]
-  films films [not null]
-  genres genres [not null]
-
-  indexes {
-    (film_id, genre_id) [pk]
-  }
-}
-
-Table films {
+Table film {
   id Int [pk, increment]
   title String [not null]
   description String
-  release_date DateTime
-  duration_min Int
-  poster_url String [not null]
-  actors actors [not null]
-  film_genres film_genres [not null]
-  showtimes showtimes [not null]
+  releaseDate DateTime
+  durationMin Int
+  posterUrl String [not null]
+  actors actor [not null]
+  filmGenres filmGenre [not null]
+  showtimes showtime [not null]
 
   indexes {
-    (title, release_date) [unique]
+    (title, releaseDate) [unique]
   }
 }
 
-Table genres {
+Table genre {
   id Int [pk, increment]
   name String [unique, not null]
-  film_genres film_genres [not null]
+  filmGenres filmGenre [not null]
 }
 
-Table orders {
-  id BigInt [pk, increment]
-  user_id Int [not null]
-  status orders_status [not null, default: 'pending']
-  created_at DateTime [default: `now()`, not null]
-  expires_at DateTime
-  users users [not null]
-  tickets tickets [not null]
-}
-
-Table halls {
-  id Int [pk, increment]
-  theatre_id Int [not null, default: 0]
-  name String [unique, not null]
-  capacity Int [not null]
-  theatres theatres [not null]
-  seats seats [not null]
-  showtimes showtimes [not null]
-}
-
-Table seats {
-  id Int [pk, increment]
-  hall_id Int [not null]
-  price Int [not null, default: 10]
-  type seats_type [not null]
-  status seats_status [not null, default: 'available']
-  seatlocation seatlocation [not null]
-  halls halls [not null]
-  tickets tickets [not null]
-
-  Note: 'Representation of a seat in the hall'
-}
-
-Table showtimes {
-  id Int [pk, increment]
-  film_id Int [not null]
-  hall_id Int [not null]
-  starts_at DateTime [not null]
-  ends_at DateTime
-  is_canceled Boolean [not null, default: false]
-  films films [not null]
-  halls halls [not null]
-  tickets tickets [not null]
+Table filmGenre {
+  filmId Int [not null]
+  genreId Int [not null]
+  film film [not null]
+  genre genre [not null]
 
   indexes {
-    (hall_id, starts_at) [unique]
+    (filmId, genreId) [pk]
   }
 }
 
-Table theatres {
-  id Int [pk, increment]
-  name String [unique, not null]
-  halls halls [not null]
-}
-
-Table tickets {
-  id BigInt [pk, increment]
-  order_id BigInt
-  showtime_id Int [not null]
-  seat_id Int [not null]
-  status tickets_status [not null, default: 'reserved']
-  unit_price Decimal [not null]
-  reserved_at DateTime [default: `now()`, not null]
-  paid_at DateTime
-  ticket_code String [unique]
-  orders orders
-  showtimes showtimes [not null]
-  seats seats [not null]
-
-  indexes {
-    (showtime_id, seat_id) [unique]
-  }
-}
-
-Table users {
+Table user {
   id Int [pk, increment]
   email String [unique, not null]
-  updated_at DateTime
-  role users_role [not null, default: 'user']
   password String [not null]
-  orders orders [not null]
+  role userRole [not null, default: 'user']
+  updatedAt DateTime
+  orders order [not null]
 }
 
-Table actors {
+Table order {
+  id BigInt [pk, increment]
+  userId Int [not null]
+  status orderStatus [not null, default: 'pending']
+  createdAt DateTime [default: `now()`, not null]
+  expiresAt DateTime
+  user user [not null]
+  tickets ticket [not null]
+}
+
+Table theatre {
+  id Int [pk, increment]
   name String [unique, not null]
-  film_id Int [not null, default: 0]
+  halls hall [not null]
+}
+
+Table hall {
   id Int [pk, increment]
+  theatreId Int [not null]
+  name String [unique, not null]
+  capacity Int [not null]
+  theatre theatre [not null]
+  seats seat [not null]
+  showtimes showtime [not null]
+}
+
+Table seat {
+  id Int [pk, increment]
+  hallId Int [not null]
+  type seatType [not null]
+  status seatStatus [not null, default: 'available']
+  hall hall [not null]
+  tickets ticket [not null]
+  taken showtimeTakenSeat [not null]
+}
+
+Table showtime {
+  id Int [pk, increment]
+  filmId Int [not null]
+  hallId Int [not null]
+  startsAt DateTime [not null]
+  endsAt DateTime [not null]
+  isCanceled Boolean [not null, default: false]
+  film film [not null]
+  hall hall [not null]
+  tickets ticket [not null]
+  taken showtimeTakenSeat [not null]
+
+  indexes {
+    (hallId, startsAt) [unique]
+  }
+}
+
+Table ticket {
+  id BigInt [pk, increment]
+  orderId BigInt
+  showtimeId Int [not null]
+  seatId Int [not null]
+  status ticketStatus [not null, default: 'reserved']
+  unitPrice Decimal [not null]
+  reservedAt DateTime [default: `now()`, not null]
+  paidAt DateTime
+  ticketCode String [unique]
+  order order
+  showtime showtime [not null]
+  seat seat [not null]
+
+  indexes {
+    (showtimeId, seatId) [unique]
+  }
+}
+
+Table actor {
+  id Int [pk, increment]
+  name String [unique, not null]
+  filmId Int [not null]
   link String
-  image_url String [not null]
-  films films [not null]
+  imageUrl String [not null]
+  film film [not null]
 }
 
-Table seatlocation {
+Table showtimeTakenSeat {
   id Int [pk, increment]
-  seat_id Int [not null]
-  column Int [not null]
-  row_label String [not null, default: '']
-  seats seats [not null]
+  seatId Int [not null]
+  showtimeId Int [not null]
+  seat seat [not null]
+  showtime showtime [not null]
+
+  indexes {
+    (seatId, showtimeId) [unique]
+  }
 }
 
-Enum orders_status {
+Enum orderStatus {
   pending
   paid
   expired
 }
 
-Enum tickets_status {
+Enum ticketStatus {
   reserved
   paid
   expired
 }
 
-Enum seats_type {
+Enum seatType {
   Standard
   Premium
   Double
 }
 
-Enum users_role {
-  user
-  admin
-}
-
-Enum seats_status {
+Enum seatStatus {
   available
   taken
 }
 
-Ref: film_genres.film_id > films.id [delete: Cascade]
+Enum userRole {
+  user
+  admin
+}
 
-Ref: film_genres.genre_id > genres.id
+Ref: filmGenre.filmId > film.id [delete: Cascade]
 
-Ref: orders.user_id > users.id [delete: Cascade]
+Ref: filmGenre.genreId > genre.id
 
-Ref: halls.theatre_id > theatres.id [delete: Cascade]
+Ref: order.userId > user.id [delete: Cascade]
 
-Ref: seats.hall_id > halls.id
+Ref: hall.theatreId > theatre.id [delete: Cascade]
 
-Ref: showtimes.film_id > films.id
+Ref: seat.hallId > hall.id
 
-Ref: showtimes.hall_id > halls.id
+Ref: showtime.filmId > film.id
 
-Ref: tickets.order_id > orders.id
+Ref: showtime.hallId > hall.id
 
-Ref: tickets.showtime_id > showtimes.id
+Ref: ticket.orderId > order.id
 
-Ref: tickets.seat_id > seats.id
+Ref: ticket.showtimeId > showtime.id
 
-Ref: actors.film_id > films.id [delete: Cascade]
+Ref: ticket.seatId > seat.id
 
-Ref: seatlocation.seat_id > seats.id
+Ref: actor.filmId > film.id [delete: Cascade]
+
+Ref: showtimeTakenSeat.seatId > seat.id
+
+Ref: showtimeTakenSeat.showtimeId > showtime.id

@@ -1,7 +1,7 @@
 import userManager from '../../repositories/UserRepository.ts'
 import { Request, Response } from 'express'
 import userService from '../../services/UserService.ts'
-import { users_role } from '@prisma/client'
+import { userRole } from '@prisma/client'
 
 export default async function register(req: Request, res: Response) {
   const { email, password } = req.body //validated in middleware
@@ -11,7 +11,7 @@ export default async function register(req: Request, res: Response) {
     return res.status(401).send('failed to create account')
   }
 
-  const tokens = await userService.createAccount(email, password, users_role.user)
+  const tokens = await userService.createAccount(email, password, userRole.user)
   if (tokens === null) {
     return res.status(500).send('failed to create account')
   }

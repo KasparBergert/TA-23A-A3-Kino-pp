@@ -1,6 +1,6 @@
-import { genres } from "@prisma/client"
+import { genre } from "@prisma/client"
 
-export const genresSeed: Omit<genres, 'id'>[] = [
+export const genreSeed: Omit<genre, 'id'>[] = [
   { name: 'Action' },
   { name: 'Drama' },
   { name: 'Comedy' },

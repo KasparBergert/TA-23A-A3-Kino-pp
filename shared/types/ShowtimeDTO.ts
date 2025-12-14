@@ -1,22 +1,16 @@
 import FilmDTO from './FilmDTO'
+import HallDTO from './HallDTO'
+import TheatresDTO from './TheatreDTO'
+
 interface ShowtimeDTO {
   id: number
-  ends_at: Date | null
-  is_canceled: boolean
-  starts_at: Date
-
+  endsAt: Date
+  isCanceled: boolean
+  startsAt: Date
   film: FilmDTO
-
-  hall: {
-    id: number
-    name: string
-    capacity: number
-  }
-
-  theatre: {
-    id: number
-    name: string
-  }
+  hall: Omit<HallDTO, 'theatreId'>
+  theatre: TheatresDTO
 }
+
 
 export default ShowtimeDTO

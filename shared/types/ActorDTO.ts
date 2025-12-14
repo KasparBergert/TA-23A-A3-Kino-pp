@@ -1,9 +1,5 @@
-interface ActorDTO {
-  id: number
-  name: string
-  film_id: number
-  link: string | null
-  image_url: string | null
-}
+import { actor } from "@prisma/client"
+
+type ActorDTO = actor
 
 export default ActorDTO

@@ -1,61 +1,39 @@
-import type { films, halls, seats, showtimes, theatres } from '@prisma/client'
+import type { film, hall, showtime, theatre } from '@prisma/client'
 import type ShowtimeFilters from '../../../shared/types/ShowtimeFilter.ts'
 import type ShowtimeDTO from "../../../shared/types/ShowtimeDTO.ts"
 import showtimeFilter from '../filters/ShowtimeFilter.ts'
 import showtimeRepository from '../repositories/ShowtimeRepository.ts'
 import hallRepositroy from '../repositories/HallRepository.ts'
 import filmRepository from '../repositories/FilmRepository.ts'
-import seatRepository from '../repositories/SeatRepository.ts'
 import theatreRepository from '../repositories/TheatreRepository.ts'
 
-type NonEmptyArray<T> = [T, ...T[]]
 
 class ShowtimeService {
-  private async loadEntityArrays<T>(
-    ids: number[],
-    loader: (id: number) => Promise<T[] | null>,
-    notFound: string,
-  ): Promise<T[][]> {
-    return await Promise.all(
-      ids.map(async (id) => {
-        const result = await loader(id)
-        if (result === null) {
-          throw new Error(notFound)
-        }
-        return result
-      }),
-    )
-  }
-
   private async loadEntities<T>(
     ids: number[],
-    loader: (id: number[]) => Promise<T[] | null>,
+    loader: (id: number[]) => Promise<T[]>,
     notFound: string,
   ): Promise<T[]> {
     const result = await loader(ids)
-    if (result === null) {
+    if (result.length === 0) {
       throw new Error(notFound)
     }
     return result
   }
 
-  private async getShowtimeFilms(film_ids: number[]): Promise<films[]> {
-    return await this.loadEntities(film_ids, filmRepository.getByIds, 'FILM_NOT_FOUND')
+  private async getShowtimeFilms(filmIds: number[]): Promise<film[]> {
+    return await this.loadEntities(filmIds, filmRepository.getByIds, 'FILM_NOT_FOUND')
   }
 
-  private async getShowtimeHalls(hall_ids: number[]): Promise<halls[]> {
-    return await this.loadEntities(hall_ids, hallRepositroy.getByIds, 'HALL_NOT_FOUND')
+  private async getShowtimeHalls(hallIds: number[]): Promise<hall[]> {
+    return await this.loadEntities(hallIds, hallRepositroy.getByIds, 'HALL_NOT_FOUND')
   }
 
-
-  private async getShowtimeTheatres(hall_ids: number[]): Promise<theatres[]> {
-    return await this.loadEntities(hall_ids, theatreRepository.getByIds, 'THEATRE_NOT_FOUND')
+  private async getShowtimeTheatres(hallIds: number[]): Promise<theatre[]> {
+    return await this.loadEntities(hallIds, theatreRepository.getByIds, 'THEATRE_NOT_FOUND')
   }
 
-  /**
-   * @returns all theatres
-   */
-  async getAll(filters: ShowtimeFilters): Promise<showtimes[]> {
+  async getAll(filters: ShowtimeFilters): Promise<showtime[]> {
     const builtFilters = await showtimeFilter.build(filters)
     return await showtimeRepository.getAll(builtFilters)
   }
@@ -64,34 +42,34 @@ class ShowtimeService {
     //creates the desired look for the showtime object
     const showtimes = await this.getAll(filters)
 
-    const film_ids = showtimes.map((st) => st.film_id)
-    const hall_ids = showtimes.map((st) => st.hall_id)
+    const filmIds = showtimes.map((st) => st.filmId)
+    const hallIds = showtimes.map((st) => st.hallId)
 
-    const films = await this.getShowtimeFilms(film_ids)
-    const halls = await this.getShowtimeHalls(hall_ids)
+    const films = await this.getShowtimeFilms(filmIds)
+    const halls = await this.getShowtimeHalls(hallIds)
 
-    const theatre_ids = halls.map((h) => h.theatre_id)
+    const theatreIds = halls.map((h) => h.theatreId)
 
-    const theatres = await this.getShowtimeTheatres(theatre_ids)
+    const theatres = await this.getShowtimeTheatres(theatreIds)
 
     //create the output
     return showtimes.map((st) => {
-      const film = films.find((f) => st.film_id === f.id)!
-      const hall = halls.find((h) => st.hall_id === h.id)!
-      const theatre = theatres.find((t) => t.id === hall.theatre_id)!
+      const film = films.find((f) => st.filmId === f.id)!
+      const hall = halls.find((h) => st.hallId === h.id)!
+      const theatre = theatres.find((t) => t.id === hall.theatreId)!
 
       return {
         id: st.id,
-        ends_at: st.ends_at,
-        is_canceled: st.is_canceled,
-        starts_at: st.starts_at,
+        endsAt: st.endsAt,
+        isCanceled: st.isCanceled,
+        startsAt: st.startsAt,
         film: {
           id: film.id,
           title: film.title,
           description: film.description,
-          duration_min: film.duration_min,
-          poster_url: film.poster_url,
-          release_date: film.release_date,
+          durationMin: film.durationMin,
+          posterUrl: film.posterUrl,
+          releaseDate: film.releaseDate,
         },
         hall: {
           id: hall.id,

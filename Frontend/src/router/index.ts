@@ -18,8 +18,8 @@ const router = createRouter({
       name: 'showtimes',
       component: Showtimes,
       beforeEnter: (to, from, next) => {
-        if (!to.query.theatre_id) {
-          console.error('Missing theatre_id in query parameters')
+        if (!to.query.theatreId) {
+          console.error('Missing theatreId in query parameters')
           return next('/')
         }
         return next()
@@ -35,8 +35,8 @@ const router = createRouter({
           return next('/')
         }
 
-        if (!to.query.hall_id) {
-          console.error('Missing theatre_id in query parameters')
+        if (!to.query.hallId) {
+          console.error('Missing hallId in query parameters')
           return next('/')
         }
         return next()

@@ -2,7 +2,7 @@ import userRepository from '../repositories/UserRepository'
 import tokenService from './TokenService'
 import type TokenPair from '../../types/TokenPair'
 import passwordUtils from '../../utils/passwordUtils'
-import { users_role } from '@prisma/client'
+import { userRole, user } from '@prisma/client'
 
 class UserService {
   /**
@@ -11,7 +11,7 @@ class UserService {
    * @param {UserRole} role - role of the user
    * @returns
    */
-  async createAccount(email: string, password: string, role: users_role): Promise<TokenPair | null> {
+  async createAccount(email: string, password: string, role: userRole): Promise<TokenPair | null> {
     const hashed_password = await passwordUtils.createhash(password)
     await userRepository.create({email, password: hashed_password, role})
     return tokenService.createTokens({ email })
