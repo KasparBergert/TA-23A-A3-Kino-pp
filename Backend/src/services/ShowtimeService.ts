@@ -1,12 +1,14 @@
 import type { film, hall, showtime, theatre } from '@prisma/client'
 import type ShowtimeFilters from '../../../shared/types/ShowtimeFilter.ts'
 import type ShowtimeDTO from "../../../shared/types/ShowtimeDTO.ts"
+import type SeatDTO from '../../../shared/types/SeatDTO.ts';
 import showtimeFilter from '../filters/ShowtimeFilter.ts'
 import showtimeRepository from '../repositories/ShowtimeRepository.ts'
 import hallRepositroy from '../repositories/HallRepository.ts'
 import filmRepository from '../repositories/FilmRepository.ts'
 import theatreRepository from '../repositories/TheatreRepository.ts'
-
+import seatRepository from '../repositories/SeatRepository.ts'
+import seatAvailabilityRepository from '../repositories/ShowtimeTakenSeat.ts'
 
 class ShowtimeService {
   private async loadEntities<T>(
@@ -33,12 +35,46 @@ class ShowtimeService {
     return await this.loadEntities(hallIds, theatreRepository.getByIds, 'THEATRE_NOT_FOUND')
   }
 
+  async exists(filter: ShowtimeFilters): Promise<boolean>{
+    const showtimeFilters = await showtimeFilter.build(filter)
+    const showtime = await showtimeRepository.getAll(showtimeFilters)
+    return showtime.length === 0 ? false : true;
+  }
+
+  async getHallSeats(hallId: number, showtimeId: number): Promise<SeatDTO[]> {
+    //much more efficient way of this algorithim would work with sets, but this works too.
+
+    //hallSeats for showtime don't exist when showtime itself with the id's doesn't exist
+    if(!await this.exists({hallId, showtimeId})){
+      throw new Error("Cannot get seat's for a showtime that doesn't exist")
+    }
+
+    const seats = await seatRepository.getByHallId(hallId);
+    const taken_seats = await seatAvailabilityRepository.getTakenSeats(showtimeId);
+
+    return seats.map((seat) => {
+      let isTaken: boolean = false
+      //find taken seat if exists.
+      for(const taken_seat of taken_seats){
+        if(seat.id === taken_seat.seatId){ isTaken = true; break; } //taken seat found.
+      }
+
+      return {
+        id: seat.id,
+        hallId: seat.hallId,
+        type: seat.type,
+        row: seat.row,
+        isTaken
+      }
+    })
+  }
+
   async getAll(filters: ShowtimeFilters): Promise<showtime[]> {
     const builtFilters = await showtimeFilter.build(filters)
     return await showtimeRepository.getAll(builtFilters)
   }
 
-  async getList(filters: ShowtimeFilters): Promise<ShowtimeDTO[]>  {
+  async getShowtimeDTOs(filters: ShowtimeFilters): Promise<ShowtimeDTO[]>  {
     //creates the desired look for the showtime object
     const showtimes = await this.getAll(filters)
 
