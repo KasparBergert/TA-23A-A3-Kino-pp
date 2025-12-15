@@ -4,13 +4,13 @@ import filmService from '../services/FilmService'
 //gets all available theatres
 export default async function getFilms(req: Request, res: Response) {
   try {
-    const film_id = Number(req.query.film_id)
+    const filmId = Number(req.query.filmId)
 
-    if (Number.isNaN(film_id)) {
+    if (Number.isNaN(filmId)) {
       const films = await filmService.getAll()
       return res.status(200).send(films)
     } else {
-      const film = await filmService.getById(film_id)
+      const film = await filmService.getById(filmId)
       return res.status(200).send(film)
     }
   } catch (err) {

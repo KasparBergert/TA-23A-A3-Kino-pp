@@ -6,7 +6,7 @@ import { Request, Response } from 'express'
 export default async function getShowtimes(req: Request, res: Response) {
   try {
     const filters: ShowtimeFilter = req.query
-    const showtimes = await showtimeService.getList(filters)
+    const showtimes = await showtimeService.getShowtimeDTOs(filters)
     return res.status(200).send(showtimes)
   } catch (err) {
     console.error(err)

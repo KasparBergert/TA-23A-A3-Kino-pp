@@ -3,12 +3,12 @@ import actorService from '../services/ActorService'
 
 export default async function getActors(req: Request, res: Response) {
   try {
-    const film_id = Number(req.query.film_id)
-    if (Number.isNaN(film_id)) {
+    const filmId = Number(req.query.filmId)
+    if (Number.isNaN(filmId)) {
       return res.status(400).send('Invalid film id')
     }
 
-    const actors = await actorService.getByFilmId(film_id)
+    const actors = await actorService.getByFilmId(filmId)
 
     return res.status(200).send(actors)
   } catch (err) {

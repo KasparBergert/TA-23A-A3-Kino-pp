@@ -6,7 +6,7 @@ async function getAll(): Promise<actor[]> {
 }
 
 async function getByFilmId(film_id: number): Promise<actor> {
-  return await client.get(`/actors?film_id=${film_id}`)
+  return await client.get(`/actors?filmId=${film_id}`)
 }
 
 export const actorService = {

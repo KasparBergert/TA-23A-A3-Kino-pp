@@ -5,7 +5,7 @@ async function getAll(): Promise<any> {
 }
 
 async function getDetails(theatre_id: number) {
-  return await client.get(`/theatres?theatre_id=${theatre_id}`)
+  return await client.get(`/theatres?theatreId=${theatre_id}`)
 }
 
 export const theatreService = {

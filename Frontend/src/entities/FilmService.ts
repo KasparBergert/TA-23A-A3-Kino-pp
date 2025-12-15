@@ -5,8 +5,8 @@ async function getAll(): Promise<film[]> {
   return await client.get('/films')
 }
 
-async function getById(film_id: number): Promise<film> {
-  return await client.get(`/films?film_id=${film_id}`)
+async function getById(filmId: number): Promise<film> {
+  return await client.get(`/films?filmId=${filmId}`)
 }
 
 export const filmsService = {
