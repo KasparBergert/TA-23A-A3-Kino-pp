@@ -20,7 +20,7 @@ export default function ApiRoutes(): Router {
   // SERVICES
   routes.get('/theatres', getTheatres)
   routes.get('/showtimes', getShowtimes)
-  routes.get('/showtimes/:hall_id/seats', getSeats)
+  routes.get('/showtimes/:showtimeId/:hallId/seats', getSeats)
   routes.get('/films', getFilms)
   routes.get('/actors', getActors)
 

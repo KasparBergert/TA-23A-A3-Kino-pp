@@ -11,7 +11,7 @@ const router = useRouter()
 
 function handleBooking() {
   orderStore.setShowtime(props.showtime)
-  router.push({ name: 'seat-select', query: { hallId: props.showtime.hall.id } })
+  router.push({ name: 'seat-select', query: { hallId: props.showtime.hall.id, showtimeId: props.showtime.id } })
 }
 </script>
 <template>

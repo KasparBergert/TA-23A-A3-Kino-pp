@@ -1,5 +1,5 @@
 import { seat } from "@prisma/client"
 
-type SeatDTO = seat;
+type SeatDTO = seat & { isTaken: boolean };
 
 export default SeatDTO

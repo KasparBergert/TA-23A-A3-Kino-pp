@@ -1,21 +1,23 @@
 <script setup lang="ts">
-import SeatDTO from "../../../../../shared/types/SeatDTO";
-import { seats_status, seats_type } from "@prisma/client";
-
-interface localSeatDTO extends Omit<SeatDTO, "status"> {
-  status: seats_status | "selected";
-}
+import { reactive } from "vue";
+import type localSeatDTO from "./localSeaDTO";
+import type SeatDTO from "../../../../../shared/types/SeatDTO";
 
 const props = defineProps<{
-  seat: localSeatDTO;
+  seat: SeatDTO;
 }>();
+
+const localSeat = reactive<localSeatDTO>({
+  ...props.seat,
+  status: props.seat.isTaken ? "taken" : "available",
+});
 
 const emit = defineEmits<{
   (e: "seat-clicked"): void;
 }>();
 
 function color() {
-  switch (props.seat.status) {
+  switch (localSeat.status) {
     case "available":
       return "#dbc76e";
     case "taken":
@@ -26,37 +28,39 @@ function color() {
 }
 
 //this exists only because of strong type checking. otherwise, its abstraction.
-function setStatus(new_status: seats_status | "selected") {
-  props.seat.status = new_status;
+function setStatus(new_status: 'available' | 'taken' | "selected") {
+  localSeat.status = new_status;
 }
 
 function handleClick() {
-  //changing status chanes color
-  const seat_status = props.seat.status;
-  switch (seat_status) {
+  switch (localSeat.status) {
     case "available":
       setStatus("selected");
+      emit("seat-clicked");
       break;
     case "selected":
       setStatus("available");
+      emit("seat-clicked");
       break;
     case "taken":
       break;
   }
-  emit("seat-clicked");
+
 }
 
 function size() {
-  switch (props.seat.type) {
-    case seats_type.Standard:
-    case seats_type.Premium:
+  switch (localSeat.type) {
+    case 'Standard':
+    case 'Premium':
       return "h-6 w-6";
-    case seats_type.Double:
+    case 'Double':
       return "h-6 w-12";
   }
 }
+
 </script>
 <template>
-  <div @click="handleClick()" :class="`${size()} bg-no-repeat bg-contain bg-center border-2 my-[0.2px] select-none cursor-pointer`"
+  <div @click="handleClick()"
+    :class="`${size()} bg-no-repeat bg-contain bg-center border-2 my-[0.2px] select-none cursor-pointer`"
     :style="{ backgroundColor: `${color()}` }"></div>
 </template>

@@ -1,10 +1,9 @@
 import seatRepository from '../repositories/SeatRepository'
-import SeatDTO from '../../../shared/types/SeatDTO'
-
+import { seat } from '@prisma/client'
 
 class SeatService {
-  async getAllByHallId(hall_id: number): Promise<SeatDTO[]> {
-    return await seatRepository.getByHallId(hall_id)
+  async getAllByHallId(hallId: number): Promise<seat[]> {
+    return await seatRepository.getByHallId(hallId)
   }
 }
 

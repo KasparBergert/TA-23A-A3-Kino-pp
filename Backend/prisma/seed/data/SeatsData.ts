@@ -5,20 +5,30 @@ export default function createSeatMatrix(
   hallIds: number[],
 ): Omit<seat, 'id'>[] {
   return hallIds.flatMap(hallId => {
-    const rowCount = Math.floor(Math.random() * 24) + 1
+    const rowCount = Math.floor(Math.random() * 12) + 1
+    const colCount = Math.floor(Math.random() * 12) + 1
 
-    return Array.from({ length: rowCount }, () => {
-      const type =
-        Math.random() < 0.7 // 70% chance
-          ? seatType.Standard
-          : Math.random() < 0.5 // 50% chance
-            ? seatType.Premium
-            : seatType.Double
+    const rows = Array.from({ length: rowCount }, (_, i) =>
+      String.fromCharCode('A'.charCodeAt(0) + i)
+    )
 
-      return {
-        hallId,
-        type,
-      }
-    })
+    return rows.flatMap(row =>
+      Array.from({ length: colCount }, () => {
+        const type =
+          Math.random() < 0.7
+            ? seatType.Standard
+            : Math.random() < 0.5
+              ? seatType.Premium
+              : seatType.Double
+
+        return {
+          hallId,
+          type,
+          row,
+        }
+      })
+    )
   })
 }
+
+

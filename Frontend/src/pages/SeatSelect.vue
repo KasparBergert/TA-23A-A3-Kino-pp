@@ -12,6 +12,7 @@ import { useRouter } from 'vue-router';
 const { safeBack } = useSafeBack();
 const router = useRouter();
 const hallId: number = useValidation.getNumberQueryParam('hallId');
+const showtimeId: number = useValidation.getNumberQueryParam('showtimeId');
 const film: FilmDTO = getFilmOrRedirect();
 
 function getFilmOrRedirect(): FilmDTO {
@@ -39,7 +40,7 @@ function proceedToPayment() {
         class="bg-slate-800/60 backdrop-blur-sm rounded-2xl shadow-2xl shadow-black/20 border border-slate-700/50 p-4 md:p-8 flex flex-col items-center justify-start min-h-[500px]">
         <Screen />
         <div class="w-full overflow-x-auto flex justify-center">
-          <SeatGrid :hallId="hallId" v-model:selected-seats-ids="selectedSeatsIds" />
+          <SeatGrid :hallId="hallId" :showtimeId="showtimeId" v-model:selected-seats-ids="selectedSeatsIds" />
         </div>
       </div>
 

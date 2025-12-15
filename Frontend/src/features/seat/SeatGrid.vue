@@ -7,6 +7,7 @@ import { toast } from "@steveyuowo/vue-hot-toast";
 
 const props = defineProps<{
   hallId: number;
+  showtimeId: number;
 }>();
 
 const emit = defineEmits<{
@@ -16,13 +17,12 @@ const emit = defineEmits<{
 const seatGrid = ref<Record<string, Set<SeatDTO>>>({}); //used for rendering only
 const selectedSeatsIds = ref<Set<number>>(new Set());
 
-
 //builds the seat grid for rendering only
 function buildSeatGrid(seats: SeatDTO[]): Record<string, Set<SeatDTO>> {
   const existing_seats = new Set();
   const seatGrid: Record<string, Set<SeatDTO>> = {};
   seats.forEach((seat) => {
-    const seat_set = seatGrid[seat.row_label] ??= new Set();
+    const seat_set = seatGrid[seat.row] ??= new Set();
     if(!existing_seats.has(seat.id)){seat_set.add(seat);}
     existing_seats.add(seat.id);
   });
@@ -32,9 +32,11 @@ function buildSeatGrid(seats: SeatDTO[]): Record<string, Set<SeatDTO>> {
 onMounted(async () => {
   try {
     const hallId = Number(props.hallId);
-    if (Number.isNaN(hallId)) throw new Error("Hall_id is not a number");
+    const showtimeId = Number(props.showtimeId);
+    if (Number.isNaN(hallId)) throw new Error("hallId is not a number");
+    if (Number.isNaN(showtimeId)) throw new Error("showtimeId is not a number");
 
-    const seats_fetched = await seatService.get(hallId);
+    const seats_fetched = await seatService.get(showtimeId, hallId);
     seatGrid.value = buildSeatGrid(seats_fetched);
   } catch (err) {
     toast.error(err);
@@ -47,7 +49,6 @@ function handleSeatClick(seat_id: number) {
     ? selectedSeatsIds.value.delete(seat_id)
     : selectedSeatsIds.value.add(seat_id);
   emit("update:selected-seats-ids", Array.from(selectedSeatsIds.value));
-  console.log(seat_id)
 }
 
 </script>
