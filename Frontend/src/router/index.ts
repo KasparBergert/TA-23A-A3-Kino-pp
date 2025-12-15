@@ -30,6 +30,7 @@ const router = createRouter({
       name: 'seat-select',
       component: SeatSelect,
       beforeEnter: (to, from, next) => {
+
         if (!orderStore.getShowtime()) {
           console.error('invalid showtime or film')
           return next('/')
@@ -39,6 +40,12 @@ const router = createRouter({
           console.error('Missing hallId in query parameters')
           return next('/')
         }
+
+        if (!to.query.showtimeId) {
+          console.error('Missing showtimeId in query parameters')
+          return next('/')
+        }
+
         return next()
 
       },

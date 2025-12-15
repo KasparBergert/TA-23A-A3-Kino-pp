@@ -20,13 +20,12 @@ const showtimesList = ref<ShowtimeDTO[]>([]);
 onMounted(async () => {
   const id = Number(theatreId);
 
-  const theatreRes: TheatresDTO = await theatreService.getDetails(id);
+  const theatreRes: TheatresDTO = await theatreService.getDetails(id); //better soulution would be to cache this since i am fetching twice at this point. homeview and this page.
   const showtimesRes: ShowtimeDTO[] = await showtimeService.get({ theatreId: id })
 
   theatre.value = theatreRes;
   showtimesList.value = showtimesRes;
 });
-
 
 </script>
 <template>
