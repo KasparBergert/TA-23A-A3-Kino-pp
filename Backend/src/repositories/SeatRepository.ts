@@ -6,7 +6,7 @@ class SeatRepository {
     return await prisma.seat.findMany()
   }
 
-  async getByHallId(hallId: number) {
+  async getByHallId(hallId: number): Promise<seat[]> {
     return await prisma.seat.findMany({ where: { hallId } })
   }
 
@@ -16,6 +16,7 @@ class SeatRepository {
       skipDuplicates: true,
     })
   }
+
 }
 
 const seatRepository = new SeatRepository()

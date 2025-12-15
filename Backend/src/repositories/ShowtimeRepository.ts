@@ -1,12 +1,8 @@
 import prisma from '../../db'
 import type { showtime } from '@prisma/client'
-import ShowtimeFilters from '../../../shared/types/ShowtimeFilter'
 
 class ShowtimeRepository {
-  /**
-   * @returns all theatres
-   */
-  async getAll(where: ShowtimeFilters): Promise<showtime[]> {
+  async getAll(where: { where: Object }): Promise<showtime[]> {
     return await prisma.showtime.findMany({
       where: {
         ...where,
@@ -17,10 +13,10 @@ class ShowtimeRepository {
     })
   }
 
-  async createMany(showtime: Omit<showtime, 'id'>[]){
+  async createMany(showtime: Omit<showtime, 'id'>[]) {
     await prisma.showtime.createMany({
       data: showtime,
-      skipDuplicates: true
+      skipDuplicates: true,
     })
   }
 
