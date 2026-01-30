@@ -21,11 +21,15 @@ const selectedSeatsIds = ref<Set<number>>(new Set());
 function buildSeatGrid(seats: SeatDTO[]): Record<string, Set<SeatDTO>> {
   const existing_seats = new Set();
   const seatGrid: Record<string, Set<SeatDTO>> = {};
-  seats.forEach((seat) => {
-    const seat_set = seatGrid[seat.row] ??= new Set();
-    if(!existing_seats.has(seat.id)){seat_set.add(seat);}
-    existing_seats.add(seat.id);
-  });
+
+  for(const seat of seats){
+    //make new entry into seatGrid
+    const seat_row = seatGrid[seat.row] ??= new Set()
+
+    seat_row.add(seat);
+  }
+
+
   return seatGrid;
 }
 
