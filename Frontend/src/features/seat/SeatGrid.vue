@@ -19,16 +19,13 @@ const selectedSeatsIds = ref<Set<number>>(new Set());
 
 //builds the seat grid for rendering only
 function buildSeatGrid(seats: SeatDTO[]): Record<string, Set<SeatDTO>> {
-  const existing_seats = new Set();
   const seatGrid: Record<string, Set<SeatDTO>> = {};
 
   for(const seat of seats){
     //make new entry into seatGrid
     const seat_row = seatGrid[seat.row] ??= new Set()
-
     seat_row.add(seat);
   }
-
 
   return seatGrid;
 }
@@ -37,8 +34,6 @@ onMounted(async () => {
   try {
     const hallId = Number(props.hallId);
     const showtimeId = Number(props.showtimeId);
-    if (Number.isNaN(hallId)) throw new Error("hallId is not a number");
-    if (Number.isNaN(showtimeId)) throw new Error("showtimeId is not a number");
 
     const seats_fetched = await seatService.get(showtimeId, hallId);
     seatGrid.value = buildSeatGrid(seats_fetched);
@@ -63,12 +58,10 @@ function handleSeatClick(seat_id: number) {
       :key="row"
       class="flex items-center"
     >
-      <!-- row label: does NOT affect centering -->
       <p class="w-6 text-right mr-2 select-none font-bold text-md">
         {{ row }}
       </p>
 
-      <!-- seats: centered by content width -->
       <div class="flex gap-1 scale-[60%] md:scale-100">
         <Seat
           v-for="seat in seats"

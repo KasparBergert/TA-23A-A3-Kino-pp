@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { reactive } from "vue";
-import type localSeatDTO from "./localSeaDTO";
+import type localSeatDTO from "./localSeatDTO";
 import type SeatDTO from "../../../../../shared/types/SeatDTO";
 
 const props = defineProps<{
