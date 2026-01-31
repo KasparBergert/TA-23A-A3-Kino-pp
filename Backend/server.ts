@@ -1,22 +1,11 @@
 import './env.ts'
+import './utils/setupConsoleColors.ts'
 import express, { ErrorRequestHandler, NextFunction, Request, Response } from 'express'
 import cookieParser from 'cookie-parser'
 import ApiRoutes from './src/routes.ts'
 import chalk from 'chalk'
 import cors from 'cors'
 import { getErrorMessage } from './utils/getErrorMessage.ts'
-
-//colors the error to red
-const origError = console.error
-console.error = (error: unknown) => {
-  origError(chalk.red(String(error)))
-}
-
-//colors the error to blue
-const origInfo = console.info
-console.info = (error: unknown) => {
-  origInfo(chalk.blue(String(error)))
-}
 
 const app = express()
 const PORT = process.env.VITE_PORT
