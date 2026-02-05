@@ -3,7 +3,6 @@ import './utils/setupConsoleColors.ts'
 import express, { ErrorRequestHandler, NextFunction, Request, Response } from 'express'
 import cookieParser from 'cookie-parser'
 import ApiRoutes from './src/routes.ts'
-import chalk from 'chalk'
 import cors from 'cors'
 import { getErrorMessage } from './utils/getErrorMessage.ts'
 
