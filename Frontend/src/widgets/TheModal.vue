@@ -2,13 +2,12 @@
 import { onMounted, onUnmounted } from 'vue'
 import { useModal } from '../utils/modal'
 
-// --- Singleton guard (module-scope flag)
 let modalMounted = false
 
 onMounted(() => {
   if (modalMounted) {
     console.error(
-      '<Modal/> reuse detected. This modal is a singleton — use open() and close() from stores/modal.ts.'
+      '<Modal/> reuse detected.'
     )
   } else {
     modalMounted = true
