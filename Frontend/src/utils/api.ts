@@ -12,7 +12,7 @@ class Api {
     return `${VITE_URI}:${VITE_PORT}/api${path}`
   }
 
-  async get<T>(path: string, options?: Record<string, any>) {
+  async get(path: string, options?: Record<string, any>) {
     try {
       const res = await fetch(this.makeURL(path), {
         method: 'GET',
