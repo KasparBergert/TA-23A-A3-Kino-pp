@@ -8,6 +8,7 @@ import getTheatres from './controllers/getTheatres.ts'
 import getSeats from './controllers/getSeats.ts'
 import getActors from './controllers/getActors.ts'
 import getFilms from './controllers/getFilms.ts'
+import { getSeatPrices } from './controllers/getSeatPrices.ts'
 
 export default function ApiRoutes(): Router {
   const routes = Router()
@@ -16,13 +17,14 @@ export default function ApiRoutes(): Router {
   routes.post('/auth/users/login', validateEmailAndPassword, login)
   routes.post('/auth/users/register', validateEmailAndPassword, register)
   routes.get('/auth/jwt/refresh', refresh)
-
+  
   // SERVICES
   routes.get('/theatres', getTheatres)
   routes.get('/showtimes', getShowtimes)
   routes.get('/showtimes/:showtimeId/:hallId/seats', getSeats)
   routes.get('/films', getFilms)
   routes.get('/actors', getActors)
+  routes.get('/seat-prices', getSeatPrices)
 
   return routes
 }

@@ -1,5 +1,5 @@
 import prisma from '../../db'
-import { seat } from '@prisma/client'
+import { seat, seatPrices } from '@prisma/client'
 
 class SeatRepository {
   async getAll() {
@@ -17,7 +17,7 @@ class SeatRepository {
     })
   }
 
-}
+  }
 
 const seatRepository = new SeatRepository()
 export default seatRepository

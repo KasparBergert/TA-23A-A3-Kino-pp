@@ -162,6 +162,11 @@ model showtimeTakenSeat {
   @@index([showtimeId])
 }
 
+model seatPrices {  
+  type  seatType @id 
+  price Int @default(10)
+}
+
 enum orderStatus {
   pending
   paid

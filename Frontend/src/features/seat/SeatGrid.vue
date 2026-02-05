@@ -1,9 +1,10 @@
 <script setup lang="ts">
-import { onMounted, ref } from "vue";
+import { onMounted, shallowRef, ref } from "vue";
 import Seat from "./SeatGrid/Seat.vue";
 import { seatService } from "../../entities/SeatService";
 import SeatDTO from "../../../../shared/types/SeatDTO";
 import { toast } from "@steveyuowo/vue-hot-toast";
+import seatsCache from "../../store/seatsCache";
 
 const props = defineProps<{
   hallId: number;
@@ -14,17 +15,22 @@ const emit = defineEmits<{
   (e: "update:selected-seats-ids", seats_ids: number[]): void;
 }>();
 
+
 const seatGrid = ref<Record<string, Set<SeatDTO>>>({}); //used for rendering only
-const selectedSeatsIds = ref<Set<number>>(new Set());
+const selectedSeatsIds = shallowRef<Set<number>>(new Set<number>());
 
 //builds the seat grid for rendering only
 function buildSeatGrid(seats: SeatDTO[]): Record<string, Set<SeatDTO>> {
   const seatGrid: Record<string, Set<SeatDTO>> = {};
+  const existing_seats: Set<number> = new Set();
 
   for(const seat of seats){
     //make new entry into seatGrid
     const seat_row = seatGrid[seat.row] ??= new Set()
-    seat_row.add(seat);
+
+    //check for duplicates      |    add seat if isn't duplicate
+    if(!existing_seats.has(seat.id)) seat_row.add(seat);
+    existing_seats.add(seat.id)
   }
 
   return seatGrid;
@@ -36,6 +42,8 @@ onMounted(async () => {
     const showtimeId = Number(props.showtimeId);
 
     const seats_fetched = await seatService.get(showtimeId, hallId);
+    //save in cache so the rest of the page can use it
+    seatsCache.add(seats_fetched);
     seatGrid.value = buildSeatGrid(seats_fetched);
   } catch (err) {
     toast.error(err);
@@ -43,11 +51,13 @@ onMounted(async () => {
   }
 });
 
-function handleSeatClick(seat_id: number) {
-  selectedSeatsIds.value.has(seat_id)
-    ? selectedSeatsIds.value.delete(seat_id)
-    : selectedSeatsIds.value.add(seat_id);
-  emit("update:selected-seats-ids", Array.from(selectedSeatsIds.value));
+function handleSeatClick(seat: SeatDTO) {
+  selectedSeatsIds.value.has(seat.id)
+    ? selectedSeatsIds.value.delete(seat.id)
+    : selectedSeatsIds.value.add(seat.id);
+
+  console.log("SeatGrid", selectedSeatsIds.value)
+  emit("update:selected-seats-ids", [...selectedSeatsIds.value]);
 }
 
 </script>
@@ -67,7 +77,7 @@ function handleSeatClick(seat_id: number) {
           v-for="seat in seats"
           :key="seat.id"
           :seat="seat"
-          @seat-clicked="handleSeatClick(seat.id)"
+          @seat-clicked="handleSeatClick(seat)"
         />
       </div>
     </div>

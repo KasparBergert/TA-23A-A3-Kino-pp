@@ -1,10 +1,28 @@
 <script setup lang="ts">
+import { orderStatus } from '@prisma/client';
+import SeatDTO from '../../../../../shared/types/SeatDTO';
+import { seatService } from '../../../entities/SeatService';
+import { onMounted, ref, shallowRef, watchEffect } from 'vue';
+import orderStore from '../../../store/OrderStore';
 
-const seat_price_tmp = 12.5
 
-defineProps<{
-  seats: number[]
+const price = ref(0)
+const seatPrices = shallowRef();
+
+const props = defineProps<{
+  seats: SeatDTO[]
 }>();
+
+
+onMounted(async () => {
+  seatPrices.value = await seatService.getPrices();
+})
+
+watchEffect(async () => {
+  console.log('Seats:', props.seats)
+  price.value = await orderStore.getPayingPrice();
+})
+
 
 </script>
 <template>
@@ -15,7 +33,7 @@ defineProps<{
     </div>
     <div class="flex justify-between text-lg font-bold text-white">
       <span>Kokku:</span>
-      <span>{{ (seats.length * seat_price_tmp).toFixed(2) }}€</span>
+      <span>{{ price }}€</span>
     </div>
   </div>
 </template>
