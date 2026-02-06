@@ -17,6 +17,17 @@ class SeatRepository {
     })
   }
 
+  async createManySeatPrices(seatPrices: seatPrices[]){
+    await prisma.seatPrices.createMany({
+      data: seatPrices,
+      skipDuplicates: true
+    })
+  }
+
+  async getSeatPrices(): Promise<seatPrices[]>{
+    return await prisma.seatPrices.findMany()
+  }
+
   }
 
 const seatRepository = new SeatRepository()
