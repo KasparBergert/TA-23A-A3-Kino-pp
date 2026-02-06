@@ -1,22 +1,15 @@
 <script setup lang="ts">
-import { orderStatus } from '@prisma/client';
 import SeatDTO from '../../../../../shared/types/SeatDTO';
-import { seatService } from '../../../entities/SeatService';
-import { onMounted, ref, shallowRef, watchEffect } from 'vue';
+import { onMounted, ref, watchEffect } from 'vue';
 import orderStore from '../../../store/OrderStore';
 
-
 const price = ref(0)
-const seatPrices = shallowRef();
 
 const props = defineProps<{
   seats: SeatDTO[]
 }>();
 
 
-onMounted(async () => {
-  seatPrices.value = await seatService.getPrices();
-})
 
 watchEffect(async () => {
   console.log('Seats:', props.seats)

@@ -4,12 +4,11 @@ import ShowtimeDTO from '../../../shared/types/ShowtimeDTO'
 import { seatService } from '../entities/SeatService'
 
 class OrderStore {
-  //this should be receved form an API
+  //this should be recieved form the API
   private seat_prices: { type: string; price: number }[]
 
   private showtime: ShowtimeDTO | null = null
   private seats: SeatDTO[] = []
-  private paying_price: number = 0
 
   async getPayingPrice(): Promise<number> {
     //if seat_prices is not set yet
@@ -17,17 +16,15 @@ class OrderStore {
       this.seat_prices = await seatService.getPrices()
     }
 
-    let sum = 0
-    for (const { type, price } of this.seat_prices) {
-      //add each seat type price sum to total sum
-      sum += this.seats.reduce((acc, seat) => {
-        if (type === seat.type) {
-          return acc + price
-        }
-        return acc
-      }, 0)
-    }
-    return sum
+    const price = this.seats.reduce((acc, seat) => {
+      console.log(this.seat_prices)
+      for (const { type, price } of this.seat_prices) {
+        if (type === seat.type) return acc + price
+      }
+      return acc
+    }, 0)
+
+    return price
   }
 
   setShowtime(showtime: ShowtimeDTO) {

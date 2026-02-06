@@ -3,7 +3,6 @@ import type FilmDTO from '../../../../shared/types/FilmDTO';
 import Summary from './TheSummaryCard/Summary.vue';
 import FilmDetails from './TheSummaryCard/FilmDetails.vue';
 import SeatDTO from '../../../../shared/types/SeatDTO';
-import { watchEffect } from 'vue';
 
 defineProps<{
   film: FilmDTO,
