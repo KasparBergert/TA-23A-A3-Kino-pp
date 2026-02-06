@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import SeatDTO from '../../../../../shared/types/SeatDTO';
-import { onMounted, ref, watchEffect } from 'vue';
+import { ref, watch } from 'vue';
 import orderStore from '../../../store/OrderStore';
 
 const price = ref(0)
@@ -9,13 +9,9 @@ const props = defineProps<{
   seats: SeatDTO[]
 }>();
 
-
-
-watchEffect(async () => {
-  console.log('Seats:', props.seats)
+watch(() => props.seats.length, async () => {
   price.value = await orderStore.getPayingPrice();
 })
-
 
 </script>
 <template>
