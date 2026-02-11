@@ -13,15 +13,21 @@ import {
   deleteUser,
   createUser,
   updateFilm,
+  createGenre,
+  updateGenre,
+  deleteGenre,
+  getFilmGenres,
 } from '../entities/AdminService'
-import type { film } from '@prisma/client'
+import type { film, genre } from '@prisma/client'
 import { theatreService } from '../entities/TheatreService'
 import { analyticsService, type AnalyticsOverview } from '../entities/AnalyticsService'
 import AnalyticsPanel from '../features/admin/AnalyticsPanel.vue'
+import { genreService } from '../entities/GenreService'
 
 const films = ref<film[]>([])
 const users = ref<{ id: number; email: string; role: string }[]>([])
 const theatres = ref<{ id: number; name: string }[]>([])
+const genres = ref<genre[]>([])
 const theatreFilms = ref<film[]>([])
 const manageTheatreId = ref<number | null>(null)
 const manageSelectionFilm = ref<number | null>(null)
@@ -40,6 +46,9 @@ const targetUserId = ref<number | null>(null)
 const targetRole = ref('user')
 const newUser = ref({ email: '', password: '', role: 'user' })
 const analytics = ref<AnalyticsOverview | null>(null)
+const selectedGenreIds = ref<number[]>([])
+const genreForm = ref<{ id: number | null; name: string }>({ id: null, name: '' })
+const theatreCity = ref('')
 
 const role = computed(() => authStore.user.value?.role)
 const isSuper = computed(() => role.value === 'super_admin')
@@ -67,21 +76,47 @@ async function loadTheatres() {
   theatres.value = data ?? []
 }
 
+async function loadGenres() {
+  const data = await genreService.getAll()
+  genres.value = data ?? []
+}
+
 async function loadAnalytics() {
   if (!isAdmin.value) return
   analytics.value = await analyticsService.getOverview()
 }
 
+async function handleSaveGenre() {
+  if (!genreForm.value.name) return
+  if (genreForm.value.id) {
+    await updateGenre(genreForm.value.id, { name: genreForm.value.name })
+  } else {
+    await createGenre({ name: genreForm.value.name })
+  }
+  genreForm.value = { id: null, name: '' }
+  await loadGenres()
+}
+
+function startEditGenre(g: genre) {
+  genreForm.value = { id: g.id, name: g.name }
+}
+
+async function handleDeleteGenre(id: number) {
+  await deleteGenre(id)
+  await loadGenres()
+}
+
 async function handleCreateFilm() {
   if (editingFilmId.value) {
-    await updateFilm(editingFilmId.value, { ...filmForm.value })
+    await updateFilm(editingFilmId.value, { ...filmForm.value, genreIds: selectedGenreIds.value })
   } else {
-    await createFilm(filmForm.value)
+    await createFilm({ ...filmForm.value, genreIds: selectedGenreIds.value })
   }
   await loadFilms()
   await loadAnalytics()
   editingFilmId.value = null
   filmForm.value = { title: '', posterUrl: '', description: '', releaseDate: '', durationMin: null }
+  selectedGenreIds.value = []
 }
 
 async function handleDeleteFilm(id: number) {
@@ -100,11 +135,15 @@ function startEditFilm(f: film) {
     releaseDate: f.releaseDate ? new Date(f.releaseDate).toISOString().split('T')[0] : '',
     durationMin: f.durationMin ?? null,
   }
+  getFilmGenres(f.id).then((res) => {
+    selectedGenreIds.value = res?.genreIds ?? []
+  })
 }
 
 function cancelEdit() {
   editingFilmId.value = null
   filmForm.value = { title: '', posterUrl: '', description: '', releaseDate: '', durationMin: null }
+  selectedGenreIds.value = []
 }
 
 async function handleUpdateRole() {
@@ -121,8 +160,9 @@ async function handleCreateUser() {
 }
 
 async function handleCreateTheatre() {
-  await createTheatre({ name: theatreName.value })
+  await createTheatre({ name: theatreName.value, city: theatreCity.value })
   theatreName.value = ''
+  theatreCity.value = ''
   await loadTheatres()
   await loadAnalytics()
 }
@@ -153,6 +193,7 @@ onMounted(async () => {
   await loadUsers()
   await loadTheatres()
   await loadAnalytics()
+  await loadGenres()
 })
 </script>
 
@@ -175,6 +216,19 @@ onMounted(async () => {
           <input v-model="filmForm.description" class="input" placeholder="Description" />
           <input v-model="filmForm.releaseDate" class="input" placeholder="Release Date" />
           <input v-model.number="filmForm.durationMin" class="input" placeholder="Duration minutes" />
+          <div class="space-y-2">
+            <p class="text-sm text-gray-300 font-semibold">Genres</p>
+            <div class="flex flex-wrap gap-2 max-h-28 overflow-y-auto">
+              <label
+                v-for="g in genres"
+                :key="g.id"
+                class="flex items-center gap-2 bg-slate-900 border border-slate-700 px-2 py-1 rounded text-sm"
+              >
+                <input type="checkbox" :value="g.id" v-model="selectedGenreIds" />
+                <span>{{ g.name }}</span>
+              </label>
+            </div>
+          </div>
           <div class="flex gap-2">
             <button class="btn" @click="handleCreateFilm">{{ editingFilmId ? 'Save changes' : 'Create film' }}</button>
             <button v-if="editingFilmId" class="btn-outline" @click="cancelEdit">Cancel</button>
@@ -222,6 +276,28 @@ onMounted(async () => {
       </div>
     </section>
 
+    <section class="bg-slate-800 rounded-xl p-6 shadow">
+      <h2 class="text-xl font-semibold mb-4">Genres</h2>
+      <div class="grid md:grid-cols-2 gap-4">
+        <div class="space-y-3">
+          <input v-model="genreForm.name" class="input" placeholder="Genre name" />
+          <div class="flex gap-2">
+            <button class="btn" @click="handleSaveGenre">{{ genreForm.id ? 'Save genre' : 'Add genre' }}</button>
+            <button v-if="genreForm.id" class="btn-outline" @click="genreForm = { id: null, name: '' }">Cancel</button>
+          </div>
+        </div>
+        <div class="space-y-2 max-h-48 overflow-y-auto">
+          <div v-for="g in genres" :key="g.id" class="flex justify-between bg-slate-700 rounded px-3 py-2">
+            <span>{{ g.name }}</span>
+            <div class="flex gap-2 text-sm">
+              <button class="text-blue-300" @click="startEditGenre(g)">Edit</button>
+              <button class="text-red-300" @click="handleDeleteGenre(g.id)">Delete</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
     <section v-if="isSuper" class="bg-slate-800 rounded-xl p-6 shadow">
       <h2 class="text-xl font-semibold mb-4">Users</h2>
       <div class="grid md:grid-cols-2 gap-4 mb-6">
@@ -263,6 +339,7 @@ onMounted(async () => {
       <h2 class="text-xl font-semibold mb-4">Cinemas</h2>
       <div class="flex gap-3 items-center mb-4">
         <input v-model="theatreName" class="input" placeholder="New theatre name" />
+        <input v-model="theatreCity" class="input" placeholder="City" />
         <button class="btn" @click="handleCreateTheatre">Create</button>
       </div>
       <div class="space-y-2 max-h-64 overflow-y-auto">

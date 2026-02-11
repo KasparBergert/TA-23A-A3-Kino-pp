@@ -5,5 +5,6 @@ interface ShowtimeFilters {
   hallId?: number
   genreId?: number
   date?: string
+  filmTitle?: string
 }
 export default ShowtimeFilters

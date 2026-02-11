@@ -15,6 +15,10 @@ import createFilm from './controllers/admin/createFilm.ts'
 import updateFilm from './controllers/admin/updateFilm.ts'
 import deleteFilm from './controllers/admin/deleteFilm.ts'
 import getAnalytics from './controllers/admin/getAnalytics.ts'
+import createGenre from './controllers/admin/createGenre.ts'
+import updateGenre from './controllers/admin/updateGenre.ts'
+import deleteGenre from './controllers/admin/deleteGenre.ts'
+import getFilmGenres from './controllers/admin/getFilmGenres.ts'
 import listUsers from './controllers/super/listUsers.ts'
 import updateUserRole from './controllers/super/updateUserRole.ts'
 import deleteUser from './controllers/super/deleteUser.ts'
@@ -49,7 +53,11 @@ export default function ApiRoutes(): Router {
   routes.post('/admin/films', requireRole(userRole.admin, userRole.super_admin), ...createFilm)
   routes.patch('/admin/films/:filmId', requireRole(userRole.admin, userRole.super_admin), ...updateFilm)
   routes.delete('/admin/films/:filmId', requireRole(userRole.admin, userRole.super_admin), deleteFilm)
+  routes.get('/admin/films/:filmId/genres', requireRole(userRole.admin, userRole.super_admin), getFilmGenres)
   routes.get('/admin/analytics', requireRole(userRole.admin, userRole.super_admin), getAnalytics)
+  routes.post('/admin/genres', requireRole(userRole.admin, userRole.super_admin), ...createGenre)
+  routes.patch('/admin/genres/:genreId', requireRole(userRole.admin, userRole.super_admin), ...updateGenre)
+  routes.delete('/admin/genres/:genreId', requireRole(userRole.admin, userRole.super_admin), deleteGenre)
 
   // SUPER ADMIN
   routes.get('/super/users', requireRole(userRole.super_admin), listUsers)

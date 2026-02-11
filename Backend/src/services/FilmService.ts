@@ -1,5 +1,7 @@
 import filmRepository from '../repositories/FilmRepository'
 import type { film } from '@prisma/client'
+import genreRepository from '../repositories/GenreRepositroy'
+import filmGenreRepository from '../repositories/FilmGenreRepository'
 
 class FilmService {
   async getById(film_id: number): Promise<film> {
@@ -17,6 +19,19 @@ class FilmService {
 
   async getByTheatreId(theatreId: number): Promise<film[]> {
     return await filmRepository.getByTheatreId(theatreId)
+  }
+
+  async validateGenreIds(genreIds: number[]): Promise<void> {
+    if (!genreIds.length) return
+    const genres = await genreRepository.getByIds(genreIds)
+    if (genres.length !== genreIds.length) {
+      throw new Error('GENRE_NOT_FOUND')
+    }
+  }
+
+  async setFilmGenres(filmId: number, genreIds: number[]): Promise<void> {
+    await this.validateGenreIds(genreIds)
+    await filmGenreRepository.setGenresForFilm(filmId, genreIds)
   }
 }
 

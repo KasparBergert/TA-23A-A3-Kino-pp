@@ -71,6 +71,7 @@ model order {
 model theatre {
   id    Int    @id @default(autoincrement())
   name  String @unique
+  city  String @default("")
 
   halls hall[]
   films film[]

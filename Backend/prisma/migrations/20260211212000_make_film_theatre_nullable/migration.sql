@@ -9,8 +9,4 @@ ALTER TABLE `film`
   FOREIGN KEY (`theatreId`) REFERENCES `theatre`(`id`)
   ON DELETE SET NULL ON UPDATE CASCADE;
 
--- Unique/index remain valid with nullable column; MySQL permits multiple NULLs
-DROP INDEX IF EXISTS `film_title_releaseDate_theatreId_key` ON `film`;
-DROP INDEX IF EXISTS `film_theatreId_idx` ON `film`;
-CREATE UNIQUE INDEX `film_title_releaseDate_theatreId_key` ON `film`(`title`, `releaseDate`, `theatreId`);
-CREATE INDEX `film_theatreId_idx` ON `film`(`theatreId`);
+-- Indexes retained; MySQL allows multiple NULLs in unique constraints, so no changes required.

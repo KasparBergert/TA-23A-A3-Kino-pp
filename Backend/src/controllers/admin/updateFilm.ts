@@ -3,6 +3,7 @@ import filmRepository from '../../repositories/FilmRepository'
 import theatreRepository from '../../repositories/TheatreRepository'
 import { filmUpdateSchema, FilmUpdateInput } from '../../dto/schemas'
 import { validateSchema } from '../middleware/validateSchema'
+import filmService from '../../services/FilmService'
 
 async function updateFilmHandler(req: Request, res: Response) {
   const id = Number(req.params.filmId)
@@ -30,6 +31,9 @@ async function updateFilmHandler(req: Request, res: Response) {
       durationMin: body.durationMin,
       theatreId,
     })
+    if (body.genreIds) {
+      await filmService.setFilmGenres(film.id, body.genreIds)
+    }
     res.status(200).json(film)
   } catch {
     res.status(404).send('Film not found')

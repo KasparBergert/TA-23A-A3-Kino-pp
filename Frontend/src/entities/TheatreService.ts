@@ -1,7 +1,13 @@
 import client from '../utils/api'
+import type { theatre } from '@prisma/client'
+import { objectToQueryFields } from '../utils/objectToQueryFields'
 
-async function getAll(): Promise<any> {
-  return await client.get('/theatres')
+type TheatreFilters = { city?: string; search?: string; orderBy?: 'name' | 'city' }
+
+async function getAll(filters: TheatreFilters = {}): Promise<theatre[]> {
+  const qs = objectToQueryFields(filters)
+  const suffix = qs ? `?${qs}` : ''
+  return await client.get(`/theatres${suffix}`)
 }
 
 async function getDetails(theatre_id: number) {

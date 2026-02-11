@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE `theatre` ADD COLUMN `city` VARCHAR(191) NOT NULL DEFAULT '';

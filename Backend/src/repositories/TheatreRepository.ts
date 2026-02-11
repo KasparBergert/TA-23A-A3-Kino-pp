@@ -5,8 +5,15 @@ class TheatreRepository {
   /**
    * @returns all theatre
    */
-  async getAll(): Promise<theatre[]> {
-    return await prisma.theatre.findMany()
+  async getAll(params?: { city?: string; search?: string; orderBy?: 'name' | 'city' }): Promise<theatre[]> {
+    const where = {
+      ...(params?.city ? { city: params.city } : {}),
+      ...(params?.search ? { name: { contains: params.search, mode: 'insensitive' as const } } : {}),
+    }
+
+    const orderBy = params?.orderBy ? { [params.orderBy]: 'asc' as const } : { name: 'asc' as const }
+
+    return await prisma.theatre.findMany({ where, orderBy })
   }
 
   async getById(theatreId: number): Promise<theatre | null> {

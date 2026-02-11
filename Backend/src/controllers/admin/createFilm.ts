@@ -3,9 +3,11 @@ import filmRepository from '../../repositories/FilmRepository'
 import theatreRepository from '../../repositories/TheatreRepository'
 import { filmCreateSchema, FilmCreateInput } from '../../dto/schemas'
 import { validateSchema } from '../middleware/validateSchema'
+import filmService from '../../services/FilmService'
 
 async function createFilmHandler(req: Request, res: Response) {
-  const { title, posterUrl, description, releaseDate, durationMin, theatreId } = req.body as FilmCreateInput
+  const { title, posterUrl, description, releaseDate, durationMin, theatreId, genreIds } =
+    req.body as FilmCreateInput
 
   let theatreIdNum: number | null = null
   if (theatreId !== undefined && theatreId !== null) {
@@ -23,8 +25,10 @@ async function createFilmHandler(req: Request, res: Response) {
       durationMin: durationMin ?? null,
       theatreId: theatreIdNum,
     })
+    await filmService.setFilmGenres(film.id, genreIds ?? [])
     res.status(201).json(film)
   } catch (err) {
+    if ((err as Error).message === 'GENRE_NOT_FOUND') return res.status(404).send('Genre not found')
     res.status(400).send('Could not create film')
   }
 }

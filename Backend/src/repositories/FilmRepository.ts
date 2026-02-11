@@ -30,6 +30,14 @@ class FilmRepository {
     })
   }
 
+  async getGenreIdsByFilmId(filmId: number): Promise<number[]> {
+    const rows = await prisma.filmGenre.findMany({
+      where: { filmId },
+      select: { genreId: true },
+    })
+    return rows.map((row) => row.genreId)
+  }
+
   async create(film: Omit<film, 'id'>): Promise<film> {
     return await prisma.film.create({ data: film })
   }

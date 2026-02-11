@@ -2,8 +2,8 @@ import type { theatre } from '@prisma/client'
 import theatreRepository from '../repositories/TheatreRepository.ts'
 
 class TheatreService {
-  async getAll(): Promise<theatre[]> {
-    return await theatreRepository.getAll()
+  async getAll(filters?: { city?: string; search?: string; orderBy?: 'name' | 'city' }): Promise<theatre[]> {
+    return await theatreRepository.getAll(filters)
   }
 
   async getById(theatre_id: number): Promise<theatre> {

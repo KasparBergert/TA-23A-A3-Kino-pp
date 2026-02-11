@@ -54,6 +54,18 @@ class ShowtimeFilter {
       where.startsAt = { gte: start, lte: end }
     }
 
+    if (filters.filmTitle) {
+      const filmIds = await prisma.film
+        .findMany({
+          where: { title: { contains: filters.filmTitle, mode: 'insensitive' } },
+          select: { id: true },
+        })
+        .then((rows) => rows.map((row) => row.id))
+      where.filmId = where.filmId
+        ? { in: filmIds.filter((id) => (where.filmId as Prisma.IntFilter).in?.includes(id) ?? true) }
+        : { in: filmIds }
+    }
+
     return where
   }
 }

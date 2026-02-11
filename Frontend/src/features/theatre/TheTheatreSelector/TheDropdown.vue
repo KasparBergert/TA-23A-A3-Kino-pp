@@ -24,7 +24,8 @@ const emit = defineEmits<{
       aria-labelledby="hs-dropdown-theatre">
       <button v-for="theatre in theatres" :key="theatre.id" @click="emit('update:selectedTheatre', theatre)"
         class="w-full text-left px-4 py-2 rounded-md hover:bg-slate-600 text-sm transition-colors">
-        {{ theatre.name }}
+        <div class="font-semibold">{{ theatre.name }}</div>
+        <div class="text-xs text-slate-300">{{ theatre.city }}</div>
       </button>
     </div>
   </div>

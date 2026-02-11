@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { onMounted, ref, watch } from 'vue';
+import { onMounted, ref, watch, computed } from 'vue';
 import { useRoute } from 'vue-router';
 import { showtimeService } from '../entities/ShowtimeService';
 import { theatreService } from '../entities/TheatreService';
@@ -20,6 +20,8 @@ const showtimesList = ref<ShowtimeDTO[]>([]);
 const genres = ref<genre[]>([]);
 const selectedDate = ref<string>('');
 const selectedGenreId = ref<number | ''>('');
+const searchTitle = ref('');
+const sortBy = ref<'time' | 'title'>('time');
 const isLoading = ref(false);
 
 async function loadTheatreDetails() {
@@ -38,6 +40,7 @@ async function loadShowtimes() {
   if (theatreId.value) filters.theatreId = theatreId.value;
   if (selectedDate.value) filters.date = selectedDate.value;
   if (selectedGenreId.value) filters.genreId = Number(selectedGenreId.value);
+  if (searchTitle.value) filters.filmTitle = searchTitle.value;
 
   const showtimesRes: ShowtimeDTO[] = await showtimeService.get(filters);
   showtimesList.value = showtimesRes;
@@ -45,10 +48,19 @@ async function loadShowtimes() {
 }
 
 watch([selectedDate, selectedGenreId], loadShowtimes);
+watch(searchTitle, loadShowtimes);
 
 onMounted(async () => {
   await Promise.all([loadTheatreDetails(), loadGenres()]);
   await loadShowtimes();
+});
+
+const sortedShowtimes = computed(() => {
+  const list = [...showtimesList.value];
+  if (sortBy.value === 'title') {
+    return list.sort((a, b) => a.film.title.localeCompare(b.film.title));
+  }
+  return list.sort((a, b) => new Date(a.startsAt).getTime() - new Date(b.startsAt).getTime());
 });
 </script>
 
@@ -78,6 +90,17 @@ onMounted(async () => {
               <option v-for="g in genres" :key="g.id" :value="g.id">{{ g.name }}</option>
             </select>
           </label>
+          <label class="text-sm text-slate-300">
+            Search
+            <input v-model="searchTitle" placeholder="Movie title" class="ml-2 rounded bg-slate-800 border border-slate-700 px-2 py-1 text-slate-100" />
+          </label>
+          <label class="text-sm text-slate-300">
+            Sort
+            <select v-model="sortBy" class="ml-2 rounded bg-slate-800 border border-slate-700 px-2 py-1 text-slate-100">
+              <option value="time">Showtime</option>
+              <option value="title">Movie name</option>
+            </select>
+          </label>
         </div>
       </div>
 
@@ -89,7 +112,7 @@ onMounted(async () => {
       </section>
 
       <div v-if="isLoading" class="text-center text-slate-300 py-10">Loading showtimes...</div>
-      <ShowtimesGrid v-else :showtimes="showtimesList" />
+      <ShowtimesGrid v-else :showtimes="sortedShowtimes" />
     </div>
   </main>
 </template>
