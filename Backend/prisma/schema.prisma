@@ -16,12 +16,12 @@ model film {
   releaseDate  DateTime?
   durationMin  Int?
   posterUrl    String
-  theatreId    Int
+  theatreId    Int?
 
   actors       actor[]
   filmGenres   filmGenre[]
   showtimes    showtime[]
-  theatre      theatre  @relation(fields: [theatreId], references: [id], onDelete: Cascade)
+  theatre      theatre? @relation(fields: [theatreId], references: [id], onDelete: SetNull)
 
   @@unique([title, releaseDate, theatreId])
   @@index([theatreId])

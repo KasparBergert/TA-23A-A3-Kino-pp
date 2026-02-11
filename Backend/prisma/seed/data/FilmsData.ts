@@ -88,6 +88,6 @@ export async function createFilmSeed(): Promise<Omit<film, 'id'>[]> {
 
   return baseFilms.map((film) => ({
     ...film,
-    theatreId: getRandom(theatres).id,
+    theatreId: null,
   }))
 }

@@ -6,12 +6,16 @@ export default async function updateFilm(req: Request, res: Response) {
   const id = Number(req.params.filmId)
   if (Number.isNaN(id)) return res.status(400).send('Invalid id')
 
-  let theatreId: number | undefined
+  let theatreId: number | null | undefined
   if (req.body.theatreId !== undefined) {
-    theatreId = Number(req.body.theatreId)
-    if (Number.isNaN(theatreId)) return res.status(400).send('Invalid theatreId')
-    const theatre = await theatreRepository.getById(theatreId)
-    if (!theatre) return res.status(404).send('Theatre not found')
+    if (req.body.theatreId === null) {
+      theatreId = null
+    } else {
+      theatreId = Number(req.body.theatreId)
+      if (Number.isNaN(theatreId)) return res.status(400).send('Invalid theatreId')
+      const theatre = await theatreRepository.getById(theatreId)
+      if (!theatre) return res.status(404).send('Theatre not found')
+    }
   }
 
   try {

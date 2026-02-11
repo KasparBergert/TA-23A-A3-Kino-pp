@@ -14,6 +14,10 @@ class FilmService {
     const films = await filmRepository.getAll()
     return films
   }
+
+  async getByTheatreId(theatreId: number): Promise<film[]> {
+    return await filmRepository.getByTheatreId(theatreId)
+  }
 }
 
 const filmService = new FilmService()
