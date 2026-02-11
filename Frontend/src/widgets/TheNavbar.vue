@@ -5,6 +5,15 @@ import FormLogin from "../features/auth/FormLogin.vue"
 import FormRegister from "../features/auth/FormRegister.vue"
 import authStore from "../store/AuthStore"
 
+const props = defineProps<{
+  showSearch?: boolean
+  search?: string
+  suggestions?: { id: number; title: string; posterUrl?: string | null }[]
+}>()
+const emit = defineEmits<{
+  (e: 'update:search', value: string): void
+}>()
+
 const openLogin = () => open(FormLogin)
 const openRegister = () => open(FormRegister)
 const logout = () => authStore.logout()
@@ -17,6 +26,37 @@ const showAdminLink = computed(() => authStore.isAdmin.value)
     <div class="navbar-left">
       <RouterLink to="/" class="navbar-title">HanKas Cinema</RouterLink>
       <RouterLink to="/" class="nav-btn nav-home">Home</RouterLink>
+      <RouterLink
+        :to="{ name: 'showtimes', query: { theatreId: 0 } }"
+        class="nav-btn"
+      >
+        Kinokava
+      </RouterLink>
+    </div>
+    <div v-if="props.showSearch" class="nav-search">
+      <input
+        :value="props.search"
+        @input="emit('update:search', ($event.target as HTMLInputElement).value)"
+        placeholder="Search movies"
+        class="search-input"
+      />
+      <div v-if="props.search" class="search-dropdown">
+        <RouterLink
+          v-for="film in props.suggestions || []"
+          :key="film.id"
+          :to="`/films/${film.id}`"
+          class="result-row"
+        >
+          <img
+            v-if="film.posterUrl"
+            :src="film.posterUrl"
+            alt=""
+            class="thumb"
+          />
+          <div class="title">{{ film.title }}</div>
+        </RouterLink>
+        <div v-if="!props.suggestions?.length" class="result-empty">No matches</div>
+      </div>
     </div>
     <div class="navbar-right">
       <template v-if="!authStore.isAuthenticated.value">
@@ -67,6 +107,69 @@ const showAdminLink = computed(() => authStore.isAdmin.value)
 .navbar-right {
   display: flex;
   gap: 1rem;
+}
+
+.nav-search {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  position: relative;
+}
+
+.search-input {
+  width: min(480px, 100%);
+  padding: 0.45rem 0.75rem;
+  border-radius: 0.5rem;
+  background: #0f172a;
+  border: 1px solid #1e293b;
+  color: #e2e8f0;
+  font-size: 0.9rem;
+}
+
+.search-dropdown {
+  position: absolute;
+  top: calc(100% + 0.35rem);
+  width: min(520px, 100%);
+  background: #0b162a;
+  border: 1px solid #1e293b;
+  border-radius: 0.75rem;
+  box-shadow: 0 12px 30px rgba(0,0,0,0.35);
+  overflow: hidden;
+  z-index: 20;
+}
+
+.result-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.65rem 0.9rem;
+  color: #e2e8f0;
+  text-decoration: none;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.result-row:hover {
+  background: #1d2a44;
+  color: #60a5fa;
+}
+
+.thumb {
+  width: 42px;
+  height: 60px;
+  object-fit: cover;
+  border-radius: 0.35rem;
+  background: #1e293b;
+}
+
+.title {
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+.result-empty {
+  padding: 0.65rem 0.9rem;
+  color: #94a3b8;
+  font-size: 0.9rem;
 }
 
 .nav-btn {

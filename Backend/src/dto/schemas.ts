@@ -54,9 +54,17 @@ export const showtimeQuerySchema = z.object({
   filmTitle: z.string().min(1).optional(),
 })
 
+export const autoScheduleSchema = z.object({
+  theatreId: z.coerce.number().int().positive(),
+  filmIds: z.array(z.coerce.number().int().positive()).min(1),
+  startDate: z.string().date(),
+  endDate: z.string().date(),
+})
+
 export type FilmCreateInput = z.infer<typeof filmCreateSchema>
 export type FilmUpdateInput = z.infer<typeof filmUpdateSchema>
 export type TheatreCreateInput = z.infer<typeof theatreCreateSchema>
 export type GenreCreateInput = z.infer<typeof genreCreateSchema>
 export type UserCreateInput = z.infer<typeof userCreateSchema>
 export type ShowtimeQuery = z.infer<typeof showtimeQuerySchema>
+export type AutoScheduleInput = z.infer<typeof autoScheduleSchema>

@@ -1,5 +1,6 @@
 import client from '../utils/api'
 import type { film, user } from '@prisma/client'
+import type { AutoSchedulePayload } from '../types/AutoSchedulePayload'
 
 type FilmPayload = Partial<
   Pick<film, 'title' | 'posterUrl' | 'description' | 'releaseDate' | 'durationMin' | 'theatreId'>
@@ -64,4 +65,8 @@ export async function updateGenre(id: number, data: GenrePayload) {
 
 export async function deleteGenre(id: number) {
   return await client.post(`/admin/genres/${id}`, {}, { method: 'DELETE' })
+}
+
+export async function autoScheduleShowtimes(payload: AutoSchedulePayload) {
+  return await client.post('/admin/showtimes/auto', payload)
 }

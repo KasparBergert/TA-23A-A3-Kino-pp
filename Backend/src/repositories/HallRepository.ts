@@ -15,6 +15,13 @@ class HallRepositroy {
     })
   }
 
+  async getByTheatreId(theatreId: number): Promise<hall[]> {
+    return await prisma.hall.findMany({
+      where: { theatreId },
+      orderBy: { id: 'asc' },
+    })
+  }
+
   async getByIds(hallIds: number[]): Promise<hall[]> {
     return await prisma.hall.findMany({
       where: { id: { in: hallIds } },

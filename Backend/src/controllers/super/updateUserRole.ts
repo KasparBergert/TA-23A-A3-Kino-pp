@@ -11,8 +11,13 @@ async function updateUserRoleHandler(req: Request, res: Response) {
   if (!Object.values(userRole).includes(role)) return res.status(400).send('Invalid role')
 
   try {
-    const user = await userRepository.updateRole(id, role)
-    res.json(user)
+    const existing = await userRepository.getById(id)
+    if (!existing) return res.status(404).send('User not found')
+    if (existing.email === 'hannes@tamm.com') {
+      return res.status(403).send('Protected account role cannot be changed')
+    }
+    const updated = await userRepository.updateRole(id, role)
+    res.json(updated)
   } catch {
     res.status(404).send('User not found')
   }

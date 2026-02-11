@@ -22,6 +22,7 @@ import getFilmGenres from './controllers/admin/getFilmGenres.ts'
 import listUsers from './controllers/super/listUsers.ts'
 import updateUserRole from './controllers/super/updateUserRole.ts'
 import deleteUser from './controllers/super/deleteUser.ts'
+import autoScheduleShowtimes from './controllers/admin/autoScheduleShowtimes.ts'
 import createTheatre from './controllers/super/createTheatre.ts'
 import updateTheatre from './controllers/super/updateTheatre.ts'
 import deleteTheatre from './controllers/super/deleteTheatre.ts'
@@ -58,6 +59,7 @@ export default function ApiRoutes(): Router {
   routes.post('/admin/genres', requireRole(userRole.admin, userRole.super_admin), ...createGenre)
   routes.patch('/admin/genres/:genreId', requireRole(userRole.admin, userRole.super_admin), ...updateGenre)
   routes.delete('/admin/genres/:genreId', requireRole(userRole.admin, userRole.super_admin), deleteGenre)
+  routes.post('/admin/showtimes/auto', requireRole(userRole.admin, userRole.super_admin), ...autoScheduleShowtimes)
 
   // SUPER ADMIN
   routes.get('/super/users', requireRole(userRole.super_admin), listUsers)

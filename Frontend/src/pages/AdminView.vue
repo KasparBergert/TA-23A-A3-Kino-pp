@@ -17,6 +17,7 @@ import {
   updateGenre,
   deleteGenre,
   getFilmGenres,
+  autoScheduleShowtimes,
 } from '../entities/AdminService'
 import type { film, genre } from '@prisma/client'
 import { theatreService } from '../entities/TheatreService'
@@ -31,6 +32,8 @@ const genres = ref<genre[]>([])
 const theatreFilms = ref<film[]>([])
 const manageTheatreId = ref<number | null>(null)
 const manageSelectionFilm = ref<number | null>(null)
+const scheduleStart = ref('')
+const scheduleEnd = ref('')
 const isManagingTheatre = computed(() => manageTheatreId.value !== null)
 
 const filmForm = ref({
@@ -62,6 +65,18 @@ async function loadFilms() {
 async function loadTheatreFilms(theatreId: number) {
   const data = await filmsService.getByTheatre(theatreId)
   theatreFilms.value = data ?? []
+}
+
+async function handleAutoSchedule() {
+  if (!manageTheatreId.value || !scheduleStart.value || !scheduleEnd.value || !manageSelectionFilm.value) return
+  await autoScheduleShowtimes({
+    theatreId: manageTheatreId.value,
+    filmIds: [manageSelectionFilm.value],
+    startDate: scheduleStart.value,
+    endDate: scheduleEnd.value,
+  })
+  await loadTheatreFilms(manageTheatreId.value)
+  await loadAnalytics()
 }
 
 async function loadUsers() {
@@ -264,12 +279,29 @@ onMounted(async () => {
             <option :value="null">Select film to assign</option>
             <option v-for="f in films" :key="f.id" :value="f.id">{{ f.title }}</option>
           </select>
+          <div class="grid grid-cols-2 gap-2">
+            <div>
+              <label class="text-xs text-gray-400">Start date</label>
+              <input v-model="scheduleStart" type="date" class="input" />
+            </div>
+            <div>
+              <label class="text-xs text-gray-400">End date</label>
+              <input v-model="scheduleEnd" type="date" class="input" />
+            </div>
+          </div>
           <button
             class="btn"
             :disabled="!manageSelectionFilm || !manageTheatreId"
             @click="() => { if (manageSelectionFilm && manageTheatreId) handleAssignFilmToTheatre(manageSelectionFilm, manageTheatreId) }"
           >
             Assign to cinema
+          </button>
+          <button
+            class="btn-outline w-full"
+            :disabled="!manageSelectionFilm || !manageTheatreId || !scheduleStart || !scheduleEnd"
+            @click="handleAutoSchedule"
+          >
+            Auto-schedule (09:00-22:00, 1h gap)
           </button>
           <p class="text-xs text-gray-400">Assigning moves the film to this cinema (each film belongs to one cinema).</p>
         </div>

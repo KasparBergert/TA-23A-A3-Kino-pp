@@ -15,18 +15,34 @@ const search = ref("");
 onMounted(async () => {
   try {
     const films_fetched = await filmsService.getAll();
-    films.value = films_fetched ?? [];
-  } catch (err) {
-    console.error("Error fetching films:", err);
-  }
+  films.value = films_fetched ?? [];
+} catch (err) {
+  console.error("Error fetching films:", err);
+}
+});
+
+const uniqueFilms = computed(() => {
+  const seen = new Set<string>();
+  return films.value.filter((f) => {
+    const key = f.title.toLowerCase();
+    if (seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
 });
 
 const filteredFilms = computed(() =>
-  films.value.filter(
+  uniqueFilms.value.filter(
     (f) =>
       f.title.toLowerCase().includes(search.value.toLowerCase()) ||
       (f.description ?? "").toLowerCase().includes(search.value.toLowerCase())
   )
+);
+
+const searchSuggestions = computed(() =>
+  uniqueFilms.value
+    .filter((f) => f.title.toLowerCase().includes(search.value.toLowerCase()))
+    .slice(0, 6)
 );
 
 watch(
@@ -39,28 +55,14 @@ watch(
 
 </script>
 <template>
-  <TheNavbar />
+  <TheNavbar :show-search="true" v-model:search="search" :suggestions="searchSuggestions" />
   <main
     class="relative flex flex-col items-center min-h-screen bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900 text-gray-100 py-10 px-4 sm:px-6">
     <BackgroundGlow />
     <div class="relative z-10 flex flex-col gap-20 w-full max-w-7xl">
       <TheTheatreSelector />
-      <div class="flex justify-end">
-        <input v-model="search" placeholder="Search movies" class="w-full md:w-1/2 input" />
-      </div>
       <HeroFilms :top3films="top3films" />
       <FilmsGrid :films="filteredFilms" />
     </div>
   </main>
 </template>
-
-<style scoped>
-.input {
-  border-radius: 0.5rem;
-  background: #0f172a;
-  border: 1px solid #1e293b;
-  padding: 0.5rem 0.75rem;
-  color: #e2e8f0;
-  font-size: 0.875rem;
-}
-</style>

@@ -8,6 +8,7 @@ import type { theatre, genre } from '@prisma/client';
 import type ShowtimeDTO from '../../../shared/types/ShowtimeDTO';
 import ShowtimesGrid from '../features/showtimes/ShowtimesGrid.vue';
 import TheatresDTO from '../../../shared/types/TheatreDTO';
+import TheNavbar from '../widgets/TheNavbar.vue';
 
 const route = useRoute();
 const theatreId = ref<number>(Number(route.query.theatreId));
@@ -23,6 +24,22 @@ const selectedGenreId = ref<number | ''>('');
 const searchTitle = ref('');
 const sortBy = ref<'time' | 'title'>('time');
 const isLoading = ref(false);
+
+const searchSuggestions = computed(() => {
+  const term = searchTitle.value.toLowerCase();
+  const seen = new Set<string>();
+  return showtimesList.value
+    .reduce((acc, s) => {
+      const title = s.film.title;
+      const key = title.toLowerCase();
+      if (!key.includes(term)) return acc;
+      if (seen.has(key)) return acc;
+      seen.add(key);
+      acc.push({ id: s.film.id, title, posterUrl: s.film.posterUrl });
+      return acc;
+    }, [] as { id: number; title: string; posterUrl?: string | null }[])
+    .slice(0, 6);
+});
 
 async function loadTheatreDetails() {
   if (!theatreId.value) return;
@@ -65,6 +82,7 @@ const sortedShowtimes = computed(() => {
 </script>
 
 <template>
+  <TheNavbar :show-search="true" v-model:search="searchTitle" :suggestions="searchSuggestions" />
   <main class="relative flex flex-col items-center min-h-screen bg-slate-900 text-gray-100 py-12 px-4 sm:px-6">
     <div class="absolute inset-0 bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900 opacity-90"></div>
 
@@ -89,10 +107,6 @@ const sortedShowtimes = computed(() => {
               <option value="">All</option>
               <option v-for="g in genres" :key="g.id" :value="g.id">{{ g.name }}</option>
             </select>
-          </label>
-          <label class="text-sm text-slate-300">
-            Search
-            <input v-model="searchTitle" placeholder="Movie title" class="ml-2 rounded bg-slate-800 border border-slate-700 px-2 py-1 text-slate-100" />
           </label>
           <label class="text-sm text-slate-300">
             Sort
