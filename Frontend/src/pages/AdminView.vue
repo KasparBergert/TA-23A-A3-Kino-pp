@@ -65,7 +65,13 @@ const isAdmin = computed(() => role.value === 'admin' || role.value === 'super_a
 
 async function loadFilms() {
   const data = await filmsService.getAll()
-  films.value = data ?? []
+  const seenTitles = new Set<string>()
+  films.value = (data ?? []).filter((f) => {
+    const key = f.title.toLowerCase()
+    if (seenTitles.has(key)) return false
+    seenTitles.add(key)
+    return true
+  })
 }
 
 async function loadTheatreFilms(theatreId: number) {

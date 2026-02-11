@@ -1,37 +1,44 @@
 import prisma from "../../../db"
 
+const genreMap: Record<string, string[]> = {
+  "The Dark Knight": ["Action", "Drama"],
+  "Inception": ["Sci-Fi", "Action"],
+  "Interstellar": ["Sci-Fi", "Drama"],
+  "The Matrix": ["Sci-Fi", "Action"],
+  "Gladiator": ["Action", "Drama"],
+  "The Shawshank Redemption": ["Drama"],
+  "Fight Club": ["Drama"],
+  "Pulp Fiction": ["Drama"],
+  "The Lord of the Rings: The Fellowship of the Ring": ["Action", "Drama"],
+  "The Lord of the Rings: The Return of the King": ["Action", "Drama"],
+  "The Social Network": ["Drama"],
+}
+
 export async function assignRandomGenresToFilms() {
-  // get all films + all genres
-  const films = await prisma.film.findMany({ select: { id: true } })
-  const genres = await prisma.genre.findMany({ select: { id: true } })
+  const films = await prisma.film.findMany({ select: { id: true, title: true } })
+  const genres = await prisma.genre.findMany({ select: { id: true, name: true } })
 
   if (films.length === 0 || genres.length === 0) {
     throw new Error('Films or genres missing before assignment')
   }
 
-  // helper for randomness
-  const randomGenre = () =>
-    genres[Math.floor(Math.random() * genres.length)]
+  const genreIdByName = new Map(genres.map((g) => [g.name, g.id]))
 
-  // build rows
-  const rows = films.flatMap(film => {
-    const g1 = randomGenre()
-    const g2 = randomGenre()
-
-    // ensure not the same genre twice
-    const assigned = new Set([g1.id, g2.id])
-
-    return [...assigned].map(genreId => ({
-      filmId: film.id,
-      genreId
-    }))
+  const rows = films.flatMap((film) => {
+    const names = genreMap[film.title] ?? ["Drama"]
+    const ids = names
+      .map((name) => genreIdByName.get(name))
+      .filter((id): id is number => Boolean(id))
+    const unique = [...new Set(ids)]
+    return unique.map((genreId) => ({ filmId: film.id, genreId }))
   })
 
-  // insert
+  // reset and insert deterministic mapping
+  await prisma.filmGenre.deleteMany({})
   await prisma.filmGenre.createMany({
     data: rows,
-    skipDuplicates: true, // avoids FK collisions
+    skipDuplicates: true,
   })
 
-  console.log(`Assigned random genres to ${films.length} films`)
+  console.log(`Assigned deterministic genres to ${films.length} films`)
 }

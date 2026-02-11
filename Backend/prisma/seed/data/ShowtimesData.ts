@@ -36,14 +36,16 @@ export async function createShowtimeSeed(): Promise<Omit<showtime, 'id'>[]> {
   const showtimes: Omit<showtime, 'id'>[] = []
 
   theatres.forEach((theatre, theatreIdx) => {
-    const hall = halls.find((h) => h.theatreId === theatre.id) || halls[0]
-    if (!hall) return
+    const theatreHalls = halls.filter((h) => h.theatreId === theatre.id)
+    const hallsCycle = theatreHalls.length ? theatreHalls : halls
+    if (!hallsCycle.length) return
 
     let cursor = new Date(today)
     cursor.setHours(OPEN_HOUR, 0, 0, 0)
 
     for (let i = 0; i < SHOWTIMES_PER_THEATRE; i++) {
       const film = films[(theatreIdx * SHOWTIMES_PER_THEATRE + i) % films.length]
+      const hall = hallsCycle[i % hallsCycle.length]
       const duration = film.durationMin ?? DEFAULT_DURATION
       const startsAt = roundDownToFiveMinutes(new Date(cursor))
       const endsAt = addMinutes(startsAt, duration)
