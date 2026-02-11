@@ -1,4 +1,4 @@
-import { theatre } from '@prisma/client'
+import type { theatre } from '@prisma/client'
 
 type TheatresDTO = theatre
 export default TheatresDTO

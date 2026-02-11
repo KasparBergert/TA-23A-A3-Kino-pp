@@ -1,4 +1,4 @@
-import { film } from "@prisma/client"
+import type { film } from "@prisma/client"
 
 type FilmDTO = film
 

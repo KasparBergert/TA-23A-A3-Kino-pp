@@ -1,4 +1,4 @@
-import { actor } from "@prisma/client"
+import type { actor } from "@prisma/client"
 
 type ActorDTO = actor
 

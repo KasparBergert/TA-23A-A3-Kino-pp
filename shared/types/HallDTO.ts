@@ -1,4 +1,4 @@
-import { hall } from '@prisma/client'
+import type { hall } from '@prisma/client'
 
 type HallDTO = hall
 

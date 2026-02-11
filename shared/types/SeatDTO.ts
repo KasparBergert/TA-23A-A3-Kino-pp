@@ -1,4 +1,4 @@
-import { seat } from "@prisma/client"
+import type { seat } from "@prisma/client"
 
 type SeatDTO = seat & { isTaken: boolean };
 

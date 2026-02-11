@@ -1,5 +1,5 @@
 import client from '../utils/api'
-import { actor } from '@prisma/client'
+import type { actor } from '@prisma/client'
 
 async function getAll(): Promise<actor[]> {
   return await client.get('/actors')

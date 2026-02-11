@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { film } from '@prisma/client';
+import type { film } from '@prisma/client';
 import FilmsGridCard from './FilmsGrid/FilmsGridCard.vue';
 
 const props = defineProps<{

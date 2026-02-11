@@ -4,7 +4,7 @@ import { toast } from '@steveyuowo/vue-hot-toast'
 import { useRouter } from 'vue-router'
 import TheDropdown from './TheTheatreSelector/TheDropdown.vue'
 import { theatreService } from '../../entities/TheatreService'
-import { theatre } from '@prisma/client'
+import type { theatre } from '@prisma/client'
 
 const fetchedTheatres = ref<theatre[]>([])
 const selectedTheatre = ref<theatre | null>(null)
