@@ -21,6 +21,7 @@ import updateTheatre from './controllers/super/updateTheatre.ts'
 import deleteTheatre from './controllers/super/deleteTheatre.ts'
 import me from './controllers/auth/me.ts'
 import logout from './controllers/auth/logout.ts'
+import { getSeatPrices } from './controllers/getSeatPrices.ts'
 
 export default function ApiRoutes(): Router {
   const routes = Router()
@@ -38,6 +39,7 @@ export default function ApiRoutes(): Router {
   routes.get('/showtimes/:showtimeId/:hallId/seats', getSeats)
   routes.get('/films', getFilms)
   routes.get('/actors', getActors)
+  routes.get('/seat-prices', getSeatPrices)
 
   // ADMIN
   routes.post('/admin/films', requireRole(userRole.admin, userRole.super_admin), createFilm)

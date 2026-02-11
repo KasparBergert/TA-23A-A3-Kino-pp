@@ -6,6 +6,8 @@ import FilmDetail from '../pages/FilmDetail.vue'
 import orderStore from '../store/OrderStore'
 import AdminView from '../pages/AdminView.vue'
 import AboutView from '../pages/AboutView.vue'
+import Payment from '../pages/Payment.vue'
+import Payment from '../pages/Payment.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -32,7 +34,6 @@ const router = createRouter({
       name: 'seat-select',
       component: SeatSelect,
       beforeEnter: (to, from, next) => {
-
         if (!orderStore.getShowtime()) {
           console.error('invalid showtime or film')
           return next('/')
@@ -48,8 +49,13 @@ const router = createRouter({
           return next('/')
         }
 
-        return next()
+        //type check before sending to the route
+        const hallId = Number(to.query.hallId)
+        const showtimeId = Number(to.query.showtimeId)
+        if (Number.isNaN(showtimeId)) throw new Error('showtimeId is not a number')
+        if (Number.isNaN(hallId)) throw new Error('hallId is not a number')
 
+        return next()
       },
     },
     {
@@ -66,6 +72,11 @@ const router = createRouter({
       path: '/about',
       name: 'about',
       component: AboutView,
+    },
+    {
+      path: '/payment',
+      name: 'payment',
+      component: Payment,
     },
   ],
 })

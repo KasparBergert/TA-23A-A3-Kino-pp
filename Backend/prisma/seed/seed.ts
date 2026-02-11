@@ -15,6 +15,7 @@ import { theatreSeed } from './data/TheatresData'
 import { genreSeed } from './data/genresData'
 import { filmSeed } from './data/FilmsData'
 import { usersSeed } from './data/UsersData'
+import seatPricesSeed from './data/SeatPricesData'
 import prisma from '../../db'
 import { createActorsSeed } from './data/ActorsData'
 import seatRepository from '../../src/repositories/SeatRepository'
@@ -27,6 +28,7 @@ async function runSeed() {
   const halls = await hallRepositroy.getAll()
   const seats = createSeatMatrix(halls.map(h => h.id))
   await seatRepository.createMany(seats)
+  await seatRepository.createManySeatPrices(seatPricesSeed)
 
   await filmRepository.createMany(filmSeed)
   await genreRepository.createMany(genreSeed)

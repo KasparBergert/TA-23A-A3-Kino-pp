@@ -1,10 +1,17 @@
 <script setup lang="ts">
+import SeatDTO from '../../../../../shared/types/SeatDTO';
+import { ref, watch } from 'vue';
+import orderStore from '../../../store/OrderStore';
 
-const seat_price_tmp = 12.5
+const price = ref(0)
 
-defineProps<{
-  seats: number[]
+const props = defineProps<{
+  seats: SeatDTO[]
 }>();
+
+watch(() => props.seats.length, async () => {
+  price.value = await orderStore.getPayingPrice();
+})
 
 </script>
 <template>
@@ -15,7 +22,7 @@ defineProps<{
     </div>
     <div class="flex justify-between text-lg font-bold text-white">
       <span>Kokku:</span>
-      <span>{{ (seats.length * seat_price_tmp).toFixed(2) }}€</span>
+      <span>{{ price }}€</span>
     </div>
   </div>
 </template>

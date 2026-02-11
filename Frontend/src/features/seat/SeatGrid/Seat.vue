@@ -51,8 +51,9 @@ function handleClick() {
 function size() {
   switch (localSeat.type) {
     case 'Standard':
-    case 'Premium':
       return "h-6 w-6";
+    case 'Premium':
+      return "h-6 w-8";
     case 'Double':
       return "h-6 w-12";
   }

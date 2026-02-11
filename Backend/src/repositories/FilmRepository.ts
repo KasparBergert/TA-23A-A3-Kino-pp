@@ -2,14 +2,11 @@ import prisma from '../../db'
 import type { film } from '@prisma/client'
 
 class FilmRepository {
-  /**
-   * @returns all films
-   */
   async getAll(): Promise<film[]> {
     return await prisma.film.findMany()
   }
 
-  async getById(filmId: number): Promise<film| null> {
+  async getById(filmId: number): Promise<film | null> {
     return await prisma.film.findUnique({
       where: { id: filmId },
     })
@@ -39,13 +36,12 @@ class FilmRepository {
     return await prisma.film.delete({ where: { id } })
   }
 
-  async createMany(film: Omit<film, 'id'>[]){
+  async createMany(film: Omit<film, 'id'>[]) {
     await prisma.film.createMany({
       data: film,
-      skipDuplicates: true
+      skipDuplicates: true,
     })
   }
-
 }
 
 const filmRepository = new FilmRepository()

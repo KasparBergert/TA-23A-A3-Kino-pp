@@ -1,5 +1,5 @@
 import prisma from '../../db'
-import { seat } from '@prisma/client'
+import { seat, seatPrices } from '@prisma/client'
 
 class SeatRepository {
   async getAll() {
@@ -17,7 +17,18 @@ class SeatRepository {
     })
   }
 
-}
+  async createManySeatPrices(seatPrices: seatPrices[]){
+    await prisma.seatPrices.createMany({
+      data: seatPrices,
+      skipDuplicates: true
+    })
+  }
+
+  async getSeatPrices(): Promise<seatPrices[]>{
+    return await prisma.seatPrices.findMany()
+  }
+
+  }
 
 const seatRepository = new SeatRepository()
 export default seatRepository
