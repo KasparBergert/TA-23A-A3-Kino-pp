@@ -1,11 +1,12 @@
 import { Request, Response } from 'express'
 import theatreRepository from '../../repositories/TheatreRepository'
+import { theatreCreateSchema, TheatreCreateInput } from '../../dto/schemas'
+import { validateSchema } from '../middleware/validateSchema'
 
-export default async function updateTheatre(req: Request, res: Response) {
+async function updateTheatreHandler(req: Request, res: Response) {
   const id = Number(req.params.theatreId)
-  const { name } = req.body
+  const { name } = req.body as TheatreCreateInput
   if (Number.isNaN(id)) return res.status(400).send('Invalid id')
-  if (!name) return res.status(400).send('Missing name')
 
   try {
     const theatre = await theatreRepository.update(id, { name })
@@ -14,3 +15,7 @@ export default async function updateTheatre(req: Request, res: Response) {
     res.status(404).send('Theatre not found')
   }
 }
+
+const updateTheatre = [validateSchema(theatreCreateSchema), updateTheatreHandler]
+
+export default updateTheatre

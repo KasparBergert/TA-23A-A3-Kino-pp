@@ -10,6 +10,11 @@ interface ShowtimeDTO {
   film: FilmDTO
   hall: Omit<HallDTO, 'theatreId'>
   theatre: TheatresDTO
+  stats: {
+    totalSeats: number
+    availableSeats: number
+    occupancyPercent: number
+  }
 }
 
 

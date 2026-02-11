@@ -1,7 +1,7 @@
 import type { film, hall, showtime, theatre } from '@prisma/client'
 import type ShowtimeFilters from '../../../shared/types/ShowtimeFilter.ts'
-import type ShowtimeDTO from "../../../shared/types/ShowtimeDTO.ts"
-import type SeatDTO from '../../../shared/types/SeatDTO.ts';
+import type ShowtimeDTO from '../../../shared/types/ShowtimeDTO.ts'
+import type SeatDTO from '../../../shared/types/SeatDTO.ts'
 import showtimeFilter from '../filters/ShowtimeFilter.ts'
 import showtimeRepository from '../repositories/ShowtimeRepository.ts'
 import hallRepositroy from '../repositories/HallRepository.ts'
@@ -35,10 +35,10 @@ class ShowtimeService {
     return await this.loadEntities(hallIds, theatreRepository.getByIds, 'THEATRE_NOT_FOUND')
   }
 
-  async exists(filter: ShowtimeFilters): Promise<boolean>{
+  async exists(filter: ShowtimeFilters): Promise<boolean> {
     const showtimeFilters = await showtimeFilter.build(filter)
     const showtime = await showtimeRepository.getAll(showtimeFilters)
-    return showtime.length === 0 ? false : true;
+    return showtime.length !== 0
   }
 
   async getHallSeats(hallId: number, showtimeId: number): Promise<SeatDTO[]> {
@@ -84,6 +84,9 @@ class ShowtimeService {
     const films = await this.getShowtimeFilms(filmIds)
     const halls = await this.getShowtimeHalls(hallIds)
 
+    const showtimeIds = showtimes.map((st) => st.id)
+    const takenSeatCounts = await seatAvailabilityRepository.countByShowtimeIds(showtimeIds)
+
     const theatreIds = halls.map((h) => h.theatreId)
 
     const theatres = await this.getShowtimeTheatres(theatreIds)
@@ -93,6 +96,11 @@ class ShowtimeService {
       const film = films.find((f) => st.filmId === f.id)!
       const hall = halls.find((h) => st.hallId === h.id)!
       const theatre = theatres.find((t) => t.id === hall.theatreId)!
+
+      const taken = takenSeatCounts[st.id] ?? 0
+      const totalSeats = hall.capacity
+      const availableSeats = Math.max(totalSeats - taken, 0)
+      const occupancyPercent = totalSeats === 0 ? 0 : Math.round((taken / totalSeats) * 100)
 
       return {
         id: st.id,
@@ -115,6 +123,11 @@ class ShowtimeService {
         theatre: {
           id: theatre.id,
           name: theatre.name,
+        },
+        stats: {
+          totalSeats,
+          availableSeats,
+          occupancyPercent,
         },
       }
     })

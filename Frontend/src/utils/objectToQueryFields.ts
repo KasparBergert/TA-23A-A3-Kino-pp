@@ -1,7 +1,6 @@
-
-
-export function objectToQueryFields(filters: Object) {
-  return Object.entries(filters).map((key, val) => {
-    return `${key}=${val}&`
-  })
+export function objectToQueryFields(filters: Record<string, unknown>): string {
+  return Object.entries(filters)
+    .filter(([, value]) => value !== undefined && value !== null && value !== '')
+    .map(([key, value]) => `${encodeURIComponent(key)}=${encodeURIComponent(String(value))}`)
+    .join('&')
 }

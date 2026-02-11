@@ -1,9 +1,10 @@
 import { Request, Response } from 'express'
 import theatreRepository from '../../repositories/TheatreRepository'
+import { theatreCreateSchema, TheatreCreateInput } from '../../dto/schemas'
+import { validateSchema } from '../middleware/validateSchema'
 
-export default async function createTheatre(req: Request, res: Response) {
-  const { name } = req.body
-  if (!name) return res.status(400).send('Missing name')
+async function createTheatreHandler(req: Request, res: Response) {
+  const { name } = req.body as TheatreCreateInput
 
   try {
     const theatre = await theatreRepository.create({ name })
@@ -12,3 +13,7 @@ export default async function createTheatre(req: Request, res: Response) {
     res.status(400).send('Could not create theatre')
   }
 }
+
+const createTheatre = [validateSchema(theatreCreateSchema), createTheatreHandler]
+
+export default createTheatre

@@ -44,6 +44,14 @@ function handleBooking() {
             <span class="font-semibold text-slate-300">Saal:</span>
             {{ showtime.hall.name }}
           </p>
+          <p class="text-sm text-slate-400">
+            <span class="font-semibold text-slate-300">Seats:</span>
+            {{ showtime.stats.availableSeats }} / {{ showtime.stats.totalSeats }} available
+          </p>
+          <p class="text-sm text-slate-400">
+            <span class="font-semibold text-slate-300">Occupancy:</span>
+            {{ showtime.stats.occupancyPercent }}%
+          </p>
         </div>
       </div>
     </RouterLink>

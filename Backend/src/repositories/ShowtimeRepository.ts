@@ -1,15 +1,16 @@
 import prisma from '../../db'
-import type { showtime } from '@prisma/client'
+import type { Prisma, showtime } from '@prisma/client'
 
 class ShowtimeRepository {
-  async getAll(where: { where: Object }): Promise<showtime[]> {
+  async getAll(where: Prisma.showtimeWhereInput): Promise<showtime[]> {
+    const startsAtFilter =
+      typeof where.startsAt === 'object' && where.startsAt !== null
+        ? { ...(where.startsAt as Prisma.DateTimeFilter), gt: new Date() }
+        : { gt: new Date() }
+
     return await prisma.showtime.findMany({
-      where: {
-        ...where,
-        startsAt: {
-          gt: new Date(), // computers time
-        },
-      },
+      where: { ...where, startsAt: startsAtFilter },
+      orderBy: { startsAt: 'asc' },
     })
   }
 

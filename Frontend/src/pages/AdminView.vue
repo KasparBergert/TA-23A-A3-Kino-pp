@@ -16,6 +16,8 @@ import {
 } from '../entities/AdminService'
 import type { film } from '@prisma/client'
 import { theatreService } from '../entities/TheatreService'
+import { analyticsService, type AnalyticsOverview } from '../entities/AnalyticsService'
+import AnalyticsPanel from '../features/admin/AnalyticsPanel.vue'
 
 const films = ref<film[]>([])
 const users = ref<{ id: number; email: string; role: string }[]>([])
@@ -37,6 +39,7 @@ const theatreName = ref('')
 const targetUserId = ref<number | null>(null)
 const targetRole = ref('user')
 const newUser = ref({ email: '', password: '', role: 'user' })
+const analytics = ref<AnalyticsOverview | null>(null)
 
 const role = computed(() => authStore.user.value?.role)
 const isSuper = computed(() => role.value === 'super_admin')
@@ -64,6 +67,11 @@ async function loadTheatres() {
   theatres.value = data ?? []
 }
 
+async function loadAnalytics() {
+  if (!isAdmin.value) return
+  analytics.value = await analyticsService.getOverview()
+}
+
 async function handleCreateFilm() {
   if (editingFilmId.value) {
     await updateFilm(editingFilmId.value, { ...filmForm.value })
@@ -71,6 +79,7 @@ async function handleCreateFilm() {
     await createFilm(filmForm.value)
   }
   await loadFilms()
+  await loadAnalytics()
   editingFilmId.value = null
   filmForm.value = { title: '', posterUrl: '', description: '', releaseDate: '', durationMin: null }
 }
@@ -78,6 +87,7 @@ async function handleCreateFilm() {
 async function handleDeleteFilm(id: number) {
   await deleteFilm(id)
   await loadFilms()
+  await loadAnalytics()
   if (manageTheatreId.value) await loadTheatreFilms(manageTheatreId.value)
 }
 
@@ -114,6 +124,7 @@ async function handleCreateTheatre() {
   await createTheatre({ name: theatreName.value })
   theatreName.value = ''
   await loadTheatres()
+  await loadAnalytics()
 }
 
 async function handleDeleteTheatre(id: number) {
@@ -141,6 +152,7 @@ onMounted(async () => {
   await loadFilms()
   await loadUsers()
   await loadTheatres()
+  await loadAnalytics()
 })
 </script>
 
@@ -151,6 +163,8 @@ onMounted(async () => {
       <h1 class="text-3xl font-semibold">Admin</h1>
       <p class="text-sm text-gray-300">Logged in as {{ authStore.user.value?.email }} ({{ authStore.user.value?.role }})</p>
     </header>
+
+    <AnalyticsPanel :analytics="analytics" />
 
     <section class="bg-slate-800 rounded-xl p-6 shadow">
       <h2 class="text-xl font-semibold mb-4">Films</h2>

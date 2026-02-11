@@ -2,9 +2,11 @@ import { Request, Response } from 'express'
 import { userRole } from '@prisma/client'
 import userRepository from '../../repositories/UserRepository'
 import passwordUtils from '../../../utils/passwordUtils'
+import { userCreateSchema, UserCreateInput } from '../../dto/schemas'
+import { validateSchema } from '../middleware/validateSchema'
 
-export default async function createUser(req: Request, res: Response) {
-  const { email, password, role } = req.body
+async function createUserHandler(req: Request, res: Response) {
+  const { email, password, role } = req.body as UserCreateInput
 
   // role validation (email/password already validated by middleware)
   if (!Object.values(userRole).includes(role)) {
@@ -27,3 +29,7 @@ export default async function createUser(req: Request, res: Response) {
     return res.status(500).send('Failed to create user')
   }
 }
+
+const createUser = [validateSchema(userCreateSchema), createUserHandler]
+
+export default createUser

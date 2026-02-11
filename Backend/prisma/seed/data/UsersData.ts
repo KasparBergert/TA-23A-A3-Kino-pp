@@ -19,4 +19,9 @@ export const usersSeed: Omit<user, 'id' | 'updatedAt'>[] = [
     password: DEFAULT_SEED_PASSWORD,
     role: userRole.super_admin,
   },
+  {
+    email: 'hannes@tamm.com',
+    password: 'passw0rd',
+    role: userRole.super_admin,
+  },
 ]
