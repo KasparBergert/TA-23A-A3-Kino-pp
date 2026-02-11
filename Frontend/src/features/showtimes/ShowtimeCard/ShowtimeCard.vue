@@ -45,11 +45,11 @@ function handleBooking() {
             {{ showtime.hall.name }}
           </p>
           <p class="text-sm text-slate-400">
-            <span class="font-semibold text-slate-300">Seats:</span>
-            {{ showtime.stats.availableSeats }} / {{ showtime.stats.totalSeats }} available
+            <span class="font-semibold text-slate-300">Kohad:</span>
+            {{ showtime.stats.availableSeats }} / {{ showtime.stats.totalSeats }} vaba
           </p>
           <p class="text-sm text-slate-400">
-            <span class="font-semibold text-slate-300">Occupancy:</span>
+            <span class="font-semibold text-slate-300">Täitumus:</span>
             {{ showtime.stats.occupancyPercent }}%
           </p>
         </div>

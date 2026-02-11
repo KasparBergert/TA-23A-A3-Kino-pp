@@ -1,7 +1,7 @@
 import { hall } from '@prisma/client'
 import theatreRepository from '../../../src/repositories/TheatreRepository'
 
-const baseNames = ['Orion', 'Nova', 'Cosmos', 'Aurora', 'Velvet', 'Lumen', 'Galaxy', 'Oasis', 'Eclipse', 'Horizon']
+const baseNames = ['Orion', 'Kaja', 'Kosmos', 'Koit', 'Samet', 'Lume', 'Galaktika', 'Oaas', 'Päikesekaar', 'Horisont']
 const capacities = [80, 120, 160, 200, 100]
 
 export async function createHallSeed(): Promise<Omit<hall, 'id'>[]> {

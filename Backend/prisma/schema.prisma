@@ -153,6 +153,7 @@ model ticket {
 model actor {
   id       Int     @id @default(autoincrement())
   name     String  @unique
+  character String?
   filmId   Int
   link     String?
   imageUrl String

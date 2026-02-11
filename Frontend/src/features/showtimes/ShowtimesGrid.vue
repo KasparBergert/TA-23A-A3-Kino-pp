@@ -8,7 +8,7 @@ defineProps<{
 <template>
   <section v-if="showtimes.length === 0" class="flex justify-center items-center py-20">
     <p class="text-xl md:text-2xl text-slate-400">
-      😢 Kahjuks pole sellel kinos ühtegi seanssi saadaval.
+      😢 Kahjuks pole sellel kuupäeval seansse.
     </p>
   </section>
 

@@ -1,5 +1,6 @@
 export const theatreSeed = [
-  { name: 'Downtown Cinema', city: 'Tallinn' },
-  { name: 'Suburbia Screens', city: 'Tartu' },
-  { name: 'Seaside Plaza', city: 'Pärnu' },
+  { name: 'Saku Plaza', city: 'Saku' },
+  { name: 'Limpa plaza', city: 'Tartu' },
+  { name: 'Burksi plaza', city: 'Tallinn' },
+  { name: 'Mulgi plaza', city: 'Võru' },
 ]

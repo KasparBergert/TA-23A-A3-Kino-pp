@@ -1,17 +1,17 @@
 import prisma from "../../../db"
 
 const genreMap: Record<string, string[]> = {
-  "The Dark Knight": ["Action", "Drama"],
-  "Inception": ["Sci-Fi", "Action"],
-  "Interstellar": ["Sci-Fi", "Drama"],
-  "The Matrix": ["Sci-Fi", "Action"],
-  "Gladiator": ["Action", "Drama"],
-  "The Shawshank Redemption": ["Drama"],
-  "Fight Club": ["Drama"],
-  "Pulp Fiction": ["Drama"],
-  "The Lord of the Rings: The Fellowship of the Ring": ["Action", "Drama"],
-  "The Lord of the Rings: The Return of the King": ["Action", "Drama"],
-  "The Social Network": ["Drama"],
+  "The Dark Knight": ["Märul", "Draama", "Põnevik"],
+  "Inception": ["Ulme", "Põnevik"],
+  "Interstellar": ["Ulme", "Draama", "Seiklus"],
+  "The Matrix": ["Ulme", "Märul"],
+  "Gladiator": ["Märul", "Draama", "Seiklus"],
+  "The Shawshank Redemption": ["Draama"],
+  "Fight Club": ["Draama", "Põnevik"],
+  "Pulp Fiction": ["Draama", "Põnevik"],
+  "The Lord of the Rings: The Fellowship of the Ring": ["Seiklus", "Märul", "Draama"],
+  "The Lord of the Rings: The Return of the King": ["Seiklus", "Märul", "Draama"],
+  "The Social Network": ["Draama"],
 }
 
 export async function assignRandomGenresToFilms() {

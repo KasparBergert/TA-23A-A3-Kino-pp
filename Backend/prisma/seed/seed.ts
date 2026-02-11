@@ -22,12 +22,31 @@ import { createActorsSeed } from './data/ActorsData'
 import seatRepository from '../../src/repositories/SeatRepository'
 import { createReviewsSeed } from './data/ReviewsData'
 import reviewRepository from '../../src/repositories/ReviewRepository'
+import { Prisma } from '@prisma/client'
 
 async function runSeed() {
+  // clean tables to avoid duplicates between runs
+  await prisma.$transaction([
+    prisma.showtimeTakenSeat.deleteMany(),
+    prisma.ticket.deleteMany(),
+    prisma.order.deleteMany(),
+    prisma.showtime.deleteMany(),
+    prisma.filmGenre.deleteMany(),
+    prisma.review.deleteMany(),
+    prisma.actor.deleteMany(),
+    prisma.seat.deleteMany(),
+    prisma.seatPrices.deleteMany(),
+    prisma.film.deleteMany(),
+    prisma.hall.deleteMany(),
+    prisma.theatre.deleteMany(),
+    prisma.genre.deleteMany(),
+    prisma.user.deleteMany(),
+  ] as const)
 
   await theatreRepository.createMany(theatreSeed)
   const hallsSeed = await createHallSeed()
   await hallRepositroy.createMany(hallsSeed)
+  await genreRepository.createMany(genreSeed)
   const halls = await hallRepositroy.getAll()
   const seats = createSeatMatrix(halls.map(h => h.id))
   await seatRepository.createMany(seats)

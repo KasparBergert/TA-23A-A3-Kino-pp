@@ -23,7 +23,6 @@ import {
 import type { film, genre } from '@prisma/client'
 import { theatreService } from '../entities/TheatreService'
 import { analyticsService, type AnalyticsOverview } from '../entities/AnalyticsService'
-import AnalyticsPanel from '../features/admin/AnalyticsPanel.vue'
 import { genreService } from '../entities/GenreService'
 import { showtimeService } from '../entities/ShowtimeService'
 import { hallService } from '../entities/HallService'
@@ -63,6 +62,19 @@ const role = computed(() => authStore.user.value?.role)
 const isSuper = computed(() => role.value === 'super_admin')
 const isAdmin = computed(() => role.value === 'admin' || role.value === 'super_admin')
 
+watch(manageTheatreId, async (id) => {
+  manageSelectionFilm.value = null
+  manageSelectionHall.value = null
+  scheduleStart.value = ''
+  scheduleEnd.value = ''
+  if (id) {
+    await loadTheatreFilms(id)
+  } else {
+    theatreFilms.value = []
+    theatreShowtimes.value = []
+    theatreHalls.value = []
+  }
+})
 async function loadFilms() {
   const data = await filmsService.getAll()
   const seenTitles = new Set<string>()
@@ -243,23 +255,21 @@ onMounted(async () => {
   <TheNavbar />
   <main class="min-h-screen bg-slate-900 text-gray-100 p-6 flex flex-col gap-8">
     <header class="flex justify-between items-center">
-      <h1 class="text-3xl font-semibold">Admin</h1>
-      <p class="text-sm text-gray-300">Logged in as {{ authStore.user.value?.email }} ({{ authStore.user.value?.role }})</p>
+      <h1 class="text-3xl font-semibold">Adminpaneel</h1>
+      <p class="text-sm text-gray-300">Sisse logitud: {{ authStore.user.value?.email }} ({{ authStore.user.value?.role }})</p>
     </header>
 
-    <AnalyticsPanel :analytics="analytics" />
-
     <section class="bg-slate-800 rounded-xl p-6 shadow">
-      <h2 class="text-xl font-semibold mb-4">Films</h2>
+      <h2 class="text-xl font-semibold mb-4">Filmid</h2>
       <div class="grid md:grid-cols-2 gap-4">
         <div class="space-y-3">
-          <input v-model="filmForm.title" class="input" placeholder="Title" />
-          <input v-model="filmForm.posterUrl" class="input" placeholder="Poster URL" />
-          <input v-model="filmForm.description" class="input" placeholder="Description" />
-          <input v-model="filmForm.releaseDate" class="input" placeholder="Release Date" />
-          <input v-model.number="filmForm.durationMin" class="input" placeholder="Duration minutes" />
+          <input v-model="filmForm.title" class="input" placeholder="Pealkiri" />
+          <input v-model="filmForm.posterUrl" class="input" placeholder="Postri URL" />
+          <input v-model="filmForm.description" class="input" placeholder="Kirjeldus" />
+          <input v-model="filmForm.releaseDate" class="input" placeholder="Linastuskuupäev" />
+          <input v-model.number="filmForm.durationMin" class="input" placeholder="Kestus (min)" />
           <div class="space-y-2">
-            <p class="text-sm text-gray-300 font-semibold">Genres</p>
+            <p class="text-sm text-gray-300 font-semibold">Žanrid</p>
             <div class="flex flex-wrap gap-2 max-h-28 overflow-y-auto">
               <label
                 v-for="g in genres"
@@ -272,19 +282,19 @@ onMounted(async () => {
             </div>
           </div>
           <div class="flex gap-2">
-            <button class="btn" @click="handleCreateFilm">{{ editingFilmId ? 'Save changes' : 'Create film' }}</button>
-            <button v-if="editingFilmId" class="btn-outline" @click="cancelEdit">Cancel</button>
+            <button class="btn" @click="handleCreateFilm">{{ editingFilmId ? 'Salvesta muudatused' : 'Lisa film' }}</button>
+            <button v-if="editingFilmId" class="btn-outline" @click="cancelEdit">Tühista</button>
           </div>
         </div>
         <div class="space-y-2 max-h-64 overflow-y-auto">
           <div v-for="f in films" :key="f.id" class="flex justify-between items-center bg-slate-700 rounded px-3 py-2">
             <div>
               <span>{{ f.title }}</span>
-              <p class="text-xs text-gray-400">Cinema: {{ f.theatreId ?? '—' }}</p>
+              <p class="text-xs text-gray-400">Kino ID: {{ f.theatreId ?? '—' }}</p>
             </div>
             <div class="flex gap-2">
-              <button class="text-blue-300 text-sm" @click="startEditFilm(f)">Edit</button>
-              <button class="text-red-300 text-sm" @click="handleDeleteFilm(f.id)">Delete</button>
+              <button class="text-blue-300 text-sm" @click="startEditFilm(f)">Muuda</button>
+              <button class="text-red-300 text-sm" @click="handleDeleteFilm(f.id)">Kustuta</button>
             </div>
           </div>
         </div>
@@ -292,27 +302,27 @@ onMounted(async () => {
 
       <div v-if="isManagingTheatre" class="mt-6 grid md:grid-cols-3 gap-4 border border-slate-700 rounded-xl p-4">
         <div>
-          <h3 class="text-lg font-semibold mb-2">Films at {{ theatres.find(t => t.id === manageTheatreId)?.name }}</h3>
+          <h3 class="text-lg font-semibold mb-2">Filmid kinos {{ theatres.find(t => t.id === manageTheatreId)?.name }}</h3>
           <div class="space-y-2 max-h-48 overflow-y-auto">
             <div v-for="f in theatreFilms" :key="f.id" class="flex justify-between bg-slate-700 rounded px-3 py-2">
               <span>{{ f.title }}</span>
             </div>
-            <p v-if="!theatreFilms.length" class="text-sm text-gray-400">No films assigned to this cinema yet.</p>
+            <p v-if="!theatreFilms.length" class="text-sm text-gray-400">Selles kinos pole veel filme.</p>
           </div>
         </div>
         <div class="space-y-3">
-          <h3 class="text-lg font-semibold">Assign film to this cinema</h3>
+          <h3 class="text-lg font-semibold">Seo film kinoga</h3>
           <select v-model.number="manageSelectionFilm" class="input">
-            <option :value="null">Select film to assign</option>
+            <option :value="null">Vali film</option>
             <option v-for="f in films" :key="f.id" :value="f.id">{{ f.title }}</option>
           </select>
           <div class="grid grid-cols-2 gap-2">
             <div>
-              <label class="text-xs text-gray-400">Start date</label>
+              <label class="text-xs text-gray-400">Alguskuupäev</label>
               <input v-model="scheduleStart" type="date" class="input" />
             </div>
             <div>
-              <label class="text-xs text-gray-400">End date</label>
+              <label class="text-xs text-gray-400">Lõppkuupäev</label>
               <input v-model="scheduleEnd" type="date" class="input" />
             </div>
           </div>
@@ -320,20 +330,20 @@ onMounted(async () => {
             class="btn"
             :disabled="!manageSelectionFilm || !manageTheatreId"
             @click="() => { if (manageSelectionFilm && manageTheatreId) handleAssignFilmToTheatre(manageSelectionFilm, manageTheatreId) }"
-          >
-            Assign to cinema
+            >
+            Seo kinoga
           </button>
           <button
             class="btn-outline w-full"
             :disabled="!manageSelectionFilm || !manageTheatreId || !scheduleStart || !scheduleEnd"
             @click="handleAutoSchedule"
           >
-            Auto-schedule (09:00-22:00, 1h gap)
+            Auto-graafik (09:00-22:00, 1h vahed)
           </button>
-          <p class="text-xs text-gray-400">Assigning moves the film to this cinema (each film belongs to one cinema).</p>
+          <p class="text-xs text-gray-400">Seostamine liigutab filmi valitud kinno (üks film ühes kinos).</p>
         </div>
         <div class="space-y-2">
-          <h3 class="text-lg font-semibold">Showtimes here</h3>
+          <h3 class="text-lg font-semibold">Seansid siin kinos</h3>
           <div class="space-y-1 max-h-48 overflow-y-auto">
             <div
               v-for="st in theatreShowtimes"
@@ -344,45 +354,45 @@ onMounted(async () => {
                 <p class="font-semibold">{{ st.filmTitle }}</p>
                 <p class="text-xs text-gray-300">{{ new Date(st.startsAt).toLocaleString() }}</p>
               </div>
-              <button class="text-red-300" @click="handleDeleteShowtime(st.id, manageTheatreId)">Delete</button>
+              <button class="text-red-300" @click="handleDeleteShowtime(st.id, manageTheatreId)">Kustuta</button>
             </div>
-            <p v-if="!theatreShowtimes.length" class="text-xs text-gray-400">No showtimes yet.</p>
+            <p v-if="!theatreShowtimes.length" class="text-xs text-gray-400">Seansse veel pole.</p>
           </div>
         </div>
       </div>
     </section>
 
     <section class="bg-slate-800 rounded-xl p-6 shadow">
-      <h2 class="text-xl font-semibold mb-4">Add Movie to Cinema</h2>
+      <h2 class="text-xl font-semibold mb-4">Seo film kinoga</h2>
       <div class="grid md:grid-cols-3 gap-4">
         <div>
-          <label class="text-sm text-gray-300 block mb-1">Cinema</label>
+          <label class="text-sm text-gray-300 block mb-1">Kino</label>
           <select v-model.number="manageTheatreId" class="input">
-            <option :value="null">Select cinema</option>
+            <option :value="null">Vali kino</option>
             <option v-for="t in theatres" :key="t.id" :value="t.id">{{ t.name }}</option>
           </select>
         </div>
         <div>
-          <label class="text-sm text-gray-300 block mb-1">Movie</label>
+          <label class="text-sm text-gray-300 block mb-1">Film</label>
           <select v-model.number="manageSelectionFilm" class="input" :disabled="!manageTheatreId">
-            <option :value="null">Select film</option>
+            <option :value="null">Vali film</option>
             <option v-for="f in films" :key="f.id" :value="f.id">{{ f.title }}</option>
           </select>
         </div>
         <div>
-          <label class="text-sm text-gray-300 block mb-1">Hall</label>
+          <label class="text-sm text-gray-300 block mb-1">Saal</label>
           <select v-model.number="manageSelectionHall" class="input" :disabled="!manageTheatreId">
-            <option :value="null">Any hall</option>
+            <option :value="null">Suvaline saal</option>
             <option v-for="h in theatreHalls" :key="h.id" :value="h.id">{{ h.name }}</option>
           </select>
         </div>
         <div class="grid grid-cols-2 gap-2">
           <div>
-            <label class="text-xs text-gray-400">Start date</label>
+            <label class="text-xs text-gray-400">Alguskuupäev</label>
             <input v-model="scheduleStart" type="date" class="input" :disabled="!manageSelectionFilm || !manageTheatreId" />
           </div>
           <div>
-            <label class="text-xs text-gray-400">End date</label>
+            <label class="text-xs text-gray-400">Lõppkuupäev</label>
             <input v-model="scheduleEnd" type="date" class="input" :disabled="!manageSelectionFilm || !manageTheatreId" />
           </div>
         </div>
@@ -393,35 +403,35 @@ onMounted(async () => {
           :disabled="!manageSelectionFilm || !manageTheatreId"
           @click="() => { if (manageSelectionFilm && manageTheatreId) handleAssignFilmToTheatre(manageSelectionFilm, manageTheatreId) }"
         >
-          Assign to cinema
+          Seo kinoga
         </button>
         <button
           class="btn-outline"
           :disabled="!manageSelectionFilm || !manageTheatreId || !scheduleStart || !scheduleEnd"
           @click="handleAutoSchedule"
         >
-          Auto-schedule (09:00-22:00, 1h gap)
+          Auto-graafik (09:00-22:00, 1h vahed)
         </button>
-        <p class="text-xs text-gray-400 mt-2">Assign moves the film to the selected cinema; auto-schedule creates daily showtimes between the dates.</p>
+        <p class="text-xs text-gray-400 mt-2">Seostamine liigutab filmi valitud kinno; auto-graafik loob kuupäevade vahemikus päevased seansid.</p>
       </div>
     </section>
 
     <section class="bg-slate-800 rounded-xl p-6 shadow">
-      <h2 class="text-xl font-semibold mb-4">Genres</h2>
+      <h2 class="text-xl font-semibold mb-4">Žanrid</h2>
       <div class="grid md:grid-cols-2 gap-4">
         <div class="space-y-3">
-          <input v-model="genreForm.name" class="input" placeholder="Genre name" />
+          <input v-model="genreForm.name" class="input" placeholder="Žanri nimi" />
           <div class="flex gap-2">
-            <button class="btn" @click="handleSaveGenre">{{ genreForm.id ? 'Save genre' : 'Add genre' }}</button>
-            <button v-if="genreForm.id" class="btn-outline" @click="genreForm = { id: null, name: '' }">Cancel</button>
+            <button class="btn" @click="handleSaveGenre">{{ genreForm.id ? 'Salvesta žanr' : 'Lisa žanr' }}</button>
+            <button v-if="genreForm.id" class="btn-outline" @click="genreForm = { id: null, name: '' }">Tühista</button>
           </div>
         </div>
         <div class="space-y-2 max-h-48 overflow-y-auto">
           <div v-for="g in genres" :key="g.id" class="flex justify-between bg-slate-700 rounded px-3 py-2">
             <span>{{ g.name }}</span>
             <div class="flex gap-2 text-sm">
-              <button class="text-blue-300" @click="startEditGenre(g)">Edit</button>
-              <button class="text-red-300" @click="handleDeleteGenre(g.id)">Delete</button>
+              <button class="text-blue-300" @click="startEditGenre(g)">Muuda</button>
+              <button class="text-red-300" @click="handleDeleteGenre(g.id)">Kustuta</button>
             </div>
           </div>
         </div>
@@ -429,25 +439,25 @@ onMounted(async () => {
     </section>
 
     <section v-if="isSuper" class="bg-slate-800 rounded-xl p-6 shadow">
-      <h2 class="text-xl font-semibold mb-4">Users</h2>
+      <h2 class="text-xl font-semibold mb-4">Kasutajad</h2>
       <div class="grid md:grid-cols-2 gap-4 mb-6">
         <div class="space-y-3">
-          <input v-model="newUser.email" class="input" placeholder="Email" />
-          <input v-model="newUser.password" type="password" class="input" placeholder="Password" />
+          <input v-model="newUser.email" class="input" placeholder="E-post" />
+          <input v-model="newUser.password" type="password" class="input" placeholder="Parool" />
           <select v-model="newUser.role" class="input">
             <option value="user">user</option>
             <option value="admin">admin</option>
             <option value="super_admin">super_admin</option>
           </select>
-          <button class="btn" @click="handleCreateUser">Create user</button>
+          <button class="btn" @click="handleCreateUser">Loo kasutaja</button>
         </div>
         <p class="text-sm text-gray-400">
-          Only super admins can create accounts. Provide an email, password, and select the role. The new user is saved immediately.
+          Ainult super-adminid saavad kontosid luua. Lisa e-post, parool ja vali roll. Uus kasutaja salvestatakse kohe.
         </p>
       </div>
       <div class="flex gap-3 items-center mb-4">
         <select v-model.number="targetUserId" class="input">
-          <option :value="null">Select user</option>
+          <option :value="null">Vali kasutaja</option>
           <option v-for="u in users" :key="u.id" :value="u.id">{{ u.email }} ({{ u.role }})</option>
         </select>
         <select v-model="targetRole" class="input">
@@ -455,47 +465,47 @@ onMounted(async () => {
           <option value="admin">admin</option>
           <option value="super_admin">super_admin</option>
         </select>
-        <button class="btn" @click="handleUpdateRole">Update role</button>
+        <button class="btn" @click="handleUpdateRole">Uuenda rolli</button>
       </div>
       <div class="space-y-2 max-h-48 overflow-y-auto">
         <div v-for="u in users" :key="u.id" class="flex justify-between bg-slate-700 rounded px-3 py-2">
           <span>{{ u.email }} ({{ u.role }})</span>
-          <button class="text-red-300" @click="handleDeleteUser(u.id)">Delete</button>
+          <button class="text-red-300" @click="handleDeleteUser(u.id)">Kustuta</button>
         </div>
       </div>
     </section>
 
     <section v-if="isSuper" class="bg-slate-800 rounded-xl p-6 shadow">
-      <h2 class="text-xl font-semibold mb-4">Cinemas</h2>
+      <h2 class="text-xl font-semibold mb-4">Kinod</h2>
       <div class="flex gap-3 items-center mb-4">
-        <input v-model="theatreName" class="input" placeholder="New theatre name" />
-        <input v-model="theatreCity" class="input" placeholder="City" />
-        <button class="btn" @click="handleCreateTheatre">Create</button>
+        <input v-model="theatreName" class="input" placeholder="Kino nimi" />
+        <input v-model="theatreCity" class="input" placeholder="Linn" />
+        <button class="btn" @click="handleCreateTheatre">Lisa</button>
       </div>
       <div class="space-y-2 max-h-64 overflow-y-auto">
         <div v-for="t in theatres" :key="t.id" class="bg-slate-700 rounded px-3 py-2">
           <div class="flex justify-between items-center">
             <span>{{ t.name }}</span>
             <div class="flex gap-2">
-              <button class="text-blue-300 text-sm" @click="() => { manageTheatreId.value = t.id; manageSelectionFilm.value = null; loadTheatreFilms(t.id) }">View lineup</button>
-              <button class="text-red-300 text-sm" @click="handleDeleteTheatre(t.id)">Delete</button>
+              <button class="text-blue-300 text-sm" @click="() => { manageTheatreId.value = t.id; manageSelectionFilm.value = null; loadTheatreFilms(t.id) }">Vaata kava</button>
+              <button class="text-red-300 text-sm" @click="handleDeleteTheatre(t.id)">Kustuta</button>
             </div>
           </div>
           <div v-if="manageTheatreId === t.id" class="mt-2 space-y-2 border border-slate-600 rounded p-3">
-            <h3 class="font-semibold text-sm">Films showing here</h3>
+            <h3 class="font-semibold text-sm">Siin jooksvad filmid</h3>
             <div class="space-y-1 max-h-32 overflow-y-auto">
               <div v-for="f in theatreFilms" :key="f.id" class="flex justify-between bg-slate-800 px-2 py-1 rounded">
                 <span>{{ f.title }}</span>
                 <div class="flex gap-2 text-xs">
-                  <button class="text-blue-300" @click="startEditFilm(f)">Edit</button>
-                  <button class="text-red-300" @click="handleAssignFilmToTheatre(f.id, null)">Remove</button>
+                  <button class="text-blue-300" @click="startEditFilm(f)">Muuda</button>
+                  <button class="text-red-300" @click="handleAssignFilmToTheatre(f.id, null)">Eemalda</button>
                 </div>
               </div>
-              <p v-if="!theatreFilms.length" class="text-xs text-gray-400">No films assigned.</p>
+              <p v-if="!theatreFilms.length" class="text-xs text-gray-400">Filme pole seotud.</p>
             </div>
             <div class="space-y-2">
               <select v-model.number="manageSelectionFilm" class="input">
-                <option :value="null">Select film to assign</option>
+                <option :value="null">Vali film seostamiseks</option>
                 <option v-for="f in films" :key="f.id" :value="f.id">{{ f.title }}</option>
               </select>
               <button
@@ -503,9 +513,9 @@ onMounted(async () => {
                 :disabled="!manageSelectionFilm"
                 @click="() => { if (manageSelectionFilm) handleAssignFilmToTheatre(manageSelectionFilm, t.id) }"
               >
-                Assign to this cinema
+                Seo selle kinoga
               </button>
-              <p class="text-xs text-gray-400">Assigning moves the film to this cinema; films with no cinema stay unassigned.</p>
+              <p class="text-xs text-gray-400">Seostamine liigutab filmi valitud kinno; ilma kinota filmid jäävad seostamata.</p>
             </div>
           </div>
         </div>

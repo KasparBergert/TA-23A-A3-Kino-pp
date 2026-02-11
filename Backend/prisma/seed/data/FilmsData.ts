@@ -5,7 +5,7 @@ import { getRandom } from '../utils/fetch'
 const baseFilms: Omit<film, 'id' | 'theatreId'>[] = [
   {
     title: 'The Dark Knight',
-    description: 'Gotham descends into chaos as Batman faces the Joker in a clash of ideals, sacrifice, and fragile hope.',
+    description: 'Gotham vajub kaosesse, kui Batman peab vastamisi Jokkeriga – ideaalide, ohverduse ja hapra lootuse heitlus.',
     director: 'Christopher Nolan',
     releaseDate: new Date('2008-07-18'),
     durationMin: 152,
@@ -16,7 +16,7 @@ const baseFilms: Omit<film, 'id' | 'theatreId'>[] = [
   },
   {
     title: 'Inception',
-    description: 'A master thief leads a team into layered dreams to plant an idea while battling memories that threaten the mission.',
+    description: 'Meistervarga meeskond tungib kihilistesse unedesse, et istutada mõte, võideldes samal ajal teda painavate mälestustega.',
     director: 'Christopher Nolan',
     releaseDate: new Date('2010-07-16'),
     durationMin: 148,
@@ -27,7 +27,7 @@ const baseFilms: Omit<film, 'id' | 'theatreId'>[] = [
   },
   {
     title: 'Interstellar',
-    description: 'As Earth withers, a pilot joins a secret mission through a wormhole to find a new home for humanity.',
+    description: 'Kui Maa hääbub, liitub piloot salajase missiooniga ussiaugu kaudu uue kodu otsimiseks inimkonnale.',
     director: 'Christopher Nolan',
     releaseDate: new Date('2014-11-07'),
     durationMin: 169,
@@ -38,7 +38,7 @@ const baseFilms: Omit<film, 'id' | 'theatreId'>[] = [
   },
   {
     title: 'The Matrix',
-    description: 'A hacker learns reality is a simulation and joins rebels to free humanity from the machines that control it.',
+    description: 'Häkker avastab, et tegelikkus on simulatsioon, ning liitub mässajatega, et vabastada inimkond masinaorjusest.',
     director: 'The Wachowskis',
     releaseDate: new Date('1999-03-31'),
     durationMin: 136,
@@ -49,7 +49,7 @@ const baseFilms: Omit<film, 'id' | 'theatreId'>[] = [
   },
   {
     title: 'Gladiator',
-    description: 'A betrayed Roman general rises as a gladiator, fighting for vengeance against the emperor who destroyed his family.',
+    description: 'Reetmise ohvriks langenud Rooma kindral tõuseb gladiaatorina, otsides kättemaksu keisrile, kes hävitas ta pere.',
     director: 'Ridley Scott',
     releaseDate: new Date('2000-05-05'),
     durationMin: 155,
@@ -60,7 +60,7 @@ const baseFilms: Omit<film, 'id' | 'theatreId'>[] = [
   },
   {
     title: 'The Shawshank Redemption',
-    description: 'Wrongly imprisoned banker Andy Dufresne endures decades in Shawshank, forging a bond that sustains hope.',
+    description: 'Ebaõiglaselt vangistatud pankur Andy Dufresne peab Shawshanki aastakümneid vastu, luues sõpruse, mis hoiab lootust elus.',
     director: 'Frank Darabont',
     releaseDate: new Date('1994-10-14'),
     durationMin: 142,
@@ -71,7 +71,7 @@ const baseFilms: Omit<film, 'id' | 'theatreId'>[] = [
   },
   {
     title: 'Fight Club',
-    description: 'An insomniac and a charismatic soap maker create an underground fight club that spirals into anarchy.',
+    description: 'Unetu kontorirott ja karismaatiline seebimeister rajavad põrandaaluse kaklusklubi, mis paisub anarhiaks.',
     director: 'David Fincher',
     releaseDate: new Date('1999-10-15'),
     durationMin: 139,
@@ -82,7 +82,7 @@ const baseFilms: Omit<film, 'id' | 'theatreId'>[] = [
   },
   {
     title: 'Pulp Fiction',
-    description: 'Interwoven tales of hitmen, boxers, and mobsters collide in a darkly comic Los Angeles crime saga.',
+    description: 'Palgamõrvarite, poksijate ja gängsterite lood põimuvad süngehõngulises komöödias Los Angelese allilmas.',
     director: 'Quentin Tarantino',
     releaseDate: new Date('1994-10-14'),
     durationMin: 154,
@@ -93,7 +93,7 @@ const baseFilms: Omit<film, 'id' | 'theatreId'>[] = [
   },
   {
     title: 'The Lord of the Rings: The Fellowship of the Ring',
-    description: 'A humble hobbit and a fellowship of allies journey across Middle-earth to destroy the One Ring of power.',
+    description: 'Tagasihoidlik hobit ja tema kaaslaste sõpruskond rändab üle Keskmaa, et hävitada kõikvõimas Üks Sõrmus.',
     director: 'Peter Jackson',
     releaseDate: new Date('2001-12-19'),
     durationMin: 178,
@@ -104,7 +104,7 @@ const baseFilms: Omit<film, 'id' | 'theatreId'>[] = [
   },
   {
     title: 'The Lord of the Rings: The Return of the King',
-    description: 'Armies clash and destinies converge as the final push to destroy the Ring decides the fate of Middle-earth.',
+    description: 'Armeed põrkuvad ja saatused põimuvad, kui viimane rünnak Sõrmuse hävitamiseks otsustab kogu Keskmaa tuleviku.',
     director: 'Peter Jackson',
     releaseDate: new Date('2003-12-17'),
     durationMin: 201,
@@ -115,7 +115,7 @@ const baseFilms: Omit<film, 'id' | 'theatreId'>[] = [
   },
   {
     title: 'The Social Network',
-    description: 'At Harvard, ambition and rivalry ignite the birth of Facebook, fracturing friendships in the race to own the idea.',
+    description: 'Harvardis sütitab auahnus ja rivaalitsemine Facebooki sünni, purustades sõprussidemed ideele autorluse nimel.',
     director: 'David Fincher',
     releaseDate: new Date('2010-10-01'),
     durationMin: 120,
@@ -130,8 +130,8 @@ export async function createFilmSeed(): Promise<Omit<film, 'id'>[]> {
   const theatres = await theatreRepository.getAll()
   if (!theatres.length) throw new Error('No theatres found; seed theatres before films')
 
-  return baseFilms.map((film) => ({
+  return baseFilms.map((film, idx) => ({
     ...film,
-    theatreId: null,
+    theatreId: theatres[idx % theatres.length].id,
   }))
 }

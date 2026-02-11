@@ -24,8 +24,8 @@ const showAdminLink = computed(() => authStore.isAdmin.value)
   <!-- Navbar -->
   <nav class="navbar">
     <div class="navbar-left">
-      <RouterLink to="/" class="navbar-title">HanKas Cinema</RouterLink>
-      <RouterLink to="/" class="nav-btn nav-home">Home</RouterLink>
+      <RouterLink to="/" class="navbar-title">HanKas Kino</RouterLink>
+      <RouterLink to="/" class="nav-btn nav-home">Avaleht</RouterLink>
       <RouterLink
         :to="{ name: 'showtimes', query: { theatreId: 0 } }"
         class="nav-btn"
@@ -37,7 +37,7 @@ const showAdminLink = computed(() => authStore.isAdmin.value)
       <input
         :value="props.search"
         @input="emit('update:search', ($event.target as HTMLInputElement).value)"
-        placeholder="Search movies"
+        placeholder="Otsi filme"
         class="search-input"
       />
       <div v-if="props.search" class="search-dropdown">
@@ -60,8 +60,8 @@ const showAdminLink = computed(() => authStore.isAdmin.value)
     </div>
     <div class="navbar-right">
       <template v-if="!authStore.isAuthenticated.value">
-        <button @click="openLogin" class="nav-btn">Login</button>
-        <button @click="openRegister" class="nav-btn">Register</button>
+        <button @click="openLogin" class="nav-btn">Logi sisse</button>
+        <button @click="openRegister" class="nav-btn">Loo konto</button>
       </template>
       <template v-else>
         <div class="user-menu" tabindex="0">

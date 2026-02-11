@@ -18,7 +18,12 @@ const film = ref<film | null>(null)
 const actors = ref<ActorDTO[]>([])
 const theatres = ref<TheatresDTO[]>([])
 const selectedTheatreId = ref<number | null>(null)
-const selectedDate = ref<string>(new Date().toISOString().split('T')[0])
+const localToday = () => {
+  const d = new Date()
+  d.setMinutes(d.getMinutes() - d.getTimezoneOffset())
+  return d.toISOString().split('T')[0]
+}
+const selectedDate = ref<string>(localToday())
 const showtimes = ref<ShowtimeDTO[]>([])
 const loadingShowtimes = ref(false)
 
@@ -26,6 +31,9 @@ const releaseLabel = computed(() =>
   film.value?.releaseDate ? new Date(film.value.releaseDate).toLocaleDateString() : 'N/A',
 )
 const durationLabel = computed(() => (film.value?.durationMin ? `${film.value.durationMin} min` : 'N/A'))
+const topCast = computed(() =>
+  actors.value.slice(0, 4).map((a) => a.name).join(', ')
+)
 
 onMounted(async () => {
   const filmId = Number(route.params.id)
@@ -91,7 +99,7 @@ async function loadShowtimes() {
           <div class="flex items-center gap-3">
             <span
               class="h-10 w-10 rounded-full bg-indigo-600/20 border border-indigo-400/40 flex items-center justify-center text-indigo-100 font-semibold">★</span>
-            <p class="text-xs uppercase tracking-[0.35em] text-indigo-200/80">Now Showing</p>
+            <p class="text-xs uppercase tracking-[0.35em] text-indigo-200/80">Kinodes</p>
           </div>
 
           <h1 class="text-3xl md:text-4xl lg:text-5xl font-extrabold text-white leading-tight drop-shadow">
@@ -103,11 +111,11 @@ async function loadShowtimes() {
           </p>
 
           <div class="flex flex-wrap gap-2 text-xs font-semibold">
-            <span class="chip">Dir: {{ film.director ?? 'Unknown' }}</span>
-            <span class="chip">Duration: {{ durationLabel }}</span>
-            <span class="chip">Rating: {{ film.rating ?? 'PG-13' }}</span>
-            <span class="chip">Language: {{ film.language ?? 'EN' }}</span>
-            <span class="chip">Released: {{ releaseLabel }}</span>
+            <span class="chip">Režissöör: {{ film.director ?? 'Puudub' }}</span>
+            <span class="chip">Kestus: {{ durationLabel }}</span>
+            <span class="chip">Reiting: {{ film.rating ?? 'PG-13' }}</span>
+            <span class="chip">Keel: {{ film.language ?? 'EN' }}</span>
+            <span class="chip">Esilinastus: {{ releaseLabel }}</span>
           </div>
 
           <div class="pt-2 flex flex-wrap gap-3">
@@ -115,7 +123,7 @@ async function loadShowtimes() {
               type="button"
               class="ghost"
               @click="router.back()">
-              Back
+              Tagasi
             </button>
           </div>
         </div>
@@ -125,7 +133,7 @@ async function loadShowtimes() {
     <!-- Trailer & details -->
     <div class="grid lg:grid-cols-2 gap-6">
       <div class="glass p-5 space-y-3">
-        <h2 class="section-title">Trailer</h2>
+        <h2 class="section-title">Treiler</h2>
         <div v-if="film.trailerUrl" class="aspect-video rounded-2xl overflow-hidden border border-slate-800 shadow-lg">
           <iframe :src="film.trailerUrl" class="w-full h-full" allowfullscreen allow="autoplay; encrypted-media"></iframe>
         </div>
@@ -133,13 +141,14 @@ async function loadShowtimes() {
       </div>
 
       <div class="glass p-5 space-y-3">
-        <h2 class="section-title">Details</h2>
+        <h2 class="section-title">Detailid</h2>
         <dl class="space-y-2 text-sm text-slate-200">
-          <div class="detail-row"><dt>Director</dt><dd>{{ film.director ?? 'Unknown' }}</dd></div>
-          <div class="detail-row"><dt>Duration</dt><dd>{{ durationLabel }}</dd></div>
-          <div class="detail-row"><dt>Rating</dt><dd>{{ film.rating ?? 'PG-13' }}</dd></div>
-          <div class="detail-row"><dt>Language</dt><dd>{{ film.language ?? 'EN' }}</dd></div>
-          <div class="detail-row"><dt>Release</dt><dd>{{ releaseLabel }}</dd></div>
+          <div class="detail-row"><dt>Režissöör</dt><dd>{{ film.director ?? 'Puudub' }}</dd></div>
+          <div class="detail-row"><dt>Kestus</dt><dd>{{ durationLabel }}</dd></div>
+          <div class="detail-row"><dt>Reiting</dt><dd>{{ film.rating ?? 'PG-13' }}</dd></div>
+          <div class="detail-row"><dt>Keel</dt><dd>{{ film.language ?? 'EN' }}</dd></div>
+          <div class="detail-row"><dt>Esilinastus</dt><dd>{{ releaseLabel }}</dd></div>
+          <div class="detail-row"><dt>Osatäitjad</dt><dd>{{ topCast || 'Varsti lisandub' }}</dd></div>
         </dl>
       </div>
     </div>
@@ -147,24 +156,18 @@ async function loadShowtimes() {
     <!-- Cast -->
     <div class="glass p-5">
       <div class="flex items-center justify-between mb-3">
-        <h2 class="section-title">Cast</h2>
-        <span class="text-xs text-slate-400">{{ actors.length }} members</span>
+        <h2 class="section-title">Näitlejad</h2>
+        <span class="text-xs text-slate-400">{{ actors.length }} liiget</span>
       </div>
-      <div v-if="actors.length" class="grid gap-4 sm:gap-6 grid-cols-[repeat(auto-fit,minmax(140px,1fr))]">
-        <article v-for="actor in actors" :key="actor.id"
-          class="bg-slate-900/80 border border-slate-800 rounded-2xl overflow-hidden shadow-lg shadow-black/30">
-          <div class="relative aspect-[2/3] overflow-hidden">
-            <img :src="actor.imageUrl ?? ''" :alt="actor.name" class="absolute inset-0 w-full h-full object-cover" />
-          </div>
-          <div class="p-3">
-            <p class="text-sm font-semibold text-white">{{ actor.name }}</p>
-            <a v-if="actor.link" :href="actor.link" target="_blank" rel="noreferrer"
-              class="text-xs text-indigo-300 hover:text-indigo-200">
-              IMDb
-            </a>
-          </div>
-        </article>
-      </div>
+      <ul v-if="actors.length" class="space-y-2">
+        <li v-for="actor in actors" :key="actor.id" class="flex items-center justify-between bg-slate-900/70 border border-slate-800 rounded-xl px-3 py-2">
+          <span class="text-sm font-semibold text-white">{{ actor.name }}</span>
+          <a v-if="actor.link" :href="actor.link" target="_blank" rel="noreferrer"
+            class="text-xs text-indigo-300 hover:text-indigo-200">
+            IMDb
+          </a>
+        </li>
+      </ul>
       <p v-else class="text-slate-300">Cast not available.</p>
     </div>
 
