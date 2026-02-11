@@ -15,7 +15,8 @@ const showAdminLink = computed(() => authStore.isAdmin.value)
   <!-- Navbar -->
   <nav class="navbar">
     <div class="navbar-left">
-      <span class="navbar-title">HanKas Cinema</span>
+      <RouterLink to="/" class="navbar-title">HanKas Cinema</RouterLink>
+      <RouterLink to="/" class="nav-btn nav-home">Home</RouterLink>
     </div>
     <div class="navbar-right">
       <template v-if="!authStore.isAuthenticated.value">
@@ -54,6 +55,13 @@ const showAdminLink = computed(() => authStore.isAdmin.value)
   font-size: 1.25rem;
   font-weight: 600;
   color:white;
+  text-decoration: none;
+}
+
+.navbar-left {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
 }
 
 .navbar-right {
