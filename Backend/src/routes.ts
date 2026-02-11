@@ -19,6 +19,7 @@ import deleteUser from './controllers/super/deleteUser.ts'
 import createTheatre from './controllers/super/createTheatre.ts'
 import updateTheatre from './controllers/super/updateTheatre.ts'
 import deleteTheatre from './controllers/super/deleteTheatre.ts'
+import createUser from './controllers/super/createUser.ts'
 import me from './controllers/auth/me.ts'
 import logout from './controllers/auth/logout.ts'
 import { getSeatPrices } from './controllers/getSeatPrices.ts'
@@ -48,6 +49,12 @@ export default function ApiRoutes(): Router {
 
   // SUPER ADMIN
   routes.get('/super/users', requireRole(userRole.super_admin), listUsers)
+  routes.post(
+    '/super/users',
+    requireRole(userRole.super_admin),
+    validateEmailAndPassword,
+    createUser,
+  )
   routes.patch('/super/users/:userId/role', requireRole(userRole.super_admin), updateUserRole)
   routes.delete('/super/users/:userId', requireRole(userRole.super_admin), deleteUser)
   routes.post('/super/theatres', requireRole(userRole.super_admin), createTheatre)

@@ -1,4 +1,4 @@
-import { createRouter, createWebHistory } from 'vue-router'
+import { createRouter, createWebHistory, NavigationGuardNext } from 'vue-router'
 import HomeView from '../pages/HomeView.vue'
 import Showtimes from '../pages/Showtimes.vue'
 import SeatSelect from '../pages/SeatSelect.vue'
@@ -7,7 +7,17 @@ import orderStore from '../store/OrderStore'
 import AdminView from '../pages/AdminView.vue'
 import AboutView from '../pages/AboutView.vue'
 import Payment from '../pages/Payment.vue'
-import Payment from '../pages/Payment.vue'
+import authStore from '../store/AuthStore'
+
+async function requireRoles(roles: string[], next: NavigationGuardNext) {
+  if (!authStore.user.value) {
+    await authStore.loadUser()
+  }
+  const role = authStore.user.value?.role
+  if (!role) return next('/')
+  if (!roles.includes(role)) return next('/')
+  return next()
+}
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -67,6 +77,9 @@ const router = createRouter({
       path: '/admin',
       name: 'admin',
       component: AdminView,
+      beforeEnter: async (to, from, next) => {
+        await requireRoles(['admin', 'super_admin'], next)
+      },
     },
     {
       path: '/about',

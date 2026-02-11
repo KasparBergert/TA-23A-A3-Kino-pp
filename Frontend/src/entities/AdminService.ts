@@ -16,6 +16,10 @@ export async function listUsers() {
   return await client.get('/super/users')
 }
 
+export async function createUser(data: { email: string; password: string; role: string }) {
+  return await client.post('/super/users', data)
+}
+
 export async function updateUserRole(id: number, role: string) {
   return await client.post(`/super/users/${id}/role`, { role }, { method: 'PATCH' })
 }

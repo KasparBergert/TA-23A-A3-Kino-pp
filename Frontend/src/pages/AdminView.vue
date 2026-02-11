@@ -3,7 +3,16 @@ import { ref, onMounted, computed } from 'vue'
 import authStore from '../store/AuthStore'
 import TheNavbar from '../widgets/TheNavbar.vue'
 import { filmsService } from '../entities/FilmService'
-import { createFilm, deleteFilm, listUsers, updateUserRole, createTheatre, deleteTheatre, deleteUser } from '../entities/AdminService'
+import {
+  createFilm,
+  deleteFilm,
+  listUsers,
+  updateUserRole,
+  createTheatre,
+  deleteTheatre,
+  deleteUser,
+  createUser,
+} from '../entities/AdminService'
 import type { film } from '@prisma/client'
 import { theatreService } from '../entities/TheatreService'
 
@@ -15,6 +24,7 @@ const filmForm = ref({ title: '', posterUrl: '', description: '', releaseDate: '
 const theatreName = ref('')
 const targetUserId = ref<number | null>(null)
 const targetRole = ref('user')
+const newUser = ref({ email: '', password: '', role: 'user' })
 
 const role = computed(() => authStore.user.value?.role)
 const isSuper = computed(() => role.value === 'super_admin')
@@ -49,6 +59,13 @@ async function handleDeleteFilm(id: number) {
 async function handleUpdateRole() {
   if (!targetUserId.value) return
   await updateUserRole(targetUserId.value, targetRole.value)
+  await loadUsers()
+}
+
+async function handleCreateUser() {
+  if (!newUser.value.email || !newUser.value.password) return
+  await createUser(newUser.value)
+  newUser.value = { email: '', password: '', role: 'user' }
   await loadUsers()
 }
 
@@ -105,6 +122,21 @@ onMounted(async () => {
 
     <section v-if="isSuper" class="bg-slate-800 rounded-xl p-6 shadow">
       <h2 class="text-xl font-semibold mb-4">Users</h2>
+      <div class="grid md:grid-cols-2 gap-4 mb-6">
+        <div class="space-y-3">
+          <input v-model="newUser.email" class="input" placeholder="Email" />
+          <input v-model="newUser.password" type="password" class="input" placeholder="Password" />
+          <select v-model="newUser.role" class="input">
+            <option value="user">user</option>
+            <option value="admin">admin</option>
+            <option value="super_admin">super_admin</option>
+          </select>
+          <button class="btn" @click="handleCreateUser">Create user</button>
+        </div>
+        <p class="text-sm text-gray-400">
+          Only super admins can create accounts. Provide an email, password, and select the role. The new user is saved immediately.
+        </p>
+      </div>
       <div class="flex gap-3 items-center mb-4">
         <select v-model.number="targetUserId" class="input">
           <option :value="null">Select user</option>

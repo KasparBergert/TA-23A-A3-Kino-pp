@@ -10,6 +10,7 @@ const isAdmin = computed(() => {
   const role = user.value?.role
   return role === 'admin' || role === 'super_admin'
 })
+const isSuperAdmin = computed(() => user.value?.role === 'super_admin')
 const displayName = computed(() => user.value?.email ?? '')
 
 async function loadUser() {
@@ -33,6 +34,7 @@ export default {
   user,
   isAuthenticated,
   isAdmin,
+  isSuperAdmin,
   displayName,
   loadUser,
   logout,
