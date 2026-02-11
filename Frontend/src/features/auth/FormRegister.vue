@@ -4,6 +4,7 @@ import client from '../../utils/api.ts'
 import { close } from '../../utils/modal.ts'
 import Form from '../../widgets/Form.vue';
 import { Toaster, toast } from "@steveyuowo/vue-hot-toast";
+import authStore from '../../store/AuthStore';
 
 const email = ref('')
 const password = ref('')
@@ -16,7 +17,8 @@ async function submitForm() {
       password: password.value,
     })
 
-    toast.success('Registration successful. Try loggin in!')
+    await authStore.loadUser()
+    toast.success('Registration successful.')
     close();
   } catch (err) {
     toast.error(err.response.data.message)

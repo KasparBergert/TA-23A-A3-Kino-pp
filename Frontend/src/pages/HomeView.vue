@@ -14,7 +14,7 @@ const top3films = ref<film[]>([]);
 onMounted(async () => {
   try {
     const films_fetched = await filmsService.getAll();
-    films.value = films_fetched;
+    films.value = films_fetched ?? [];
     top3films.value = films.value.slice(0, 3);
   } catch (err) {
     console.error("Error fetching films:", err);

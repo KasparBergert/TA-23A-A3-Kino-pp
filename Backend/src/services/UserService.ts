@@ -13,24 +13,21 @@ class UserService {
    */
   async createAccount(email: string, password: string, role: userRole): Promise<TokenPair | null> {
     const hashed_password = await passwordUtils.createhash(password)
-    await userRepository.create({email, password: hashed_password, role})
-    return tokenService.createTokens({ email })
+    await userRepository.create({ email, password: hashed_password, role })
+    return tokenService.createTokens({ email, role })
   }
 
   //gives a TokenPair, otherwise null if unsuccessful
   async userLogin(email: string, password: string): Promise<TokenPair> {
-    //get the user from the database
     const user = await userRepository.getByEmail(email)
     if (!user) throw new Error('USER_NOT_FOUND')
 
-    //check if password matches
-    const password_hash = await passwordUtils.createhash(password)
-    const valid = passwordUtils.verify(password_hash, user.password)
+    const valid = await passwordUtils.verify(user.password, password)
     if (!valid) {
       throw Error('INVALID_PASSWORD')
     }
 
-    return tokenService.createTokens(email)
+    return tokenService.createTokens({ email: user.email, role: user.role })
   }
 }
 

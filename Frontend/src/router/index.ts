@@ -4,6 +4,8 @@ import Showtimes from '../pages/Showtimes.vue'
 import SeatSelect from '../pages/SeatSelect.vue'
 import FilmDetail from '../pages/FilmDetail.vue'
 import orderStore from '../store/OrderStore'
+import AdminView from '../pages/AdminView.vue'
+import AboutView from '../pages/AboutView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -54,6 +56,16 @@ const router = createRouter({
       path: '/films/:id',
       name: 'film-detail',
       component: FilmDetail,
+    },
+    {
+      path: '/admin',
+      name: 'admin',
+      component: AdminView,
+    },
+    {
+      path: '/about',
+      name: 'about',
+      component: AboutView,
     },
   ],
 })

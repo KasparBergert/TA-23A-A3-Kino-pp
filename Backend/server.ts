@@ -13,9 +13,14 @@ const URI = process.env.VITE_URI
 
 //helps add 's' to 'http' protocol when cookies are set to 'secure'.
 const secureSuffix = process.env.SecureCookies === 'true' ? 's' : ''
+const allowedOrigins = [
+  `http${secureSuffix}://localhost:5173`,
+  `http${secureSuffix}://localhost:5174`,
+]
 app.use(
   cors({
-    origin: `http${secureSuffix}://localhost:5173`,
+    origin: allowedOrigins,
+    credentials: true,
   }),
 )
 app.use(cookieParser())

@@ -18,7 +18,9 @@ class Api {
         method: 'GET',
         ...options,
         headers: this.makeDefaultHeaders(),
+        credentials: 'include',
       })
+      if (res.status === 204) return null as T
       return await res.json()
     } catch (err) {
       console.log(err)
@@ -32,7 +34,9 @@ class Api {
         ...options,
         body: JSON.stringify(body),
         headers: this.makeDefaultHeaders(),
+        credentials: 'include',
       })
+      if (res.status === 204) return null
       return await res.json()
     } catch (err) {
       console.log(err)

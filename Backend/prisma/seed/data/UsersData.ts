@@ -12,4 +12,9 @@ export const usersSeed: Omit<user, 'id' | 'updatedAt'>[] = [
     password: 'HASH',
     role: userRole.user,
   },
+  {
+    email: 'super@example.com',
+    password: 'HASH',
+    role: userRole.super_admin,
+  },
 ]

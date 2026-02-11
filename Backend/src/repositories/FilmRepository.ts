@@ -27,6 +27,18 @@ class FilmRepository {
     })
   }
 
+  async create(film: Omit<film, 'id'>): Promise<film> {
+    return await prisma.film.create({ data: film })
+  }
+
+  async update(id: number, film: Partial<Omit<film, 'id'>>): Promise<film> {
+    return await prisma.film.update({ where: { id }, data: film })
+  }
+
+  async delete(id: number): Promise<film> {
+    return await prisma.film.delete({ where: { id } })
+  }
+
   async createMany(film: Omit<film, 'id'>[]){
     await prisma.film.createMany({
       data: film,

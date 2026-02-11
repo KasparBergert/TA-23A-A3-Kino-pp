@@ -183,4 +183,5 @@ enum seatType {
 enum userRole {
   user
   admin
+  super_admin
 }

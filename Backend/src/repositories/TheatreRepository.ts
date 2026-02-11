@@ -21,6 +21,18 @@ class TheatreRepository {
     })
   }
 
+  async create(data: Omit<theatre, 'id'>): Promise<theatre> {
+    return await prisma.theatre.create({ data })
+  }
+
+  async update(id: number, data: Partial<Omit<theatre, 'id'>>): Promise<theatre> {
+    return await prisma.theatre.update({ where: { id }, data })
+  }
+
+  async delete(id: number): Promise<theatre> {
+    return await prisma.theatre.delete({ where: { id } })
+  }
+
   async createMany(theatre: Omit<theatre, 'id'>[]){
     await prisma.theatre.createMany({
       data: theatre,

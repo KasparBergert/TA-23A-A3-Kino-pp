@@ -12,16 +12,16 @@ class AuthService {
     //check if user was found
     if (user === null) return false;
 
-    return passwordUtils.verify(entered_password, user.password)
+    return passwordUtils.verify(user.password, entered_password)
   }
 
   //gives both refresh and access token when entered are correct
   async createUserTokens(email: string, entered_password: string): Promise<null | TokenPair> {
     //validate if user has the right password
-    const valid = this.validatePassword(email, entered_password)
+    const valid = await this.validatePassword(email, entered_password)
     if(!valid){ return null; }
 
-    const tokens = tokenService.createTokens(email);
+    const tokens = tokenService.createTokens({ email });
     return tokens
   }
 
@@ -30,4 +30,3 @@ class AuthService {
 
 const authService = new AuthService();
 export default authService;
-

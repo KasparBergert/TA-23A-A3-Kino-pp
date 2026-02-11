@@ -1,8 +1,15 @@
 <script setup lang="ts">
-import { open } from "../utils/modal";
-import FormLogin from "../features/auth/FormLogin.vue";
-import FormRegister from "../features/auth/FormRegister.vue";
+import { computed } from "vue"
+import { open } from "../utils/modal"
+import FormLogin from "../features/auth/FormLogin.vue"
+import FormRegister from "../features/auth/FormRegister.vue"
+import authStore from "../store/AuthStore"
 
+const openLogin = () => open(FormLogin)
+const openRegister = () => open(FormRegister)
+const logout = () => authStore.logout()
+
+const showAdminLink = computed(() => authStore.isAdmin.value)
 </script>
 <template>
   <!-- Navbar -->
@@ -11,8 +18,22 @@ import FormRegister from "../features/auth/FormRegister.vue";
       <span class="navbar-title">HanKas Cinema</span>
     </div>
     <div class="navbar-right">
-      <button @click="open(FormLogin)" class="nav-btn">Login</button>
-      <button @click="open(FormRegister)" class="nav-btn">Register</button>
+      <template v-if="!authStore.isAuthenticated.value">
+        <button @click="openLogin" class="nav-btn">Login</button>
+        <button @click="openRegister" class="nav-btn">Register</button>
+      </template>
+      <template v-else>
+        <div class="user-menu" tabindex="0">
+          <button class="nav-btn user-trigger" aria-haspopup="true" aria-expanded="false">
+            {{ authStore.displayName.value }}
+            <span class="caret">▾</span>
+          </button>
+          <div class="dropdown">
+            <a v-if="showAdminLink" href="/admin" class="dropdown-item">Admin</a>
+            <button class="dropdown-item" @click="logout">Sign out</button>
+          </div>
+        </div>
+      </template>
     </div>
   </nav>
 </template>
@@ -26,6 +47,7 @@ import FormRegister from "../features/auth/FormRegister.vue";
   display: flex;
   justify-content: space-between;
   align-items: center;
+  gap: 1rem;
 }
 
 .navbar-title {
@@ -48,5 +70,54 @@ import FormRegister from "../features/auth/FormRegister.vue";
 }
 .nav-btn:hover {
   color: #269af8;
+}
+
+.user-menu {
+  position: relative;
+}
+
+.user-trigger {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  color: #e2e8f0;
+}
+
+.caret { font-size: 0.9rem; }
+
+.dropdown {
+  position: absolute;
+  top: 115%;
+  right: 0;
+  background: #0b1c38;
+  border: 1px solid #1f3b77;
+  border-radius: 0.5rem;
+  padding: 0.35rem 0;
+  min-width: 10rem;
+  display: none;
+  flex-direction: column;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+  z-index: 10;
+}
+
+.dropdown-item {
+  padding: 0.5rem 0.75rem;
+  color: #dbeafe;
+  background: none;
+  border: none;
+  text-align: left;
+  width: 100%;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.dropdown-item:hover {
+  background: #16294f;
+  color: #60a5fa;
+}
+
+.user-menu:hover .dropdown,
+.user-menu:focus-within .dropdown {
+  display: flex;
 }
 </style>

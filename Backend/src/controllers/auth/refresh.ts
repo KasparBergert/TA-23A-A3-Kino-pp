@@ -6,7 +6,7 @@ export default function refresh(req: Request, res: Response) {
   const refreshToken = req.cookies.refreshToken
   const result: JwtPayload = tokenService.verifyToken(refreshToken)
 
-  const tokens = tokenService.createTokens(result.email as string)
+  const tokens = tokenService.createTokens({ email: result.email, role: result.role })
 
   res.cookie('refreshToken', tokens.refreshToken, {
     httpOnly: true,

@@ -19,6 +19,9 @@ class UserRepository {
     return await prisma.user.findMany()
   }
 
+  async getById(id: number): Promise<user | null> {
+    return await prisma.user.findUnique({ where: { id } })
+  }
 
   async create(user: Omit<user, 'id' | 'updatedAt'>): Promise<user | null> {
     return await prisma.user.create({
@@ -31,6 +34,17 @@ class UserRepository {
       data: user,
       skipDuplicates: true,
     })
+  }
+
+  async updateRole(id: number, role: user['role']): Promise<user> {
+    return await prisma.user.update({
+      where: { id },
+      data: { role },
+    })
+  }
+
+  async delete(id: number): Promise<user> {
+    return await prisma.user.delete({ where: { id } })
   }
 }
 
