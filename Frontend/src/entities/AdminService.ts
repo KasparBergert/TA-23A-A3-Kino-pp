@@ -70,3 +70,7 @@ export async function deleteGenre(id: number) {
 export async function autoScheduleShowtimes(payload: AutoSchedulePayload) {
   return await client.post('/admin/showtimes/auto', payload)
 }
+
+export async function deleteShowtime(id: number) {
+  return await client.post(`/admin/showtimes/${id}`, {}, { method: 'DELETE' })
+}

@@ -18,12 +18,15 @@ import {
   deleteGenre,
   getFilmGenres,
   autoScheduleShowtimes,
+  deleteShowtime,
 } from '../entities/AdminService'
 import type { film, genre } from '@prisma/client'
 import { theatreService } from '../entities/TheatreService'
 import { analyticsService, type AnalyticsOverview } from '../entities/AnalyticsService'
 import AnalyticsPanel from '../features/admin/AnalyticsPanel.vue'
 import { genreService } from '../entities/GenreService'
+import { showtimeService } from '../entities/ShowtimeService'
+import { hallService } from '../entities/HallService'
 
 const films = ref<film[]>([])
 const users = ref<{ id: number; email: string; role: string }[]>([])
@@ -32,8 +35,11 @@ const genres = ref<genre[]>([])
 const theatreFilms = ref<film[]>([])
 const manageTheatreId = ref<number | null>(null)
 const manageSelectionFilm = ref<number | null>(null)
+const manageSelectionHall = ref<number | null>(null)
 const scheduleStart = ref('')
 const scheduleEnd = ref('')
+const theatreShowtimes = ref<{ id: number; filmTitle: string; startsAt: string }[]>([])
+const theatreHalls = ref<{ id: number; name: string }[]>([])
 const isManagingTheatre = computed(() => manageTheatreId.value !== null)
 
 const filmForm = ref({
@@ -65,6 +71,12 @@ async function loadFilms() {
 async function loadTheatreFilms(theatreId: number) {
   const data = await filmsService.getByTheatre(theatreId)
   theatreFilms.value = data ?? []
+  theatreShowtimes.value = (await showtimeService.get({ theatreId }))?.map((st) => ({
+    id: st.id,
+    filmTitle: st.film.title,
+    startsAt: st.startsAt,
+  })) ?? []
+  theatreHalls.value = await hallService.getByTheatre(theatreId)
 }
 
 async function handleAutoSchedule() {
@@ -74,6 +86,7 @@ async function handleAutoSchedule() {
     filmIds: [manageSelectionFilm.value],
     startDate: scheduleStart.value,
     endDate: scheduleEnd.value,
+    hallId: manageSelectionHall.value ?? undefined,
   })
   await loadTheatreFilms(manageTheatreId.value)
   await loadAnalytics()
@@ -196,6 +209,14 @@ async function handleAssignFilmToTheatre(filmId: number, theatreId: number | nul
   await loadFilms()
   if (theatreId) await loadTheatreFilms(theatreId)
   manageSelectionFilm.value = null
+  manageSelectionHall.value = null
+  scheduleStart.value = ''
+  scheduleEnd.value = ''
+}
+
+async function handleDeleteShowtime(id: number, theatreId: number | null) {
+  await deleteShowtime(id)
+  if (theatreId) await loadTheatreFilms(theatreId)
 }
 
 async function handleDeleteUser(id: number) {
@@ -263,7 +284,7 @@ onMounted(async () => {
         </div>
       </div>
 
-      <div v-if="isManagingTheatre" class="mt-6 grid md:grid-cols-2 gap-4 border border-slate-700 rounded-xl p-4">
+      <div v-if="isManagingTheatre" class="mt-6 grid md:grid-cols-3 gap-4 border border-slate-700 rounded-xl p-4">
         <div>
           <h3 class="text-lg font-semibold mb-2">Films at {{ theatres.find(t => t.id === manageTheatreId)?.name }}</h3>
           <div class="space-y-2 max-h-48 overflow-y-auto">
@@ -305,6 +326,77 @@ onMounted(async () => {
           </button>
           <p class="text-xs text-gray-400">Assigning moves the film to this cinema (each film belongs to one cinema).</p>
         </div>
+        <div class="space-y-2">
+          <h3 class="text-lg font-semibold">Showtimes here</h3>
+          <div class="space-y-1 max-h-48 overflow-y-auto">
+            <div
+              v-for="st in theatreShowtimes"
+              :key="st.id"
+              class="flex justify-between items-center bg-slate-700 rounded px-3 py-2 text-sm"
+            >
+              <div>
+                <p class="font-semibold">{{ st.filmTitle }}</p>
+                <p class="text-xs text-gray-300">{{ new Date(st.startsAt).toLocaleString() }}</p>
+              </div>
+              <button class="text-red-300" @click="handleDeleteShowtime(st.id, manageTheatreId)">Delete</button>
+            </div>
+            <p v-if="!theatreShowtimes.length" class="text-xs text-gray-400">No showtimes yet.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="bg-slate-800 rounded-xl p-6 shadow">
+      <h2 class="text-xl font-semibold mb-4">Add Movie to Cinema</h2>
+      <div class="grid md:grid-cols-3 gap-4">
+        <div>
+          <label class="text-sm text-gray-300 block mb-1">Cinema</label>
+          <select v-model.number="manageTheatreId" class="input">
+            <option :value="null">Select cinema</option>
+            <option v-for="t in theatres" :key="t.id" :value="t.id">{{ t.name }}</option>
+          </select>
+        </div>
+        <div>
+          <label class="text-sm text-gray-300 block mb-1">Movie</label>
+          <select v-model.number="manageSelectionFilm" class="input" :disabled="!manageTheatreId">
+            <option :value="null">Select film</option>
+            <option v-for="f in films" :key="f.id" :value="f.id">{{ f.title }}</option>
+          </select>
+        </div>
+        <div>
+          <label class="text-sm text-gray-300 block mb-1">Hall</label>
+          <select v-model.number="manageSelectionHall" class="input" :disabled="!manageTheatreId">
+            <option :value="null">Any hall</option>
+            <option v-for="h in theatreHalls" :key="h.id" :value="h.id">{{ h.name }}</option>
+          </select>
+        </div>
+        <div class="grid grid-cols-2 gap-2">
+          <div>
+            <label class="text-xs text-gray-400">Start date</label>
+            <input v-model="scheduleStart" type="date" class="input" :disabled="!manageSelectionFilm || !manageTheatreId" />
+          </div>
+          <div>
+            <label class="text-xs text-gray-400">End date</label>
+            <input v-model="scheduleEnd" type="date" class="input" :disabled="!manageSelectionFilm || !manageTheatreId" />
+          </div>
+        </div>
+      </div>
+      <div class="flex flex-wrap gap-2 mt-4">
+        <button
+          class="btn"
+          :disabled="!manageSelectionFilm || !manageTheatreId"
+          @click="() => { if (manageSelectionFilm && manageTheatreId) handleAssignFilmToTheatre(manageSelectionFilm, manageTheatreId) }"
+        >
+          Assign to cinema
+        </button>
+        <button
+          class="btn-outline"
+          :disabled="!manageSelectionFilm || !manageTheatreId || !scheduleStart || !scheduleEnd"
+          @click="handleAutoSchedule"
+        >
+          Auto-schedule (09:00-22:00, 1h gap)
+        </button>
+        <p class="text-xs text-gray-400 mt-2">Assign moves the film to the selected cinema; auto-schedule creates daily showtimes between the dates.</p>
       </div>
     </section>
 

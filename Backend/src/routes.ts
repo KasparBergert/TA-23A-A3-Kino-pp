@@ -5,6 +5,7 @@ import refresh from './controllers/auth/refresh.ts'
 import { getShowtimes } from './controllers/getShowtimes.ts'
 import validateEmailAndPassword from './controllers/middleware/validateEmailAndPassword.ts'
 import getTheatres from './controllers/getTheatres.ts'
+import getHalls from './controllers/getHalls.ts'
 import getSeats from './controllers/getSeats.ts'
 import getActors from './controllers/getActors.ts'
 import getFilms from './controllers/getFilms.ts'
@@ -23,6 +24,7 @@ import listUsers from './controllers/super/listUsers.ts'
 import updateUserRole from './controllers/super/updateUserRole.ts'
 import deleteUser from './controllers/super/deleteUser.ts'
 import autoScheduleShowtimes from './controllers/admin/autoScheduleShowtimes.ts'
+import deleteShowtime from './controllers/admin/deleteShowtime.ts'
 import createTheatre from './controllers/super/createTheatre.ts'
 import updateTheatre from './controllers/super/updateTheatre.ts'
 import deleteTheatre from './controllers/super/deleteTheatre.ts'
@@ -43,6 +45,7 @@ export default function ApiRoutes(): Router {
 
   // SERVICES
   routes.get('/theatres', getTheatres)
+  routes.get('/halls', getHalls)
   routes.get('/showtimes', ...getShowtimes)
   routes.get('/showtimes/:showtimeId/:hallId/seats', getSeats)
   routes.get('/films', getFilms)
@@ -60,6 +63,7 @@ export default function ApiRoutes(): Router {
   routes.patch('/admin/genres/:genreId', requireRole(userRole.admin, userRole.super_admin), ...updateGenre)
   routes.delete('/admin/genres/:genreId', requireRole(userRole.admin, userRole.super_admin), deleteGenre)
   routes.post('/admin/showtimes/auto', requireRole(userRole.admin, userRole.super_admin), ...autoScheduleShowtimes)
+  routes.delete('/admin/showtimes/:showtimeId', requireRole(userRole.admin, userRole.super_admin), deleteShowtime)
 
   // SUPER ADMIN
   routes.get('/super/users', requireRole(userRole.super_admin), listUsers)

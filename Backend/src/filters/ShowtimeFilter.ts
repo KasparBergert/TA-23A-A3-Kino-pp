@@ -46,12 +46,20 @@ class ShowtimeFilter {
       where.filmId = { in: filmIds }
     }
 
+    const today = new Date()
+    today.setHours(0, 0, 0, 0)
+
     if (filters.date) {
       const start = new Date(filters.date)
-      start.setUTCHours(0, 0, 0, 0)
+      start.setHours(0, 0, 0, 0)
       const end = new Date(filters.date)
-      end.setUTCHours(23, 59, 59, 999)
+      end.setHours(23, 59, 59, 999)
       where.startsAt = { gte: start, lte: end }
+    } else {
+      where.startsAt = {
+        ...(where.startsAt as Prisma.DateTimeFilter | undefined),
+        gte: today,
+      }
     }
 
     if (filters.filmTitle) {

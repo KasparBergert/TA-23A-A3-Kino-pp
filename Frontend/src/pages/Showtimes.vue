@@ -19,7 +19,7 @@ if (Number.isNaN(theatreId.value)) {
 const theatre = ref<theatre>({ name: '...', id: 0 });
 const showtimesList = ref<ShowtimeDTO[]>([]);
 const genres = ref<genre[]>([]);
-const selectedDate = ref<string>('');
+const selectedDate = ref<string>(new Date().toISOString().split('T')[0]);
 const selectedGenreId = ref<number | ''>('');
 const searchTitle = ref('');
 const sortBy = ref<'time' | 'title'>('time');
@@ -53,15 +53,21 @@ async function loadGenres() {
 
 async function loadShowtimes() {
   isLoading.value = true;
-  const filters: Record<string, string | number> = {};
-  if (theatreId.value) filters.theatreId = theatreId.value;
-  if (selectedDate.value) filters.date = selectedDate.value;
-  if (selectedGenreId.value) filters.genreId = Number(selectedGenreId.value);
-  if (searchTitle.value) filters.filmTitle = searchTitle.value;
+  try {
+    const filters: Record<string, string | number> = {};
+    if (theatreId.value) filters.theatreId = theatreId.value;
+    if (selectedDate.value) filters.date = selectedDate.value;
+    if (selectedGenreId.value) filters.genreId = Number(selectedGenreId.value);
+    if (searchTitle.value) filters.filmTitle = searchTitle.value;
 
-  const showtimesRes: ShowtimeDTO[] = await showtimeService.get(filters);
-  showtimesList.value = showtimesRes;
-  isLoading.value = false;
+    const showtimesRes: ShowtimeDTO[] = await showtimeService.get(filters);
+    showtimesList.value = showtimesRes ?? [];
+  } catch (err) {
+    console.error('Failed to load showtimes', err);
+    showtimesList.value = [];
+  } finally {
+    isLoading.value = false;
+  }
 }
 
 watch([selectedDate, selectedGenreId], loadShowtimes);

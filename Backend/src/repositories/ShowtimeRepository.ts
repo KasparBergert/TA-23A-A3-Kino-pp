@@ -3,13 +3,8 @@ import type { Prisma, showtime } from '@prisma/client'
 
 class ShowtimeRepository {
   async getAll(where: Prisma.showtimeWhereInput): Promise<showtime[]> {
-    const startsAtFilter =
-      typeof where.startsAt === 'object' && where.startsAt !== null
-        ? { ...(where.startsAt as Prisma.DateTimeFilter), gt: new Date() }
-        : { gt: new Date() }
-
     return await prisma.showtime.findMany({
-      where: { ...where, startsAt: startsAtFilter },
+      where,
       orderBy: { startsAt: 'asc' },
     })
   }
@@ -19,6 +14,10 @@ class ShowtimeRepository {
       data: showtime,
       skipDuplicates: true,
     })
+  }
+
+  async delete(id: number) {
+    await prisma.showtime.delete({ where: { id } })
   }
 
 }

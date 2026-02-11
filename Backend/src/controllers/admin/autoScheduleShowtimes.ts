@@ -14,6 +14,14 @@ function addMinutes(date: Date, minutes: number) {
   return new Date(date.getTime() + minutes * 60 * 1000)
 }
 
+function roundDownToFiveMinutes(date: Date) {
+  const rounded = new Date(date)
+  const minutes = rounded.getMinutes()
+  const floored = minutes - (minutes % 5)
+  rounded.setMinutes(floored, 0, 0)
+  return rounded
+}
+
 function sameDay(date: Date) {
   const d = new Date(date)
   d.setHours(0, 0, 0, 0)
@@ -27,7 +35,7 @@ function maxCloseForDay(day: Date) {
 }
 
 async function autoScheduleHandler(req: Request, res: Response) {
-  const { theatreId, filmIds, startDate, endDate } = req.body
+  const { theatreId, filmIds, startDate, endDate, hallId } = req.body
 
   const start = new Date(startDate)
   const end = new Date(endDate)
@@ -35,7 +43,13 @@ async function autoScheduleHandler(req: Request, res: Response) {
 
   const halls = await hallRepository.getByTheatreId(theatreId)
   if (!halls.length) return res.status(400).send('Selected cinema has no halls')
-  const hallId = halls[0].id
+  const hallToUse =
+    hallId ??
+    halls[0].id
+
+  if (hallId && !halls.some((h) => h.id === hallId)) {
+    return res.status(400).send('Hall does not belong to selected cinema')
+  }
 
   const films = await filmRepository.getByIds(filmIds)
   if (!films.length) return res.status(400).send('No films found for the provided ids')
@@ -51,13 +65,13 @@ async function autoScheduleHandler(req: Request, res: Response) {
     while (cursor < closing) {
       const film = films[filmIndex % films.length]
       const duration = film.durationMin ?? DEFAULT_DURATION
-      const startsAt = new Date(cursor)
+      const startsAt = roundDownToFiveMinutes(new Date(cursor))
       const endsAt = addMinutes(startsAt, duration)
 
       if (endsAt > closing) break
 
-      showtimes.push({ filmId: film.id, hallId, startsAt, endsAt })
-      cursor = addMinutes(endsAt, GAP_MINUTES)
+      showtimes.push({ filmId: film.id, hallId: hallToUse, startsAt, endsAt })
+      cursor = roundDownToFiveMinutes(addMinutes(endsAt, GAP_MINUTES))
       filmIndex += 1
     }
   }

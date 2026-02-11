@@ -12,7 +12,7 @@ defineProps<{
     </p>
   </section>
 
-  <section v-else class="grid gap-6 grid-cols-[repeat(auto-fit,minmax(320px,1fr))] p-2">
+  <section v-else class="flex flex-col gap-4 p-2">
     <ShowtimeCard v-for="showtime in showtimes" :key="showtime.id" :showtime="showtime" />
   </section>
 </template>

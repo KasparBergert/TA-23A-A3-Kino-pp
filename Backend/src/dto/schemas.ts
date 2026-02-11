@@ -59,6 +59,7 @@ export const autoScheduleSchema = z.object({
   filmIds: z.array(z.coerce.number().int().positive()).min(1),
   startDate: z.string().date(),
   endDate: z.string().date(),
+  hallId: z.coerce.number().int().positive().optional(),
 })
 
 export type FilmCreateInput = z.infer<typeof filmCreateSchema>
