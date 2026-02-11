@@ -21,7 +21,8 @@ async function submitForm() {
     toast.success('Registration successful.')
     close();
   } catch (err) {
-    toast.error(err.response.data.message)
+    const message = (err && err.message) || (err?.error) || 'Registration failed.'
+    toast.error(message)
   }
 
 }

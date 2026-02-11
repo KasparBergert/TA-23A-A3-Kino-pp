@@ -30,5 +30,5 @@ export default async function register(req: Request, res: Response) {
     path: '/api',
   })
 
-  res.status(201).send('Account creation successful')
+  res.status(201).json({ message: 'Account creation successful' })
 }

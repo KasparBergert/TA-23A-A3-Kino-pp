@@ -15,6 +15,7 @@ import { theatreSeed } from './data/TheatresData'
 import { genreSeed } from './data/genresData'
 import { filmSeed } from './data/FilmsData'
 import { usersSeed } from './data/UsersData'
+import passwordUtils from '../../utils/passwordUtils'
 import seatPricesSeed from './data/SeatPricesData'
 import prisma from '../../db'
 import { createActorsSeed } from './data/ActorsData'
@@ -39,7 +40,11 @@ async function runSeed() {
   const showtimeSeed = await createShowtimeSeed()
   await showtimeRepositroy.createMany(showtimeSeed)
 
-  await userRepository.createMany(usersSeed)
+  // Hash seeded user passwords so login works with seed accounts
+  const hashedUsers = await Promise.all(
+    usersSeed.map(async (u) => ({ ...u, password: await passwordUtils.createhash(u.password) })),
+  )
+  await userRepository.createMany(hashedUsers)
   const ordersSeed = await createOrdersSeed()
   await orderRepository.createMany(ordersSeed)
 

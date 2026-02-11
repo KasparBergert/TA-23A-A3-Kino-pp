@@ -12,7 +12,7 @@ class Api {
     return `${VITE_URI}:${VITE_PORT}/api${path}`
   }
 
-  async get(path: string, options?: Record<string, any>) {
+  async get<T = any>(path: string, options?: Record<string, any>) {
     try {
       const res = await fetch(this.makeURL(path), {
         method: 'GET',
@@ -21,9 +21,11 @@ class Api {
         credentials: 'include',
       })
       if (res.status === 204) return null as T
+      if (!res.ok) throw await res.json()
       return await res.json()
     } catch (err) {
       console.log(err)
+      throw err
     }
   }
 
@@ -37,9 +39,11 @@ class Api {
         credentials: 'include',
       })
       if (res.status === 204) return null
+      if (!res.ok) throw await res.json()
       return await res.json()
     } catch (err) {
       console.log(err)
+      throw err
     }
   }
 }

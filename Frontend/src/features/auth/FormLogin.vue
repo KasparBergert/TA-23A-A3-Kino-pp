@@ -21,7 +21,8 @@ async function submitForm() {
     toast.success('Login successful.')
     close();
   } catch (err) {
-    toast.error(err.response.data.message)
+    const message = (err && err.message) || (err?.error) || 'Login failed.'
+    toast.error(message)
   }
 
 }
