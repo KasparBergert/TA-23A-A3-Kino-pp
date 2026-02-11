@@ -2,6 +2,7 @@ import filmRepository from '../repositories/FilmRepository'
 import type { film } from '@prisma/client'
 import genreRepository from '../repositories/GenreRepositroy'
 import filmGenreRepository from '../repositories/FilmGenreRepository'
+import reviewRepository from '../repositories/ReviewRepository'
 
 class FilmService {
   async getById(film_id: number): Promise<film> {
@@ -15,6 +16,13 @@ class FilmService {
   async getAll(): Promise<film[]> {
     const films = await filmRepository.getAll()
     return films
+  }
+
+  async getWithExtras(filmId: number) {
+    const film = await this.getById(filmId)
+    const genreIds = await filmRepository.getGenreIdsByFilmId(filmId)
+    const reviews = await reviewRepository.getByFilmId(filmId)
+    return { film, genreIds, reviews }
   }
 
   async getByTheatreId(theatreId: number): Promise<film[]> {

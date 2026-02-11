@@ -1,0 +1,20 @@
+-- AlterTable
+ALTER TABLE `film` ADD COLUMN `director` VARCHAR(191) NULL,
+    ADD COLUMN `language` VARCHAR(191) NOT NULL DEFAULT 'EN',
+    ADD COLUMN `rating` VARCHAR(191) NOT NULL DEFAULT 'PG-13',
+    ADD COLUMN `trailerUrl` VARCHAR(191) NULL;
+
+-- CreateTable
+CREATE TABLE `review` (
+    `id` INTEGER NOT NULL AUTO_INCREMENT,
+    `filmId` INTEGER NOT NULL,
+    `author` VARCHAR(191) NOT NULL,
+    `rating` INTEGER NOT NULL DEFAULT 4,
+    `comment` VARCHAR(191) NULL,
+    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- AddForeignKey
+ALTER TABLE `review` ADD CONSTRAINT `review_filmId_fkey` FOREIGN KEY (`filmId`) REFERENCES `film`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;

@@ -20,6 +20,8 @@ import seatPricesSeed from './data/SeatPricesData'
 import prisma from '../../db'
 import { createActorsSeed } from './data/ActorsData'
 import seatRepository from '../../src/repositories/SeatRepository'
+import { createReviewsSeed } from './data/ReviewsData'
+import reviewRepository from '../../src/repositories/ReviewRepository'
 
 async function runSeed() {
 
@@ -37,6 +39,11 @@ async function runSeed() {
   await assignRandomGenresToFilms()
   const actorsSeed = await createActorsSeed()
   await actorRepository.createMany(actorsSeed)
+
+  const reviewsSeed = await createReviewsSeed()
+  if (reviewsSeed.length) {
+    await reviewRepository.createMany(reviewsSeed)
+  }
 
   const showtimeSeed = await createShowtimeSeed()
   await showtimeRepositroy.createMany(showtimeSeed)

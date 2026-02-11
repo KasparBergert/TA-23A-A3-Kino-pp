@@ -15,10 +15,16 @@ const secureSuffix = process.env.SecureCookies === 'true' ? 's' : ''
 const allowedOrigins = [
   `http${secureSuffix}://localhost:5173`,
   `http${secureSuffix}://localhost:5174`,
+  `http${secureSuffix}://localhost:5176`,
 ]
 app.use(
   cors({
-    origin: allowedOrigins,
+    origin: (origin, callback) => {
+      if (!origin || allowedOrigins.includes(origin)) {
+        return callback(null, origin)
+      }
+      return callback(new Error('Not allowed by CORS'))
+    },
     credentials: true,
   }),
 )

@@ -8,7 +8,7 @@ export default async function getFilms(req: Request, res: Response) {
     const theatreId = Number(req.query.theatreId)
 
     if (!Number.isNaN(filmId)) {
-      const film = await filmService.getById(filmId)
+      const film = await filmService.getWithExtras(filmId)
       return res.status(200).send(film)
     }
 

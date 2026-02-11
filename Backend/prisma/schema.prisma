@@ -13,14 +13,19 @@ model film {
   id           Int       @id @default(autoincrement())
   title        String
   description  String?
+  director     String?
   releaseDate  DateTime?
   durationMin  Int?
   posterUrl    String
+  trailerUrl   String?
+  rating       String   @default("PG-13")
+  language     String   @default("EN")
   theatreId    Int?
 
   actors       actor[]
   filmGenres   filmGenre[]
   showtimes    showtime[]
+  reviews      review[]
   theatre      theatre? @relation(fields: [theatreId], references: [id], onDelete: SetNull)
 
   @@unique([title, releaseDate, theatreId])
@@ -173,6 +178,17 @@ model showtimeTakenSeat {
 model seatPrices {  
   type  seatType @id 
   price Int @default(10)
+}
+
+model review {
+  id        Int      @id @default(autoincrement())
+  filmId    Int
+  author    String
+  rating    Int      @default(4)
+  comment   String?
+  createdAt DateTime @default(now())
+
+  film film @relation(fields: [filmId], references: [id], onDelete: Cascade)
 }
 
 enum orderStatus {

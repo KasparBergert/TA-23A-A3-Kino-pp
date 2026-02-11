@@ -3,7 +3,7 @@ import type { film } from '@prisma/client'
 
 class FilmRepository {
   async getAll(): Promise<film[]> {
-    return await prisma.film.findMany()
+    return await prisma.film.findMany({ orderBy: { title: 'asc' } })
   }
 
   async getById(filmId: number): Promise<film | null> {
@@ -27,6 +27,7 @@ class FilmRepository {
   async getByTheatreId(theatreId: number): Promise<film[]> {
     return await prisma.film.findMany({
       where: { theatreId },
+      orderBy: { title: 'asc' },
     })
   }
 
