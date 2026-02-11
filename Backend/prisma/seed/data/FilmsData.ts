@@ -1,6 +1,8 @@
-import { film } from "@prisma/client"
+import { film } from '@prisma/client'
+import theatreRepository from '../../../src/repositories/TheatreRepository'
+import { getRandom } from '../utils/fetch'
 
-export const filmSeed: Omit<film, 'id'>[] = [
+const baseFilms: Omit<film, 'id' | 'theatreId'>[] = [
   {
     title: 'The Dark Knight',
     description: 'Gotham descends into chaos as Batman faces the Joker in a clash of ideals, sacrifice, and fragile hope.',
@@ -79,3 +81,13 @@ export const filmSeed: Omit<film, 'id'>[] = [
     posterUrl: 'https://image.tmdb.org/t/p/w500/n0ybibhJtQ5icDqTp8eRytcIHJx.jpg',
   },
 ]
+
+export async function createFilmSeed(): Promise<Omit<film, 'id'>[]> {
+  const theatres = await theatreRepository.getAll()
+  if (!theatres.length) throw new Error('No theatres found; seed theatres before films')
+
+  return baseFilms.map((film) => ({
+    ...film,
+    theatreId: getRandom(theatres).id,
+  }))
+}

@@ -20,7 +20,14 @@ const films = ref<film[]>([])
 const users = ref<{ id: number; email: string; role: string }[]>([])
 const theatres = ref<{ id: number; name: string }[]>([])
 
-const filmForm = ref({ title: '', posterUrl: '', description: '', releaseDate: '', durationMin: null as number | null })
+const filmForm = ref({
+  title: '',
+  posterUrl: '',
+  description: '',
+  releaseDate: '',
+  durationMin: null as number | null,
+  theatreId: null as number | null,
+})
 const theatreName = ref('')
 const targetUserId = ref<number | null>(null)
 const targetRole = ref('user')
@@ -28,6 +35,7 @@ const newUser = ref({ email: '', password: '', role: 'user' })
 
 const role = computed(() => authStore.user.value?.role)
 const isSuper = computed(() => role.value === 'super_admin')
+const isAdmin = computed(() => role.value === 'admin' || role.value === 'super_admin')
 
 async function loadFilms() {
   const data = await filmsService.getAll()
@@ -41,12 +49,13 @@ async function loadUsers() {
 }
 
 async function loadTheatres() {
-  if (!isSuper.value) return
+  if (!isAdmin.value) return
   const data = await theatreService.getAll()
   theatres.value = data ?? []
 }
 
 async function handleCreateFilm() {
+  if (!filmForm.value.theatreId) return
   await createFilm(filmForm.value)
   await loadFilms()
 }
@@ -109,6 +118,10 @@ onMounted(async () => {
           <input v-model="filmForm.description" class="input" placeholder="Description" />
           <input v-model="filmForm.releaseDate" class="input" placeholder="Release Date" />
           <input v-model.number="filmForm.durationMin" class="input" placeholder="Duration minutes" />
+          <select v-model.number="filmForm.theatreId" class="input">
+            <option :value="null">Select cinema</option>
+            <option v-for="t in theatres" :key="t.id" :value="t.id">{{ t.name }}</option>
+          </select>
           <button class="btn" @click="handleCreateFilm">Create film</button>
         </div>
         <div class="space-y-2 max-h-64 overflow-y-auto">

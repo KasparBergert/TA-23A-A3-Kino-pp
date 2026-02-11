@@ -16,12 +16,15 @@ model film {
   releaseDate  DateTime?
   durationMin  Int?
   posterUrl    String
+  theatreId    Int
 
   actors       actor[]
   filmGenres   filmGenre[]
   showtimes    showtime[]
+  theatre      theatre  @relation(fields: [theatreId], references: [id], onDelete: Cascade)
 
-  @@unique([title, releaseDate])
+  @@unique([title, releaseDate, theatreId])
+  @@index([theatreId])
 }
 
 model genre {
@@ -70,6 +73,7 @@ model theatre {
   name  String @unique
 
   halls hall[]
+  films film[]
 }
 
 model hall {
@@ -105,6 +109,9 @@ model showtime {
   startsAt   DateTime
   endsAt     DateTime
   isCanceled Boolean  @default(false)
+  format     showtimeFormat @default(two_d)
+  language   String   @default("en")
+  rating     String   @default("PG")
 
   film     film    @relation(fields: [filmId], references: [id])
   hall     hall    @relation(fields: [hallId], references: [id])
@@ -177,6 +184,12 @@ enum ticketStatus {
   reserved
   paid
   expired
+}
+
+enum showtimeFormat {
+  two_d
+  three_d
+  imax
 }
 
 enum seatType {

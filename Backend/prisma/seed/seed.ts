@@ -13,7 +13,7 @@ import createSeatMatrix from './data/SeatsData'
 import { createHallSeed } from './data/HallsData'
 import { theatreSeed } from './data/TheatresData'
 import { genreSeed } from './data/genresData'
-import { filmSeed } from './data/FilmsData'
+import { createFilmSeed } from './data/FilmsData'
 import { usersSeed } from './data/UsersData'
 import passwordUtils from '../../utils/passwordUtils'
 import seatPricesSeed from './data/SeatPricesData'
@@ -31,7 +31,8 @@ async function runSeed() {
   await seatRepository.createMany(seats)
   await seatRepository.createManySeatPrices(seatPricesSeed)
 
-  await filmRepository.createMany(filmSeed)
+  const filmsSeed = await createFilmSeed()
+  await filmRepository.createMany(filmsSeed)
   await genreRepository.createMany(genreSeed)
   await assignRandomGenresToFilms()
   const actorsSeed = await createActorsSeed()
