@@ -5,10 +5,10 @@ import theatreRepository from '../../../src/repositories/TheatreRepository.ts'
 
 const OPEN_HOUR = 9
 const CLOSE_HOUR = 22
-const GAP_MIN = 60
-const GAP_MAX = 120
+const GAP_MIN = 45
+const GAP_MAX = 90
 const DEFAULT_DURATION = 120
-const SHOWTIMES_PER_THEATRE = 5
+const SHOWTIMES_PER_THEATRE = 8
 const DAYS_AHEAD = 14
 
 function addMinutes(date: Date, minutes: number) {

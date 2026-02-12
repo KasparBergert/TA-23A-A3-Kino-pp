@@ -139,7 +139,7 @@ const activeOrder = computed(() => orderStore.getOrderId())
   border-radius: 0.75rem;
   box-shadow: 0 12px 30px rgba(0,0,0,0.35);
   overflow: hidden;
-  z-index: 20;
+  z-index: 1000;
 }
 
 .result-row {
@@ -212,7 +212,7 @@ const activeOrder = computed(() => orderStore.getOrderId())
   display: none;
   flex-direction: column;
   box-shadow: 0 4px 12px rgba(0,0,0,0.25);
-  z-index: 10;
+  z-index: 1000;
 }
 
 .dropdown-item {

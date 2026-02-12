@@ -34,6 +34,9 @@ import logout from './controllers/auth/logout.ts'
 import { getSeatPrices } from './controllers/getSeatPrices.ts'
 import mockPay from './controllers/checkout/mockPay.ts'
 import cancelReservation from './controllers/checkout/cancelReservation.ts'
+import requireAuth from './controllers/middleware/requireAuth.ts'
+import getMyOrders from './controllers/orders/getMyOrders.ts'
+import payOrder from './controllers/checkout/payOrder.ts'
 
 export default function ApiRoutes(): Router {
   const routes = Router()
@@ -56,6 +59,8 @@ export default function ApiRoutes(): Router {
   routes.get('/seat-prices', getSeatPrices)
   routes.post('/checkout/mock', mockPay)
   routes.post('/checkout/cancel', cancelReservation)
+  routes.post('/checkout/pay', requireAuth, payOrder)
+  routes.get('/orders/me', requireAuth, getMyOrders)
 
   // ADMIN
   routes.post('/admin/films', requireRole(userRole.admin, userRole.super_admin), ...createFilm)

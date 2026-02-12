@@ -1,6 +1,7 @@
 import { Request, Response } from 'express'
 import prisma from '../../../db'
 import mailer from '../../lib/mailer'
+import { calcPricePerSeat } from '../../utils/pricing'
 
 export default async function mockPay(req: Request, res: Response) {
   try {
@@ -87,13 +88,26 @@ export default async function mockPay(req: Request, res: Response) {
       },
     })
 
+    const ticketsData = seatIds.map((seatId) => {
+      const seat = seats.find((s) => s.id === Number(seatId))
+      const unitPrice = calcPricePerSeat(seat?.type ?? 'Standard')
+      return {
+        orderId: order.id,
+        showtimeId: showtime.id,
+        seatId: Number(seatId),
+        status: 'reserved',
+        unitPrice,
+        reservedAt: now,
+      }
+    })
+
     await prisma.ticket.createMany({
       data: seatIds.map((seatId) => ({
         orderId: order.id,
         showtimeId: showtime.id,
         seatId: Number(seatId),
         status: 'reserved',
-        unitPrice: 0,
+        unitPrice: calcPricePerSeat(seats.find((s) => s.id === Number(seatId))?.type ?? 'Standard'),
         reservedAt: now,
       })),
     })
@@ -118,11 +132,14 @@ export default async function mockPay(req: Request, res: Response) {
       })
       .catch((err) => console.warn('[mailer] send failed', err))
 
+    const total = ticketsData.reduce((sum, t) => sum + Number(t.unitPrice), 0)
+
     return res.status(201).json({
       orderId: order.id.toString(),
       reservedSeats: seatIds,
       email,
       expiresAt: holdUntil.toISOString(),
+      total,
       notice: 'Broneering loodud. Hoidke kinnitamiseks 15 minuti jooksul.',
     })
   } catch (err) {

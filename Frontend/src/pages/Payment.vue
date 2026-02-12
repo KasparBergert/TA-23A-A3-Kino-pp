@@ -12,6 +12,8 @@ const router = useRouter()
 const email = ref('')
 const saveToAccount = ref(true)
 const submitting = ref(false)
+const completed = ref(false)
+const createdOrderId = ref<string | null>(null)
 const holdEndsAt = ref<number | null>(orderStore.getHoldExpiresAt())
 const now = ref(Date.now())
 let tick: number | undefined
@@ -69,8 +71,9 @@ async function submitReservation() {
     toast.success('Broneering kinnitatud! Kontrolli e-posti.')
     console.log('reservation', res)
     orderStore.setOrderId(res.orderId)
+    createdOrderId.value = res.orderId
     orderStore.clear({ preserveOrderId: true })
-    router.replace({ name: 'showtimes', query: { theatreId: showtime.theatre.id, date: showtime.startsAt.split('T')[0] } })
+    completed.value = true
   } catch (err: any) {
     toast.error(err?.message ?? 'Broneerimine ebaõnnestus')
     console.error(err)
@@ -85,8 +88,12 @@ async function submitReservation() {
     <BackgroundGlow />
 
     <div class="relative z-10 w-full max-w-md">
-      <form autocomplete="off" @submit.prevent="submitReservation"
-        class="bg-slate-900/60 backdrop-blur border border-slate-700 rounded-xl p-6 space-y-5">
+      <form
+        v-if="!completed"
+        autocomplete="off"
+        @submit.prevent="submitReservation"
+        class="bg-slate-900/60 backdrop-blur border border-slate-700 rounded-xl p-6 space-y-5"
+      >
         <button type="button" class="text-sm text-slate-400 hover:text-white" @click="router.back()">
           ← Tagasi istekohtade valikusse
         </button>
@@ -131,6 +138,30 @@ async function submitReservation() {
           {{ isExpired ? 'Aegunud' : (submitting ? 'Kinnitan...' : 'Kinnita ja salvesta') }}
         </button>
       </form>
+
+      <div
+        v-else
+        class="bg-slate-900/60 backdrop-blur border border-slate-700 rounded-xl p-6 space-y-4 text-center"
+      >
+        <h2 class="text-xl font-semibold text-gray-100">Broneering salvestatud</h2>
+        <p class="text-sm text-slate-300">
+          Tellimus #{{ createdOrderId }} on loodud. Valige, kas maksta kohe või hiljem.
+        </p>
+        <div class="flex gap-3 justify-center">
+          <button
+            class="px-4 py-2 rounded-lg bg-green-600 text-white font-semibold hover:bg-green-500"
+            @click="router.push({ name: 'orders' })"
+          >
+            Maksa nüüd
+          </button>
+          <button
+            class="px-4 py-2 rounded-lg bg-slate-700 text-white font-semibold hover:bg-slate-600"
+            @click="router.push({ name: 'showtimes', query: { theatreId: showtime?.theatre.id ?? 0 } })"
+          >
+            Maksa hiljem
+          </button>
+        </div>
+      </div>
     </div>
   </main>
 </template>

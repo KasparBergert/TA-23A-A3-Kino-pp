@@ -77,6 +77,19 @@ class ShowtimeService {
   async getShowtimeDTOs(filters: ShowtimeFilters): Promise<ShowtimeDTO[]>  {
     //creates the desired look for the showtime object
     const showtimes = await this.getAll(filters)
+    // drop past showtimes for today
+    if (filters.date) {
+      const now = new Date()
+      const isoDay = now.toISOString().split('T')[0]
+      if (filters.date === isoDay) {
+        const nowTs = now.getTime()
+        for (let i = showtimes.length - 1; i >= 0; i--) {
+          if (new Date(showtimes[i].startsAt).getTime() < nowTs) {
+            showtimes.splice(i, 1)
+          }
+        }
+      }
+    }
 
     const filmIds = showtimes.map((st) => st.filmId)
     const hallIds = showtimes.map((st) => st.hallId)

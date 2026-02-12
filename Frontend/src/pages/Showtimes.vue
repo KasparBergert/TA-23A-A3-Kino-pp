@@ -117,7 +117,7 @@ const sortedShowtimes = computed(() => {
           Tagasi
         </button>
 
-        <div class="flex gap-3 items-center flex-wrap">
+        <div class="flex gap-3 items-center flex-wrap relative z-20">
           <label class="text-sm text-slate-300">
             Kuupäev
             <input v-model="selectedDate" type="date" class="ml-2 rounded bg-slate-800 border border-slate-700 px-2 py-1 text-slate-100" />
