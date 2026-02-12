@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted, computed } from 'vue'
+import { ref, onMounted, computed, watch } from 'vue'
 import authStore from '../store/AuthStore'
 import TheNavbar from '../widgets/TheNavbar.vue'
 import { filmsService } from '../entities/FilmService'
@@ -300,7 +300,7 @@ onMounted(async () => {
         </div>
       </div>
 
-      <div v-if="isManagingTheatre" class="mt-6 grid md:grid-cols-3 gap-4 border border-slate-700 rounded-xl p-4">
+      <div v-if="isManagingTheatre" class="mt-6 grid md:grid-cols-2 gap-4 border border-slate-700 rounded-xl p-4">
         <div>
           <h3 class="text-lg font-semibold mb-2">Filmid kinos {{ theatres.find(t => t.id === manageTheatreId)?.name }}</h3>
           <div class="space-y-2 max-h-48 overflow-y-auto">
@@ -341,23 +341,6 @@ onMounted(async () => {
             Auto-graafik (09:00-22:00, 1h vahed)
           </button>
           <p class="text-xs text-gray-400">Seostamine liigutab filmi valitud kinno (üks film ühes kinos).</p>
-        </div>
-        <div class="space-y-2">
-          <h3 class="text-lg font-semibold">Seansid siin kinos</h3>
-          <div class="space-y-1 max-h-48 overflow-y-auto">
-            <div
-              v-for="st in theatreShowtimes"
-              :key="st.id"
-              class="flex justify-between items-center bg-slate-700 rounded px-3 py-2 text-sm"
-            >
-              <div>
-                <p class="font-semibold">{{ st.filmTitle }}</p>
-                <p class="text-xs text-gray-300">{{ new Date(st.startsAt).toLocaleString() }}</p>
-              </div>
-              <button class="text-red-300" @click="handleDeleteShowtime(st.id, manageTheatreId)">Kustuta</button>
-            </div>
-            <p v-if="!theatreShowtimes.length" class="text-xs text-gray-400">Seansse veel pole.</p>
-          </div>
         </div>
       </div>
     </section>

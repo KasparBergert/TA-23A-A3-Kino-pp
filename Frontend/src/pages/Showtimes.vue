@@ -24,9 +24,9 @@ const todayLocal = () => {
   d.setMinutes(d.getMinutes() - d.getTimezoneOffset());
   return d.toISOString().split('T')[0];
 };
-const selectedDate = ref<string>(todayLocal());
+const selectedDate = ref<string>(route.query.date?.toString() ?? todayLocal());
 const selectedGenreId = ref<number | ''>('');
-const searchTitle = ref('');
+const searchTitle = ref(route.query.filmTitle?.toString() ?? '');
 const sortBy = ref<'time' | 'title'>('time');
 const isLoading = ref(false);
 
@@ -77,6 +77,16 @@ async function loadShowtimes() {
 
 watch([selectedDate, selectedGenreId], loadShowtimes);
 watch(searchTitle, loadShowtimes);
+watch(
+  () => route.query,
+  (q) => {
+    if (q.date) selectedDate.value = q.date.toString();
+    if (q.filmTitle) searchTitle.value = q.filmTitle.toString();
+    if (q.theatreId) theatreId.value = Number(q.theatreId);
+    loadShowtimes();
+  },
+  { deep: true },
+);
 
 onMounted(async () => {
   await Promise.all([loadTheatreDetails(), loadGenres()]);

@@ -7,7 +7,8 @@ import showtimeRepository from '../../repositories/ShowtimeRepository'
 
 const MIN_OPEN_HOUR = 9
 const MAX_OPEN_HOUR = 22
-const GAP_MINUTES = 60
+const MIN_GAP_MINUTES = 60
+const MAX_GAP_MINUTES = 120
 const DEFAULT_DURATION = 120
 
 function addMinutes(date: Date, minutes: number) {
@@ -71,7 +72,8 @@ async function autoScheduleHandler(req: Request, res: Response) {
       if (endsAt > closing) break
 
       showtimes.push({ filmId: film.id, hallId: hallToUse, startsAt, endsAt })
-      cursor = roundDownToFiveMinutes(addMinutes(endsAt, GAP_MINUTES))
+      const gap = MIN_GAP_MINUTES + Math.floor(Math.random() * (MAX_GAP_MINUTES - MIN_GAP_MINUTES + 1))
+      cursor = roundDownToFiveMinutes(addMinutes(endsAt, gap))
       filmIndex += 1
     }
   }

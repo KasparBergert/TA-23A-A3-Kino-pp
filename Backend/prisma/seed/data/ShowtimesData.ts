@@ -6,6 +6,7 @@ import theatreRepository from '../../../src/repositories/TheatreRepository.ts'
 const OPEN_HOUR = 9
 const CLOSE_HOUR = 22
 const GAP_MIN = 60
+const GAP_MAX = 120
 const DEFAULT_DURATION = 120
 const SHOWTIMES_PER_THEATRE = 5
 const DAYS_AHEAD = 14
@@ -20,6 +21,12 @@ function roundDownToFiveMinutes(date: Date) {
   const floored = minutes - (minutes % 5)
   rounded.setMinutes(floored, 0, 0)
   return rounded
+}
+
+function maxCloseForDay(day: Date) {
+  const d = new Date(day)
+  d.setHours(CLOSE_HOUR, 0, 0, 0)
+  return d
 }
 
 export async function createShowtimeSeed(): Promise<Omit<showtime, 'id'>[]> {
@@ -45,6 +52,7 @@ export async function createShowtimeSeed(): Promise<Omit<showtime, 'id'>[]> {
       let cursor = new Date(today)
       cursor.setDate(cursor.getDate() + day)
       cursor.setHours(OPEN_HOUR, 0, 0, 0)
+      const closing = maxCloseForDay(cursor)
 
       for (let i = 0; i < SHOWTIMES_PER_THEATRE; i++) {
         const film = films[(theatreIdx * SHOWTIMES_PER_THEATRE + i + day) % films.length]
@@ -52,6 +60,7 @@ export async function createShowtimeSeed(): Promise<Omit<showtime, 'id'>[]> {
         const duration = film.durationMin ?? DEFAULT_DURATION
         const startsAt = roundDownToFiveMinutes(new Date(cursor))
         const endsAt = addMinutes(startsAt, duration)
+        if (endsAt > closing) break
         showtimes.push({
           filmId: film.id,
           hallId: hall.id,
@@ -59,7 +68,8 @@ export async function createShowtimeSeed(): Promise<Omit<showtime, 'id'>[]> {
           endsAt,
           isCanceled: false,
         })
-        cursor = roundDownToFiveMinutes(addMinutes(endsAt, GAP_MIN))
+        const gap = GAP_MIN + Math.floor(Math.random() * (GAP_MAX - GAP_MIN + 1))
+        cursor = roundDownToFiveMinutes(addMinutes(endsAt, gap))
         if (cursor.getHours() >= CLOSE_HOUR) break
       }
     }
