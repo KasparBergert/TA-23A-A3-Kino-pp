@@ -1,10 +1,11 @@
 <script setup lang="ts">
-import { reactive } from "vue";
+import { reactive, watch } from "vue";
 import type localSeatDTO from "./localSeatDTO";
 import type SeatDTO from "../../../../../shared/types/SeatDTO";
 
 const props = defineProps<{
   seat: SeatDTO;
+  presetSelected?: boolean;
 }>();
 
 const localSeat = reactive<localSeatDTO>({
@@ -31,6 +32,20 @@ function color() {
 function setStatus(new_status: 'available' | 'taken' | "selected") {
   localSeat.status = new_status;
 }
+
+// apply preset selection when provided
+if (props.presetSelected && !localSeat.isTaken) {
+  setStatus("selected")
+}
+
+// keep in sync if parent changes selection
+watch(
+  () => props.presetSelected,
+  (val) => {
+    if (localSeat.isTaken) return;
+    setStatus(val ? "selected" : "available");
+  },
+);
 
 function handleClick() {
   switch (localSeat.status) {

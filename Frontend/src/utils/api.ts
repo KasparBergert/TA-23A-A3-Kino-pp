@@ -12,6 +12,30 @@ class Api {
     return `${VITE_URI}:${VITE_PORT}/api${path}`
   }
 
+  private async parseResponse(res: Response) {
+    const contentType = res.headers.get('content-type') || ''
+    if (res.status === 204) return null
+    if (!res.ok) {
+      const text = await res.text()
+      let parsed: any
+      try {
+        parsed = text ? JSON.parse(text) : null
+      } catch {
+        parsed = null
+      }
+      const message = parsed?.message ?? text ?? res.statusText
+      throw {
+        status: res.status,
+        message,
+        body: parsed ?? text,
+      }
+    }
+    if (contentType.includes('application/json')) {
+      return res.json()
+    }
+    return res.text()
+  }
+
   async get<T = any>(path: string, options?: Record<string, any>) {
     try {
       const res = await fetch(this.makeURL(path), {
@@ -20,9 +44,7 @@ class Api {
         headers: this.makeDefaultHeaders(),
         credentials: 'include',
       })
-      if (res.status === 204) return null as T
-      if (!res.ok) throw await res.json()
-      return await res.json()
+      return (await this.parseResponse(res)) as T
     } catch (err) {
       console.log(err)
       throw err
@@ -38,9 +60,7 @@ class Api {
         headers: this.makeDefaultHeaders(),
         credentials: 'include',
       })
-      if (res.status === 204) return null
-      if (!res.ok) throw await res.json()
-      return await res.json()
+      return await this.parseResponse(res)
     } catch (err) {
       console.log(err)
       throw err

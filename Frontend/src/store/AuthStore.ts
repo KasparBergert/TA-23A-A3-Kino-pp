@@ -17,7 +17,11 @@ async function loadUser() {
   try {
     const result = await client.get<AuthUser>('/auth/me')
     if (result?.email) user.value = result as AuthUser
-  } catch (e) {
+  } catch (e: any) {
+    if (e?.status === 401) {
+      user.value = null
+      return
+    }
     console.error(e)
   }
 }

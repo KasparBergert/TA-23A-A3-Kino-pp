@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { effect, ref, shallowRef, watch } from 'vue';
+import { ref, shallowRef, watch, onMounted, onUnmounted, computed } from 'vue';
 import SeatGrid from '../features/seat/SeatGrid.vue';
 import orderStore from '../store/OrderStore';
 import { useValidation } from '../utils/useValidation';
@@ -28,6 +28,10 @@ function getFilmOrRedirect(): FilmDTO {
 
 const selectedSeats = ref<SeatDTO[]>([]);
 const selectedSeatsIds = ref<number[]>([]);
+const holdEndsAt = ref<number | null>(orderStore.getHoldExpiresAt());
+const now = ref(Date.now());
+let tick: number | undefined;
+let hydrateTimer: number | undefined;
 
 function getSelectedSeats(): SeatDTO[] {
   //get seatGrid seats
@@ -50,6 +54,42 @@ watch(selectedSeatsIds, () => {
   orderStore.setChosenSeats(selectedSeats.value);
 })
 
+const timeLeft = computed(() => {
+  if (!holdEndsAt.value) return 0;
+  return Math.max(0, holdEndsAt.value - now.value);
+});
+
+const isExpired = computed(() => timeLeft.value <= 0);
+
+onMounted(() => {
+  if (orderStore.isHoldExpired()) {
+    orderStore.clear()
+  }
+
+  tick = window.setInterval(() => {
+    now.value = Date.now();
+  }, 1000);
+});
+
+onUnmounted(() => {
+  if (tick) window.clearInterval(tick);
+  if (hydrateTimer) window.clearInterval(hydrateTimer);
+});
+
+onMounted(() => {
+  // Rehydrate previously chosen seats so user can keep editing after navigating back
+  const savedSeats = orderStore.getChosenSeats();
+  if (savedSeats?.length) {
+    hydrateTimer = window.setInterval(() => {
+      const cached = seatsCache.get();
+      if (cached.length === 0) return;
+      selectedSeatsIds.value = savedSeats.map((s) => s.id);
+      selectedSeats.value = getSelectedSeats();
+      if (hydrateTimer) window.clearInterval(hydrateTimer);
+    }, 150);
+  }
+});
+
 </script>
 <template>
   <div
@@ -65,13 +105,19 @@ watch(selectedSeatsIds, () => {
 
       <TheSummaryCard :film="film" :seats="selectedSeats" />
 
-      <button @click="proceedToPayment" :disabled="selectedSeats.length === 0" :class="[
-        selectedSeats.length === 0
-          ? 'opacity-40 cursor-not-allowed pointer-events-none'
-          : 'hover:-translate-y-0.5 active:translate-y-0']"
-        class="lg:col-start-2 w-full py-3 px-6 text-sm font-bold text-white bg-gradient-to-r from-indigo-500 to-blue-600 hover:from-indigo-600 hover:to-blue-700 rounded-xl shadow-lg shadow-indigo-500/20 transition-all focus:ring-4 focus:ring-indigo-500/30 outline-none">
-        Maksma
-      </button>
+      <div class="lg:col-start-2 w-full space-y-2">
+        <div v-if="holdEndsAt" class="text-xs text-slate-300 text-center">
+          Broneeringu aeg: {{ Math.floor(timeLeft / 60000).toString().padStart(2, '0') }}:{{ Math.floor((timeLeft % 60000) / 1000).toString().padStart(2, '0') }}
+        </div>
+
+        <button @click="proceedToPayment" :disabled="selectedSeats.length === 0 || isExpired" :class="[
+          selectedSeats.length === 0 || isExpired
+            ? 'opacity-40 cursor-not-allowed pointer-events-none'
+            : 'hover:-translate-y-0.5 active:translate-y-0']"
+          class="w-full py-3 px-6 text-sm font-bold text-white bg-gradient-to-r from-indigo-500 to-blue-600 hover:from-indigo-600 hover:to-blue-700 rounded-xl shadow-lg shadow-indigo-500/20 transition-all focus:ring-4 focus:ring-indigo-500/30 outline-none">
+          {{ isExpired ? 'Aeg sai läbi' : 'Kinnita broneering' }}
+        </button>
+      </div>
     </div>
   </div>
 </template>

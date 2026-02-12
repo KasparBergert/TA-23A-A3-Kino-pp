@@ -1,6 +1,6 @@
 import SeatDTO from "../../../shared/types/SeatDTO";
 
-const cache: SeatDTO[] = []
+let cache: SeatDTO[] = []
 
 function get(){
   return cache
@@ -12,6 +12,10 @@ function add(seats: SeatDTO[]){
   }
 }
 
+function clear(){
+  cache = []
+}
+
 export default {
-  get, add
+  get, add, clear
 }
