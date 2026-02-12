@@ -91,6 +91,11 @@ const router = createRouter({
       name: 'payment',
       component: Payment,
     },
+    {
+      path: '/orders',
+      name: 'orders',
+      component: () => import('../pages/Orders.vue'),
+    },
   ],
 })
 

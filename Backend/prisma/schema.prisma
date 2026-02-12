@@ -10,40 +10,38 @@ datasource db {
 }
 
 model film {
-  id           Int       @id @default(autoincrement())
-  title        String
-  description  String?
-  director     String?
-  releaseDate  DateTime?
-  durationMin  Int?
-  posterUrl    String
-  trailerUrl   String?
-  rating       String   @default("PG-13")
-  language     String   @default("EN")
-  theatreId    Int?
-
-  actors       actor[]
-  filmGenres   filmGenre[]
-  showtimes    showtime[]
-  reviews      review[]
-  theatre      theatre? @relation(fields: [theatreId], references: [id], onDelete: SetNull)
+  id          Int         @id @default(autoincrement())
+  title       String
+  description String?
+  releaseDate DateTime?
+  durationMin Int?
+  posterUrl   String
+  theatreId   Int?
+  director    String?
+  language    String      @default("EN")
+  rating      String      @default("PG-13")
+  trailerUrl  String?
+  actors      actor[]
+  theatre     theatre?    @relation(fields: [theatreId], references: [id])
+  filmGenres  filmGenre[]
+  reviews     review[]
+  showtimes   showtime[]
 
   @@unique([title, releaseDate, theatreId])
   @@index([theatreId])
 }
 
 model genre {
-  id         Int          @id @default(autoincrement())
-  name       String       @unique
+  id         Int         @id @default(autoincrement())
+  name       String      @unique
   filmGenres filmGenre[]
 }
 
 model filmGenre {
   filmId  Int
   genreId Int
-
-  film  film  @relation(fields: [filmId], references: [id], onDelete: Cascade)
-  genre genre @relation(fields: [genreId], references: [id])
+  film    film  @relation(fields: [filmId], references: [id], onDelete: Cascade)
+  genre   genre @relation(fields: [genreId], references: [id])
 
   @@id([filmId, genreId])
   @@index([filmId])
@@ -56,8 +54,7 @@ model user {
   password  String
   role      userRole  @default(user)
   updatedAt DateTime?
-
-  orders order[]
+  orders    order[]
 }
 
 model order {
@@ -66,9 +63,8 @@ model order {
   status    orderStatus @default(pending)
   createdAt DateTime    @default(now())
   expiresAt DateTime?
-
-  user    user     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  tickets ticket[]
+  user      user        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tickets   ticket[]
 
   @@index([userId])
 }
@@ -77,18 +73,16 @@ model theatre {
   id    Int    @id @default(autoincrement())
   name  String @unique
   city  String @default("")
-
-  halls hall[]
   films film[]
+  halls hall[]
 }
 
 model hall {
-  id        Int    @id @default(autoincrement())
+  id        Int        @id @default(autoincrement())
   theatreId Int
-  name      String @unique
+  name      String     @unique
   capacity  Int
-
-  theatre   theatre   @relation(fields: [theatreId], references: [id], onDelete: Cascade)
+  theatre   theatre    @relation(fields: [theatreId], references: [id], onDelete: Cascade)
   seats     seat[]
   showtimes showtime[]
 
@@ -96,33 +90,31 @@ model hall {
 }
 
 model seat {
-  id     Int        @id @default(autoincrement())
-  hallId Int
-  type   seatType
-  row    String
-
-  hall    hall     @relation(fields: [hallId], references: [id])
-  tickets ticket[]
+  id      Int                 @id @default(autoincrement())
+  hallId  Int
+  type    seatType
+  row     String
+  hall    hall                @relation(fields: [hallId], references: [id])
   taken   showtimeTakenSeat[]
+  tickets ticket[]
 
   @@index([hallId])
 }
 
 model showtime {
-  id         Int      @id @default(autoincrement())
+  id         Int                 @id @default(autoincrement())
   filmId     Int
   hallId     Int
   startsAt   DateTime
   endsAt     DateTime
-  isCanceled Boolean  @default(false)
-  format     showtimeFormat @default(two_d)
-  language   String   @default("en")
-  rating     String   @default("PG")
-
-  film     film    @relation(fields: [filmId], references: [id])
-  hall     hall    @relation(fields: [hallId], references: [id])
-  tickets  ticket[]
-  taken    showtimeTakenSeat[]
+  isCanceled Boolean             @default(false)
+  format     showtimeFormat      @default(two_d)
+  language   String              @default("en")
+  rating     String              @default("PG")
+  film       film                @relation(fields: [filmId], references: [id])
+  hall       hall                @relation(fields: [hallId], references: [id])
+  taken      showtimeTakenSeat[]
+  tickets    ticket[]
 
   @@unique([hallId, startsAt])
   @@index([filmId])
@@ -139,10 +131,9 @@ model ticket {
   reservedAt DateTime     @default(now())
   paidAt     DateTime?
   ticketCode String?      @unique
-
-  order    order?   @relation(fields: [orderId], references: [id])
-  showtime showtime @relation(fields: [showtimeId], references: [id])
-  seat     seat     @relation(fields: [seatId], references: [id])
+  order      order?       @relation(fields: [orderId], references: [id])
+  seat       seat         @relation(fields: [seatId], references: [id])
+  showtime   showtime     @relation(fields: [showtimeId], references: [id])
 
   @@unique([showtimeId, seatId])
   @@index([orderId])
@@ -151,14 +142,13 @@ model ticket {
 }
 
 model actor {
-  id       Int     @id @default(autoincrement())
-  name     String  @unique
+  id        Int     @id @default(autoincrement())
+  name      String  @unique
+  filmId    Int
+  link      String?
+  imageUrl  String
   character String?
-  filmId   Int
-  link     String?
-  imageUrl String
-
-  film film @relation(fields: [filmId], references: [id], onDelete: Cascade)
+  film      film    @relation(fields: [filmId], references: [id], onDelete: Cascade)
 
   @@index([filmId])
 }
@@ -167,18 +157,17 @@ model showtimeTakenSeat {
   id         Int      @id @default(autoincrement())
   seatId     Int
   showtimeId Int
-
-  seat     seat     @relation(fields: [seatId], references: [id])
-  showtime showtime @relation(fields: [showtimeId], references: [id])
+  seat       seat     @relation(fields: [seatId], references: [id])
+  showtime   showtime @relation(fields: [showtimeId], references: [id])
 
   @@unique([seatId, showtimeId])
   @@index([seatId])
   @@index([showtimeId])
 }
 
-model seatPrices {  
-  type  seatType @id 
-  price Int @default(10)
+model seatPrices {
+  type  seatType @id
+  price Int      @default(10)
 }
 
 model review {
@@ -188,8 +177,9 @@ model review {
   rating    Int      @default(4)
   comment   String?
   createdAt DateTime @default(now())
+  film      film     @relation(fields: [filmId], references: [id], onDelete: Cascade)
 
-  film film @relation(fields: [filmId], references: [id], onDelete: Cascade)
+  @@index([filmId], map: "review_filmId_fkey")
 }
 
 enum orderStatus {

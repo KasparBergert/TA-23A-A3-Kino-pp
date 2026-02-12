@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, shallowRef, ref } from "vue";
+import { onMounted, shallowRef, ref, watch } from "vue";
 import Seat from "./SeatGrid/Seat.vue";
 import { seatService } from "../../entities/SeatService";
 import SeatDTO from "../../../../shared/types/SeatDTO";
@@ -36,27 +36,38 @@ function buildSeatGrid(seats: SeatDTO[]): Record<string, Set<SeatDTO>> {
   return seatGrid;
 }
 
-onMounted(async () => {
+async function loadSeats() {
   try {
     const hallId = Number(props.hallId);
     const showtimeId = Number(props.showtimeId);
 
+    seatsCache.clear();
+    selectedSeatsIds.value = new Set();
+    emit("update:selected-seats-ids", []);
+
     const seats_fetched = await seatService.get(showtimeId, hallId);
-    //save in cache so the rest of the page can use it
     seatsCache.add(seats_fetched);
     seatGrid.value = buildSeatGrid(seats_fetched);
   } catch (err) {
     toast.error(err);
     console.error("Error fetching seats:", err);
   }
-});
+}
+
+onMounted(loadSeats);
+
+watch(
+  () => [props.hallId, props.showtimeId],
+  () => {
+    loadSeats();
+  }
+);
 
 function handleSeatClick(seat: SeatDTO) {
   selectedSeatsIds.value.has(seat.id)
     ? selectedSeatsIds.value.delete(seat.id)
     : selectedSeatsIds.value.add(seat.id);
 
-  console.log("SeatGrid", selectedSeatsIds.value)
   emit("update:selected-seats-ids", [...selectedSeatsIds.value]);
 }
 
@@ -83,4 +94,3 @@ function handleSeatClick(seat: SeatDTO) {
     </div>
   </div>
 </template>
-

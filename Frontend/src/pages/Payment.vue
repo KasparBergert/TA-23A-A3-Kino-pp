@@ -5,10 +5,12 @@ import { toast } from '@steveyuowo/vue-hot-toast'
 import orderStore from '../store/OrderStore'
 import { bookingService } from '../entities/BookingService'
 import BackgroundGlow from '../widgets/BackgroundGlow.vue'
+import authStore from '../store/AuthStore'
 
 const router = useRouter()
 
 const email = ref('')
+const saveToAccount = ref(true)
 const submitting = ref(false)
 const holdEndsAt = ref<number | null>(orderStore.getHoldExpiresAt())
 const now = ref(Date.now())
@@ -28,6 +30,8 @@ const seatCount = computed(() => seats.length)
 const seatLabels = computed(() =>
   seats.map((s) => `${s.row} · #${s.id}`)
 )
+const accountEmail = computed(() => authStore.user.value?.email ?? '')
+const selectedEmail = computed(() => (saveToAccount.value && accountEmail.value ? accountEmail.value : email.value))
 
 onMounted(() => {
   if (!showtime || seatCount.value === 0) {
@@ -50,7 +54,7 @@ async function submitReservation() {
     router.replace('/')
     return
   }
-  const cleanEmail = email.value.trim()
+  const cleanEmail = selectedEmail.value.trim()
   if (!cleanEmail) {
     toast.error('Sisesta e-post')
     return
@@ -103,8 +107,19 @@ async function submitReservation() {
           <label class="block text-sm mb-1 text-gray-300">
             E-posti aadress (kinnituseks)
           </label>
-          <input v-model="email" type="email" placeholder="nimi@e-post.ee" autocomplete="off" required
-            class="py-2.5 px-3 block w-full rounded-lg bg-slate-800 border-slate-700 text-gray-100 placeholder-gray-500 focus:border-indigo-500 focus:ring-indigo-500" />
+          <input
+            v-model="email"
+            :disabled="saveToAccount && accountEmail"
+            type="email"
+            placeholder="nimi@e-post.ee"
+            autocomplete="off"
+            required
+            class="py-2.5 px-3 block w-full rounded-lg bg-slate-800 border-slate-700 text-gray-100 placeholder-gray-500 focus:border-indigo-500 focus:ring-indigo-500 disabled:opacity-60 disabled:cursor-not-allowed" />
+        </div>
+
+        <div v-if="authStore.isAuthenticated.value" class="flex items-center gap-2 text-sm text-slate-200">
+          <input id="saveAccount" type="checkbox" v-model="saveToAccount" class="h-4 w-4 text-indigo-600 bg-slate-800 border-slate-700 rounded" />
+          <label for="saveAccount">Salvesta broneering minu kontole ({{ accountEmail || '—' }})</label>
         </div>
 
         <p class="text-xs text-slate-400">

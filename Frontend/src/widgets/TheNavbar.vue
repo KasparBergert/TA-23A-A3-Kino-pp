@@ -4,6 +4,8 @@ import { open } from "../utils/modal"
 import FormLogin from "../features/auth/FormLogin.vue"
 import FormRegister from "../features/auth/FormRegister.vue"
 import authStore from "../store/AuthStore"
+import orderStore from "../store/OrderStore"
+import { bookingService } from "../entities/BookingService"
 
 const props = defineProps<{
   showSearch?: boolean
@@ -19,6 +21,7 @@ const openRegister = () => open(FormRegister)
 const logout = () => authStore.logout()
 
 const showAdminLink = computed(() => authStore.isAdmin.value)
+const activeOrder = computed(() => orderStore.getOrderId())
 </script>
 <template>
   <!-- Navbar -->
@@ -70,6 +73,7 @@ const showAdminLink = computed(() => authStore.isAdmin.value)
             <span class="caret">▾</span>
           </button>
           <div class="dropdown">
+            <RouterLink to="/orders" class="dropdown-item">Minu broneeringud</RouterLink>
             <a v-if="showAdminLink" href="/admin" class="dropdown-item">Admin</a>
             <button class="dropdown-item" @click="logout">Sign out</button>
           </div>
