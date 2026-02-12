@@ -11,6 +11,7 @@ import { theatreService } from '../entities/TheatreService'
 import { showtimeService } from '../entities/ShowtimeService'
 import type ShowtimeDTO from '../../../shared/types/ShowtimeDTO'
 import type TheatresDTO from '../../../shared/types/TheatreDTO'
+import orderStore from '../store/OrderStore'
 
 const route = useRoute()
 const router = useRouter()
@@ -72,6 +73,11 @@ async function loadShowtimes() {
   } finally {
     loadingShowtimes.value = false
   }
+}
+
+function handleBooking(st: ShowtimeDTO) {
+  orderStore.setShowtime(st)
+  router.push({ name: 'seat-select', query: { hallId: st.hall.id, showtimeId: st.id } })
 }
 </script>
 
@@ -175,30 +181,47 @@ async function loadShowtimes() {
     <div class="glass p-5 space-y-4">
       <div class="flex flex-wrap gap-3 items-end">
         <div class="flex flex-col gap-1">
-          <label class="text-xs text-slate-400">Cinema</label>
+          <label class="text-xs text-slate-400">Kino</label>
           <select v-model.number="selectedTheatreId" class="input">
-            <option :value="null">All cinemas</option>
+            <option :value="null">Kõik kinod</option>
             <option v-for="t in theatres" :key="t.id" :value="t.id">{{ t.name }}</option>
           </select>
         </div>
         <div class="flex flex-col gap-1">
-          <label class="text-xs text-slate-400">Date</label>
+          <label class="text-xs text-slate-400">Kuupäev</label>
           <input v-model="selectedDate" type="date" class="input" />
         </div>
         <div class="flex gap-2">
-          <button class="cta" type="button" @click="loadShowtimes">Show all showtimes</button>
+          <button class="cta" type="button" @click="loadShowtimes">Kuva seansid</button>
         </div>
       </div>
 
-      <div v-if="loadingShowtimes" class="text-slate-300 text-sm">Loading showtimes…</div>
-      <div v-else-if="!showtimes.length" class="text-slate-300 text-sm">No showtimes for this date.</div>
+      <div v-if="loadingShowtimes" class="text-slate-300 text-sm">Laen seansse…</div>
+      <div v-else-if="!showtimes.length" class="text-slate-300 text-sm">Sellel kuupäeval seansse pole.</div>
       <ul v-else class="space-y-3">
-        <li v-for="st in showtimes" :key="st.id" class="flex justify-between items-center bg-slate-900/70 border border-slate-800 rounded-xl px-4 py-3">
+        <li
+          v-for="st in showtimes"
+          :key="st.id"
+          class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 bg-slate-900/70 border border-slate-800 rounded-xl px-4 py-3"
+        >
           <div>
-            <p class="text-white font-semibold">{{ new Date(st.startsAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) }}</p>
-            <p class="text-xs text-slate-400">{{ st.theatre.name }} · {{ st.hall.name }} · {{ st.format?.toUpperCase?.() || '2D' }}</p>
+            <p class="text-white font-semibold">
+              {{ new Date(st.startsAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) }}
+            </p>
+            <p class="text-xs text-slate-400">
+              {{ st.theatre.name }} · {{ st.hall.name }} · {{ st.format?.toUpperCase?.() || '2D' }}
+            </p>
           </div>
-          <span class="chip">Rating {{ st.rating ?? 'PG' }}</span>
+          <div class="flex items-center gap-3">
+            <span class="chip">Reiting {{ st.rating ?? 'PG' }}</span>
+            <button
+              type="button"
+              class="px-3 py-2 rounded-lg bg-blue-600 text-white text-sm font-semibold shadow hover:bg-blue-500 transition-colors"
+              @click="handleBooking(st)"
+            >
+              Broneeri
+            </button>
+          </div>
         </li>
       </ul>
     </div>

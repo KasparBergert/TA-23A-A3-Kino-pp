@@ -32,6 +32,7 @@ import createUser from './controllers/super/createUser.ts'
 import me from './controllers/auth/me.ts'
 import logout from './controllers/auth/logout.ts'
 import { getSeatPrices } from './controllers/getSeatPrices.ts'
+import mockPay from './controllers/checkout/mockPay.ts'
 
 export default function ApiRoutes(): Router {
   const routes = Router()
@@ -52,6 +53,7 @@ export default function ApiRoutes(): Router {
   routes.get('/actors', getActors)
   routes.get('/genres', getGenres)
   routes.get('/seat-prices', getSeatPrices)
+  routes.post('/checkout/mock', mockPay)
 
   // ADMIN
   routes.post('/admin/films', requireRole(userRole.admin, userRole.super_admin), ...createFilm)
