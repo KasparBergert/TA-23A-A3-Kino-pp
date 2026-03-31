@@ -9,7 +9,7 @@ import Screen from '../widgets/Screen.vue';
 import TheSummaryCard from '../features/booking/TheSummaryCard.vue';
 import { useRouter } from 'vue-router';
 import SeatDTO from '../../../shared/types/SeatDTO';
-import seatsCache from '../store/seatsCache';
+import seatsCache from '../store/SeatsCache';
 
 const { safeBack } = useSafeBack();
 const router = useRouter();
