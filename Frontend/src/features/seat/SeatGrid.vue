@@ -4,7 +4,7 @@ import Seat from "./SeatGrid/Seat.vue";
 import { seatService } from "../../entities/SeatService";
 import SeatDTO from "../../../../shared/types/SeatDTO";
 import { toast } from "@steveyuowo/vue-hot-toast";
-import seatsCache from "../../store/seatsCache";
+import SeatsCache from "../../store/SeatsCache";
 
 const props = defineProps<{
   hallId: number;
@@ -41,12 +41,12 @@ async function loadSeats() {
     const hallId = Number(props.hallId);
     const showtimeId = Number(props.showtimeId);
 
-    seatsCache.clear();
+    SeatsCache.clear();
     selectedSeatsIds.value = new Set();
     emit("update:selected-seats-ids", []);
 
     const seats_fetched = await seatService.get(showtimeId, hallId);
-    seatsCache.add(seats_fetched);
+    SeatsCache.add(seats_fetched);
     seatGrid.value = buildSeatGrid(seats_fetched);
   } catch (err) {
     toast.error(err);

@@ -9,7 +9,7 @@ import Screen from '../widgets/Screen.vue';
 import TheSummaryCard from '../features/booking/TheSummaryCard.vue';
 import { useRouter } from 'vue-router';
 import SeatDTO from '../../../shared/types/SeatDTO';
-import seatsCache from '../store/SeatsCache';
+import SeatsCache from '../store/SeatsCache';
 
 const { safeBack } = useSafeBack();
 const router = useRouter();
@@ -35,7 +35,7 @@ let hydrateTimer: number | undefined;
 
 function getSelectedSeats(): SeatDTO[] {
   //get seatGrid seats
-  const seats = seatsCache.get();
+  const seats = SeatsCache.get();
   //get only the selected seats
   return seats.filter((seat) => {
     for (const id of selectedSeatsIds.value) {
@@ -81,7 +81,7 @@ onMounted(() => {
   const savedSeats = orderStore.getChosenSeats();
   if (savedSeats?.length) {
     hydrateTimer = window.setInterval(() => {
-      const cached = seatsCache.get();
+      const cached = SeatsCache.get();
       if (cached.length === 0) return;
       selectedSeatsIds.value = savedSeats.map((s) => s.id);
       selectedSeats.value = getSelectedSeats();
