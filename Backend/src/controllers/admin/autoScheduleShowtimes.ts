@@ -1,9 +1,7 @@
 import { Request, Response } from 'express'
 import { autoScheduleSchema } from '../../dto/schemas'
 import { validateSchema } from '../middleware/validateSchema'
-import hallRepository from '../../repositories/HallRepository'
-import filmRepository from '../../repositories/FilmRepository'
-import showtimeRepository from '../../repositories/ShowtimeRepository'
+import prisma from '../../../db'
 
 const MIN_OPEN_HOUR = 9
 const MAX_OPEN_HOUR = 22
@@ -42,7 +40,10 @@ async function autoScheduleHandler(req: Request, res: Response) {
   const end = new Date(endDate)
   if (start > end) return res.status(400).send('startDate must be before endDate')
 
-  const halls = await hallRepository.getByTheatreId(theatreId)
+  const halls = await prisma.hall.findMany({
+    where: { theatreId },
+    orderBy: { id: 'asc' },
+  })
   if (!halls.length) return res.status(400).send('Selected cinema has no halls')
   const hallToUse =
     hallId ??
@@ -52,7 +53,9 @@ async function autoScheduleHandler(req: Request, res: Response) {
     return res.status(400).send('Hall does not belong to selected cinema')
   }
 
-  const films = await filmRepository.getByIds(filmIds)
+  const films = await prisma.film.findMany({
+    where: { id: { in: filmIds } },
+  })
   if (!films.length) return res.status(400).send('No films found for the provided ids')
 
   const showtimes: { filmId: number; hallId: number; startsAt: Date; endsAt: Date }[] = []
@@ -80,7 +83,10 @@ async function autoScheduleHandler(req: Request, res: Response) {
 
   if (!showtimes.length) return res.status(400).send('No showtimes could be generated with given range')
 
-  await showtimeRepository.createMany(showtimes)
+  await prisma.showtime.createMany({
+    data: showtimes,
+    skipDuplicates: true,
+  })
   return res.status(201).json({ created: showtimes.length })
 }
 

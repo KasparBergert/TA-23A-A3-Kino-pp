@@ -1,8 +1,8 @@
 import { Request, Response } from 'express'
-import userRepository from '../../repositories/UserRepository'
 import { userRole } from '@prisma/client'
 import { userRoleUpdateSchema } from '../../dto/schemas'
 import { validateSchema } from '../middleware/validateSchema'
+import prisma from '../../../db'
 
 async function updateUserRoleHandler(req: Request, res: Response) {
   const id = Number(req.params.userId)
@@ -11,12 +11,17 @@ async function updateUserRoleHandler(req: Request, res: Response) {
   if (!Object.values(userRole).includes(role)) return res.status(400).send('Invalid role')
 
   try {
-    const existing = await userRepository.getById(id)
+    const existing = await prisma.user.findUnique({
+      where: { id },
+    })
     if (!existing) return res.status(404).send('User not found')
     if (existing.email === 'hannes@tamm.com') {
       return res.status(403).send('Protected account role cannot be changed')
     }
-    const updated = await userRepository.updateRole(id, role)
+    const updated = await prisma.user.update({
+      where: { id },
+      data: { role },
+    })
     res.json(updated)
   } catch {
     res.status(404).send('User not found')

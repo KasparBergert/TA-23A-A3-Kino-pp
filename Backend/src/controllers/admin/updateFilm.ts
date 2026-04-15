@@ -1,9 +1,8 @@
 import { Request, Response } from 'express'
-import filmRepository from '../../repositories/FilmRepository'
-import theatreRepository from '../../repositories/TheatreRepository'
 import { filmUpdateSchema, FilmUpdateInput } from '../../dto/schemas'
 import { validateSchema } from '../middleware/validateSchema'
 import filmService from '../../services/FilmService'
+import prisma from '../../../db'
 
 async function updateFilmHandler(req: Request, res: Response) {
   const id = Number(req.params.filmId)
@@ -17,19 +16,24 @@ async function updateFilmHandler(req: Request, res: Response) {
       theatreId = null
     } else {
       theatreId = Number(body.theatreId)
-      const theatre = await theatreRepository.getById(theatreId)
+      const theatre = await prisma.theatre.findUnique({
+        where: { id: theatreId },
+      })
       if (!theatre) return res.status(404).send('Theatre not found')
     }
   }
 
   try {
-    const film = await filmRepository.update(id, {
-      title: body.title,
-      posterUrl: body.posterUrl,
-      description: body.description,
-      releaseDate: body.releaseDate ?? undefined,
-      durationMin: body.durationMin,
-      theatreId,
+    const film = await prisma.film.update({
+      where: { id },
+      data: {
+        title: body.title,
+        posterUrl: body.posterUrl,
+        description: body.description,
+        releaseDate: body.releaseDate ?? undefined,
+        durationMin: body.durationMin,
+        theatreId,
+      },
     })
     if (body.genreIds) {
       await filmService.setFilmGenres(film.id, body.genreIds)

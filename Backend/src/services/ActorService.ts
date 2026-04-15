@@ -1,9 +1,11 @@
-import actorRepository from '../repositories/ActorRepository'
+import prisma from '../../db'
 import type ActorDTO from '../../../shared/types/ActorDTO'
 
 class ActorService {
   async getByFilmId(film_id: number): Promise<ActorDTO[]> {
-    return actorRepository.getByFilmId(film_id)
+    return await prisma.actor.findMany({
+      where: { filmId: film_id },
+    })
   }
 }
 

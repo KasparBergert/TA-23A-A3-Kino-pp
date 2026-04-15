@@ -1,9 +1,8 @@
 import { Request, Response } from 'express'
-import filmRepository from '../../repositories/FilmRepository'
-import theatreRepository from '../../repositories/TheatreRepository'
 import { filmCreateSchema, FilmCreateInput } from '../../dto/schemas'
 import { validateSchema } from '../middleware/validateSchema'
 import filmService from '../../services/FilmService'
+import prisma from '../../../db'
 
 async function createFilmHandler(req: Request, res: Response) {
   const { title, posterUrl, description, releaseDate, durationMin, theatreId, genreIds } =
@@ -12,18 +11,22 @@ async function createFilmHandler(req: Request, res: Response) {
   let theatreIdNum: number | null = null
   if (theatreId !== undefined && theatreId !== null) {
     theatreIdNum = Number(theatreId)
-    const theatre = await theatreRepository.getById(theatreIdNum)
+    const theatre = await prisma.theatre.findUnique({
+      where: { id: theatreIdNum },
+    })
     if (!theatre) return res.status(404).send('Theatre not found')
   }
 
   try {
-    const film = await filmRepository.create({
-      title,
-      posterUrl,
-      description: description ?? null,
-      releaseDate: releaseDate ?? null,
-      durationMin: durationMin ?? null,
-      theatreId: theatreIdNum,
+    const film = await prisma.film.create({
+      data: {
+        title,
+        posterUrl,
+        description: description ?? null,
+        releaseDate: releaseDate ?? null,
+        durationMin: durationMin ?? null,
+        theatreId: theatreIdNum,
+      },
     })
     await filmService.setFilmGenres(film.id, genreIds ?? [])
     res.status(201).json(film)

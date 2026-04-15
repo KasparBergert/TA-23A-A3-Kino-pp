@@ -1,6 +1,5 @@
 import { Request, Response } from 'express'
 import prisma from '../../../db'
-import seatAvailabilityRepository from '../../repositories/ShowtimeTakenSeat.ts'
 
 type BookingsPerMovie = { filmId: number; filmTitle: string; bookings: number }
 type OccupancyRow = {
@@ -41,7 +40,7 @@ export default async function getAnalytics(_req: Request, res: Response) {
       return acc
     }, {})
 
-    const takenCounts = await seatAvailabilityRepository.countByShowtimeIds(showtimeIds)
+    const takenCounts = await countByShowtimeIds(showtimeIds)
 
     const occupancy: OccupancyRow[] = showtimes.map((st) => {
       const totalSeats = st.hall.capacity
@@ -69,4 +68,19 @@ export default async function getAnalytics(_req: Request, res: Response) {
     console.error(error)
     return res.status(500).send('Failed to load analytics')
   }
+}
+
+async function countByShowtimeIds(showtimeIds: number[]): Promise<Record<number, number>> {
+  if (showtimeIds.length === 0) return {}
+
+  const grouped = await prisma.showtimeTakenSeat.groupBy({
+    by: ['showtimeId'],
+    _count: { _all: true },
+    where: { showtimeId: { in: showtimeIds } },
+  })
+
+  return grouped.reduce<Record<number, number>>((acc, row) => {
+    acc[row.showtimeId] = row._count._all
+    return acc
+  }, {})
 }

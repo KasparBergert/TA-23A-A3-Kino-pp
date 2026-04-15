@@ -1,5 +1,5 @@
 import { Request, Response } from 'express'
-import hallRepository from '../repositories/HallRepository'
+import prisma from '../../db'
 
 export default async function getHalls(req: Request, res: Response) {
   try {
@@ -9,8 +9,11 @@ export default async function getHalls(req: Request, res: Response) {
     }
 
     const halls = theatreId
-      ? await hallRepository.getByTheatreId(theatreId)
-      : await hallRepository.getAll()
+      ? await prisma.hall.findMany({
+          where: { theatreId },
+          orderBy: { id: 'asc' },
+        })
+      : await prisma.hall.findMany()
 
     return res.status(200).send(halls)
   } catch (err) {

@@ -1,12 +1,17 @@
 import { Request, Response } from 'express'
-import filmRepository from '../../repositories/FilmRepository'
+import prisma from '../../../db'
 
 export default async function getFilmGenres(req: Request, res: Response) {
   const id = Number(req.params.filmId)
   if (Number.isNaN(id)) return res.status(400).send('Invalid film id')
 
   try {
-    const genreIds = await filmRepository.getGenreIdsByFilmId(id)
+    const genreIds = await prisma.filmGenre
+      .findMany({
+        where: { filmId: id },
+        select: { genreId: true },
+      })
+      .then((rows) => rows.map((row) => row.genreId))
     return res.json({ genreIds })
   } catch (error) {
     console.error(error)

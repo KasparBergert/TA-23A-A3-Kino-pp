@@ -1,9 +1,9 @@
 import { Request, Response } from 'express'
-import genreRepository from '../repositories/GenreRepositroy'
+import prisma from '../../db'
 
 export default async function getGenres(_req: Request, res: Response) {
   try {
-    const genres = await genreRepository.getAll()
+    const genres = await prisma.genre.findMany()
     return res.status(200).json(genres)
   } catch (error) {
     console.error(error)

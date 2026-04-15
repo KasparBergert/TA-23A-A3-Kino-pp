@@ -1,7 +1,7 @@
 import { Request, Response } from 'express'
-import userRepository from '../../repositories/UserRepository'
+import prisma from '../../../db'
 
 export default async function listUsers(req: Request, res: Response) {
-  const users = await userRepository.getAll()
+  const users = await prisma.user.findMany()
   res.json(users)
 }

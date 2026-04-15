@@ -1,11 +1,13 @@
-import userManager from '../../repositories/UserRepository.ts'
 import { Request, Response } from 'express'
 import userService from '../../services/UserService.ts'
 import { userRole } from '@prisma/client'
+import prisma from '../../../db'
 
 export default async function register(req: Request, res: Response) {
   const { email, password } = req.body //validated in middleware
-  const found = await userManager.getByEmail(email)
+  const found = await prisma.user.findFirst({
+    where: { email },
+  })
   if (found) {
     console.info('account already exists')
     return res.status(401).send('failed to create account')
