@@ -127,7 +127,7 @@ export default async function mockPay(req: Request, res: Response) {
         theatreName: showtime.hall.theatre.name,
         hallName: showtime.hall.name,
         datetime: new Date(showtime.startsAt).toLocaleString('et-EE', { dateStyle: 'medium', timeStyle: 'short' }),
-        seats: seats.map((s) => ({ id: s.id, row: s.row, type: s.type })),
+        seats: seats.map((s) => ({ id: s.id, row: s.row, column: s.column, type: s.type })),
         orderId: order.id.toString(),
       })
       .catch((err) => console.warn('[mailer] send failed', err))

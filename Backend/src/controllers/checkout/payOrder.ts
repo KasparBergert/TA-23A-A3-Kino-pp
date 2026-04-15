@@ -55,7 +55,7 @@ export default async function payOrder(req: Request, res: Response) {
           theatreName: st.hall.theatre.name,
           hallName: st.hall.name,
           datetime: new Date(st.startsAt).toLocaleString('et-EE', { dateStyle: 'medium', timeStyle: 'short' }),
-          seats: order.tickets.map((t) => ({ id: t.seatId, row: t.seat.row, type: t.seat.type })),
+          seats: order.tickets.map((t) => ({ id: t.seatId, row: t.seat.row, column: t.seat.column, type: t.seat.type })),
           orderId: order.id.toString(),
         })
         .catch((err) => console.warn('[mailer] payOrder send failed', err))
