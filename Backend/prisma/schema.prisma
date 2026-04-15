@@ -94,6 +94,7 @@ model seat {
   hallId  Int
   type    seatType
   row     String
+  column  Int
   hall    hall                @relation(fields: [hallId], references: [id])
   taken   showtimeTakenSeat[]
   tickets ticket[]
