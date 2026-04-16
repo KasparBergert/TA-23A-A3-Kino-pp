@@ -29,11 +29,11 @@ const timeLeft = computed(() => {
 const isExpired = computed(() => timeLeft.value <= 0)
 
 const seatCount = computed(() => seats.length)
-const seatLabels = computed(() =>
-  seats.map((s) => `${s.row} · #${s.id}`)
-)
+const seatLabels = computed(() => seats.map((s) => `${s.row}${s.column}`))
 const accountEmail = computed(() => authStore.user.value?.email ?? '')
-const selectedEmail = computed(() => (saveToAccount.value && accountEmail.value ? accountEmail.value : email.value))
+const selectedEmail = computed(() =>
+  saveToAccount.value && accountEmail.value ? accountEmail.value : email.value,
+)
 
 onMounted(() => {
   if (!showtime || seatCount.value === 0) {
@@ -95,7 +95,7 @@ async function submitReservation() {
         class="bg-slate-900/60 backdrop-blur border border-slate-700 rounded-xl p-6 space-y-5"
       >
         <button type="button" class="text-sm text-slate-400 hover:text-white" @click="router.back()">
-          ← Tagasi istekohtade valikusse
+          Tagasi istekohtade valikusse
         </button>
 
         <h2 class="text-xl font-semibold text-gray-100">

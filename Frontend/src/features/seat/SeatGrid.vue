@@ -15,21 +15,28 @@ const emit = defineEmits<{
   (e: "update:selected-seats-ids", seats_ids: number[]): void;
 }>();
 
-
-const seatGrid = ref<Record<string, Set<SeatDTO>>>({}); //used for rendering only
+const seatGrid = ref<Record<string, SeatDTO[]>>({}); //used for rendering only
 const selectedSeatsIds = shallowRef<Set<number>>(new Set<number>());
 
+function sortSeats(seats: SeatDTO[]): SeatDTO[] {
+  return [...seats].sort((a, b) => {
+    const rowOrder = a.row.localeCompare(b.row);
+    if (rowOrder !== 0) return rowOrder;
+    return a.column - b.column;
+  });
+}
+
 //builds the seat grid for rendering only
-function buildSeatGrid(seats: SeatDTO[]): Record<string, Set<SeatDTO>> {
-  const seatGrid: Record<string, Set<SeatDTO>> = {};
+function buildSeatGrid(seats: SeatDTO[]): Record<string, SeatDTO[]> {
+  const seatGrid: Record<string, SeatDTO[]> = {};
   const existing_seats: Set<number> = new Set();
 
-  for(const seat of seats){
+  for(const seat of sortSeats(seats)){
     //make new entry into seatGrid
-    const seat_row = seatGrid[seat.row] ??= new Set()
+    const seat_row = seatGrid[seat.row] ??= []
 
     //check for duplicates      |    add seat if isn't duplicate
-    if(!existing_seats.has(seat.id)) seat_row.add(seat);
+    if(!existing_seats.has(seat.id)) seat_row.push(seat);
     existing_seats.add(seat.id)
   }
 

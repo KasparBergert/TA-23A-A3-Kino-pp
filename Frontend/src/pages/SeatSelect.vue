@@ -33,16 +33,24 @@ const now = ref(Date.now());
 let tick: number | undefined;
 let hydrateTimer: number | undefined;
 
+function sortSeats(seats: SeatDTO[]): SeatDTO[] {
+  return [...seats].sort((a, b) => {
+    const rowOrder = a.row.localeCompare(b.row);
+    if (rowOrder !== 0) return rowOrder;
+    return a.column - b.column;
+  });
+}
+
 function getSelectedSeats(): SeatDTO[] {
   //get seatGrid seats
   const seats = SeatsCache.get();
   //get only the selected seats
-  return seats.filter((seat) => {
+  return sortSeats(seats.filter((seat) => {
     for (const id of selectedSeatsIds.value) {
       if (seat.id === id) return 1
     }
     return 0
-  })
+  }))
 }
 
 function proceedToPayment() {
