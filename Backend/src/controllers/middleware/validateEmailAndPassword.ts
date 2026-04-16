@@ -1,28 +1,28 @@
 import { NextFunction, Request, Response } from 'express'
-import passwordUtils from '../../../utils/passwordUtils'
-import emailUtils from '../../../utils/EmailUtils'
+import { BadRequestError } from '../../errors/HttpError.ts'
+import passwordUtils from '../../../utils/passwordUtils.ts'
+import emailUtils from '../../../utils/EmailUtils.ts'
 
 export default function validateEmailAndPassword(req: Request, res: Response, next: NextFunction) {
+  void res
   const body = req.body
   if (!body || typeof body !== 'object') {
-    return res.status(400).send("Body not sent '{email, password}'")
+    return next(new BadRequestError("Body not sent '{email, password}'"))
   }
 
   const { email, password } = body
 
-  if(typeof email !== 'string' || typeof password !== 'string'){
-    return res.status(400).send('email or password are required to be strings')
+  if (typeof email !== 'string' || typeof password !== 'string') {
+    return next(new BadRequestError('email or password are required to be strings'))
   }
 
-  const isEmailValid = emailUtils.validate(email)
-  const isPasswordValid = passwordUtils.validate(password)
-
-  if (!isEmailValid) {
-    return res.status(400).send('Email is not valid')
+  if (!emailUtils.validate(email)) {
+    return next(new BadRequestError('Email is not valid'))
   }
 
-  if (!isPasswordValid) {
-    return res.status(400).send('Password more than 99 characters')
+  if (!passwordUtils.validate(password)) {
+    return next(new BadRequestError('Password more than 99 characters'))
   }
-  next()
+
+  return next()
 }

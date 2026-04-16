@@ -6,11 +6,22 @@ import type SeatDTO from '../../../shared/types/SeatDTO.ts'
 import showtimeFilter from '../filters/ShowtimeFilter.ts'
 
 class ShowtimeService {
+  private localDateOnly(date: Date): string {
+    const year = date.getFullYear()
+    const month = String(date.getMonth() + 1).padStart(2, '0')
+    const day = String(date.getDate()).padStart(2, '0')
+    return `${year}-${month}-${day}`
+  }
+
   private async loadEntities<T>(
     ids: number[],
     loader: (id: number[]) => Promise<T[]>,
     notFound: string,
   ): Promise<T[]> {
+    if (ids.length === 0) {
+      return []
+    }
+
     const result = await loader(ids)
     if (result.length === 0) {
       throw new Error(notFound)
@@ -64,18 +75,18 @@ class ShowtimeService {
     //much more efficient way of this algorithim would work with sets, but this works too.
 
     //hallSeats for showtime don't exist when showtime itself with the id's doesn't exist
-    if(!await this.exists({hallId, showtimeId})){
+    if (!(await this.exists({ hallId, showtimeId }))) {
       throw new Error("Cannot get seat's for a showtime that doesn't exist")
     }
 
     const seats = await prisma.seat.findMany({
       where: { hallId },
       orderBy: [{ row: 'asc' }, { column: 'asc' }],
-    });
+    })
     const taken_seats = await prisma.showtimeTakenSeat.findMany({
       where: { showtimeId },
       select: { seatId: true },
-    });
+    })
     const takenSeatIds = new Set(taken_seats.map((seat) => seat.seatId))
 
     return seats.map((seat) => {
@@ -85,7 +96,7 @@ class ShowtimeService {
         type: seat.type,
         row: seat.row,
         column: seat.column,
-        isTaken: takenSeatIds.has(seat.id)
+        isTaken: takenSeatIds.has(seat.id),
       }
     })
   }
@@ -98,14 +109,14 @@ class ShowtimeService {
     })
   }
 
-  async getShowtimeDTOs(filters: ShowtimeFilters): Promise<ShowtimeDTO[]>  {
+  async getShowtimeDTOs(filters: ShowtimeFilters): Promise<ShowtimeDTO[]> {
     //creates the desired look for the showtime object
     const showtimes = await this.getAll(filters)
     // drop past showtimes for today
     if (filters.date) {
       const now = new Date()
-      const isoDay = now.toISOString().split('T')[0]
-      if (filters.date === isoDay) {
+      const today = this.localDateOnly(now)
+      if (filters.date === today) {
         const nowTs = now.getTime()
         for (let i = showtimes.length - 1; i >= 0; i--) {
           if (new Date(showtimes[i].startsAt).getTime() < nowTs) {
@@ -113,6 +124,10 @@ class ShowtimeService {
           }
         }
       }
+    }
+
+    if (showtimes.length === 0) {
+      return []
     }
 
     const filmIds = showtimes.map((st) => st.filmId)

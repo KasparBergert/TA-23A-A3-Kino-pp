@@ -1,18 +1,21 @@
 import prisma from '../../db'
 import type { film } from '@prisma/client'
+import type { FilmCreateInput, FilmUpdateInput } from '../dto/schemas'
+import { NotFoundError } from '../errors/HttpError'
+import type { CRUDService } from './interface/CRUDService'
 
-class FilmService {
+class FilmService implements CRUDService<film, FilmCreateInput, FilmUpdateInput> {
   async getById(film_id: number): Promise<film> {
     const film = await prisma.film.findUnique({
       where: { id: film_id },
     })
     if (film === null) {
-      throw new Error('FILM_NOT_FOUND')
+      throw new NotFoundError('Film not found')
     }
     return film
   }
 
-  async getAll(): Promise<film[]> {
+  async get(): Promise<film[]> {
     const films = await prisma.film.findMany({
       orderBy: { title: 'asc' },
     })
@@ -39,13 +42,73 @@ class FilmService {
     })
   }
 
+  async create(data: FilmCreateInput): Promise<film> {
+    const film = await prisma.film.create({
+      data: {
+        title: data.title,
+        posterUrl: data.posterUrl,
+        description: data.description ?? null,
+        releaseDate: data.releaseDate ?? null,
+        durationMin: data.durationMin ?? null,
+        theatreId: await this.resolveTheatreId(data.theatreId),
+      },
+    })
+
+    await this.setFilmGenres(film.id, data.genreIds ?? [])
+    return film
+  }
+
+  async edit(id: number, data: FilmUpdateInput): Promise<film> {
+    try {
+      const film = await prisma.film.update({
+        where: { id },
+        data: {
+          title: data.title,
+          posterUrl: data.posterUrl,
+          description: data.description,
+          releaseDate: data.releaseDate ?? undefined,
+          durationMin: data.durationMin,
+          theatreId: await this.resolveTheatreId(data.theatreId),
+        },
+      })
+
+      if (data.genreIds) {
+        await this.setFilmGenres(film.id, data.genreIds)
+      }
+
+      return film
+    } catch (error) {
+      if (error instanceof NotFoundError) {
+        throw error
+      }
+      throw new NotFoundError('Film not found')
+    }
+  }
+
+  async delete(id: number): Promise<void> {
+    try {
+      await prisma.film.delete({ where: { id } })
+    } catch {
+      throw new NotFoundError('Film not found')
+    }
+  }
+
+  async getGenreIds(filmId: number): Promise<number[]> {
+    return await prisma.filmGenre
+      .findMany({
+        where: { filmId },
+        select: { genreId: true },
+      })
+      .then((rows) => rows.map((row) => row.genreId))
+  }
+
   async validateGenreIds(genreIds: number[]): Promise<void> {
     if (!genreIds.length) return
     const genres = await prisma.genre.findMany({
       where: { id: { in: genreIds } },
     })
     if (genres.length !== genreIds.length) {
-      throw new Error('GENRE_NOT_FOUND')
+      throw new NotFoundError('Genre not found')
     }
   }
 
@@ -59,6 +122,21 @@ class FilmService {
         skipDuplicates: true,
       })
     })
+  }
+
+  private async resolveTheatreId(theatreId: number | null | undefined): Promise<number | null | undefined> {
+    if (theatreId === undefined) return undefined
+    if (theatreId === null) return null
+
+    const theatre = await prisma.theatre.findUnique({
+      where: { id: Number(theatreId) },
+    })
+
+    if (!theatre) {
+      throw new NotFoundError('Theatre not found')
+    }
+
+    return theatre.id
   }
 }
 

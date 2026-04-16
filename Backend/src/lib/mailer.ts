@@ -45,7 +45,7 @@ export type ReservationEmailPayload = {
   theatreName: string
   hallName: string
   datetime: string
-  seats: { id: number; row: string; type: string }[]
+  seats: { id: number; row: string; column: number; type: string }[]
   orderId: string
 }
 
@@ -53,7 +53,9 @@ async function sendReservationEmail(payload: ReservationEmailPayload) {
   const transporter = await getTransporter()
   const from = SMTP_FROM || 'kino@example.com'
 
-  const seatList = payload.seats.map((s) => `Rida ${s.row} — iste #${s.id} (${s.type})`).join('\n') || 'Istmed valimata'
+  const seatList =
+    payload.seats.map((s) => `Rida ${s.row}, koht ${s.column} (${s.type})`).join('\n') ||
+    'Istmed valimata'
   const text = `Tere!\n\nSinu broneering on salvestatud.\n\nFilm: ${payload.filmTitle}\nKino: ${payload.theatreName}\nSaal: ${payload.hallName}\nAeg: ${payload.datetime}\nTellimus: ${payload.orderId}\n\nIstmed:\n${seatList}\n\nKohtad on hoitud 15 minutit. Kohtume kinos!`
 
   const info = await transporter.sendMail({
