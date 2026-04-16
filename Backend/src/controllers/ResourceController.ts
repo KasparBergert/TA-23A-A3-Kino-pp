@@ -1,6 +1,12 @@
 import type { NextFunction, Request, Response } from 'express'
 import { BadRequestError } from '../errors/HttpError'
-import type { CRUDService } from '../services/interface/CRUDService'
+
+type CRUDService<TEntity, TCreate, TEdit = TCreate> = {
+  get(): Promise<TEntity[]>
+  create(data: TCreate): Promise<TEntity>
+  edit(id: number, data: TEdit): Promise<TEntity>
+  delete(id: number): Promise<unknown>
+}
 
 type ResourceControllerOptions = {
   deleteReturnsBody?: boolean

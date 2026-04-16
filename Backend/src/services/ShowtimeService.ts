@@ -4,6 +4,7 @@ import type ShowtimeFilters from '../../../shared/types/ShowtimeFilter.ts'
 import type ShowtimeDTO from '../../../shared/types/ShowtimeDTO.ts'
 import type SeatDTO from '../../../shared/types/SeatDTO.ts'
 import showtimeFilter from '../filters/ShowtimeFilter.ts'
+import { NotFoundError } from '../errors/HttpError'
 
 class ShowtimeService {
   private localDateOnly(date: Date): string {
@@ -109,6 +110,19 @@ class ShowtimeService {
     })
   }
 
+  async getById(showtimeId: number) {
+    const showtime = await prisma.showtime.findUnique({
+      where: { id: showtimeId },
+      include: { film: true, hall: { include: { theatre: true } } },
+    })
+
+    if (!showtime) {
+      throw new NotFoundError('Showtime not found')
+    }
+
+    return showtime
+  }
+
   async getShowtimeDTOs(filters: ShowtimeFilters): Promise<ShowtimeDTO[]> {
     //creates the desired look for the showtime object
     const showtimes = await this.getAll(filters)
@@ -166,6 +180,11 @@ class ShowtimeService {
           durationMin: film.durationMin,
           posterUrl: film.posterUrl,
           releaseDate: film.releaseDate,
+          theatreId: film.theatreId,
+          director: film.director,
+          language: film.language,
+          rating: film.rating,
+          trailerUrl: film.trailerUrl,
         },
         hall: {
           id: hall.id,
@@ -175,6 +194,7 @@ class ShowtimeService {
         theatre: {
           id: theatre.id,
           name: theatre.name,
+          city: theatre.city,
         },
         stats: {
           totalSeats,

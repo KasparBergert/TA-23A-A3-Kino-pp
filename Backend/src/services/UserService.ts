@@ -39,6 +39,15 @@ class UserService {
     return await prisma.user.findMany()
   }
 
+  async getByEmail(email: string): Promise<user> {
+    const user = await prisma.user.findUnique({
+      where: { email },
+    })
+
+    if (!user) throw new NotFoundError('User not found')
+    return user
+  }
+
   async createUser(email: string, password: string, role: userRole) {
     const existing = await prisma.user.findFirst({
       where: { email },

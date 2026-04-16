@@ -2,9 +2,8 @@ import prisma from '../../db'
 import type { film } from '@prisma/client'
 import type { FilmCreateInput, FilmUpdateInput } from '../dto/schemas'
 import { NotFoundError } from '../errors/HttpError'
-import type { CRUDService } from './interface/CRUDService'
 
-class FilmService implements CRUDService<film, FilmCreateInput, FilmUpdateInput> {
+class FilmService {
   async getById(film_id: number): Promise<film> {
     const film = await prisma.film.findUnique({
       where: { id: film_id },

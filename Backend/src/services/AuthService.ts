@@ -7,11 +7,9 @@ class AuthService {
 
   //validates if user entered the right password
   private async validatePassword(email: string, entered_password: string): Promise<Boolean> {
-    //search the database for a user, get the password hash and determine if the password is the same
     const user = await prisma.user.findFirst({
       where: { email },
     });
-    //check if user was found
     if (user === null) return false;
 
     return passwordUtils.verify(user.password, entered_password)
@@ -19,9 +17,8 @@ class AuthService {
 
   //gives both refresh and access token when entered are correct
   async createUserTokens(email: string, entered_password: string): Promise<null | TokenPair> {
-    //validate if user has the right password
     const valid = await this.validatePassword(email, entered_password)
-    if(!valid){ return null; }
+    if (!valid) { return null; }
 
     const tokens = tokenService.createTokens({ email });
     return tokens

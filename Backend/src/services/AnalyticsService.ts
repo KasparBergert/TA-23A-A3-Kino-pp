@@ -12,13 +12,30 @@ export type OccupancyRow = {
 
 class AnalyticsService {
   async getSummary() {
-    const tickets = await prisma.ticket.groupBy({
+    const tickets = await this.getTicketCountsByShowtime()
+    const showtimeIds = tickets.map((ticket) => ticket.showtimeId)
+    const showtimes = await this.getShowtimeAnalyticsData(showtimeIds)
+    const bookingsPerFilm = this.buildBookingsPerMovie(showtimes, tickets)
+    const takenCounts = await this.countByShowtimeIds(showtimeIds)
+    const occupancy = this.buildOccupancyRows(showtimes, takenCounts)
+    const totalBookings = this.calculateTotalBookings(tickets)
+
+    return {
+      totalBookings,
+      bookingsPerMovie: Object.values(bookingsPerFilm),
+      occupancy,
+    }
+  }
+
+  private async getTicketCountsByShowtime() {
+    return await prisma.ticket.groupBy({
       by: ['showtimeId'],
       _count: { _all: true },
     })
+  }
 
-    const showtimeIds = tickets.map((ticket) => ticket.showtimeId)
-    const showtimes = await prisma.showtime.findMany({
+  private async getShowtimeAnalyticsData(showtimeIds: number[]) {
+    return await prisma.showtime.findMany({
       where: { id: { in: showtimeIds } },
       select: {
         id: true,
@@ -27,8 +44,20 @@ class AnalyticsService {
         film: { select: { title: true } },
       },
     })
+  }
 
-    const bookingsPerFilm = showtimes.reduce<Record<number, BookingsPerMovie>>((acc, showtime) => {
+  private buildBookingsPerMovie(
+    showtimes: Array<{
+      id: number
+      filmId: number
+      film: { title: string }
+    }>,
+    tickets: Array<{
+      showtimeId: number
+      _count: { _all: number }
+    }>,
+  ): Record<number, BookingsPerMovie> {
+    return showtimes.reduce<Record<number, BookingsPerMovie>>((acc, showtime) => {
       const count = tickets.find((ticket) => ticket.showtimeId === showtime.id)?._count._all ?? 0
       const existing = acc[showtime.filmId]
       acc[showtime.filmId] = {
@@ -38,10 +67,17 @@ class AnalyticsService {
       }
       return acc
     }, {})
+  }
 
-    const takenCounts = await this.countByShowtimeIds(showtimeIds)
-
-    const occupancy: OccupancyRow[] = showtimes.map((showtime) => {
+  private buildOccupancyRows(
+    showtimes: Array<{
+      id: number
+      hall: { capacity: number; name: string }
+      film: { title: string }
+    }>,
+    takenCounts: Record<number, number>,
+  ): OccupancyRow[] {
+    return showtimes.map((showtime) => {
       const totalSeats = showtime.hall.capacity
       const taken = takenCounts[showtime.id] ?? 0
       const availableSeats = Math.max(totalSeats - taken, 0)
@@ -56,14 +92,14 @@ class AnalyticsService {
         totalSeats,
       }
     })
+  }
 
-    const totalBookings = tickets.reduce((sum, ticket) => sum + ticket._count._all, 0)
-
-    return {
-      totalBookings,
-      bookingsPerMovie: Object.values(bookingsPerFilm),
-      occupancy,
-    }
+  private calculateTotalBookings(
+    tickets: Array<{
+      _count: { _all: number }
+    }>,
+  ): number {
+    return tickets.reduce((sum, ticket) => sum + ticket._count._all, 0)
   }
 
   private async countByShowtimeIds(showtimeIds: number[]): Promise<Record<number, number>> {

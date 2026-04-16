@@ -1,6 +1,6 @@
 import type { NextFunction, Request, Response } from 'express'
 import { BadRequestError, UnauthorizedError } from '../errors/HttpError'
-import checkoutService from '../services/CheckoutService'
+import checkoutService from '../services/Checkout/CheckoutService'
 
 class CheckoutController {
   mockPay = async (req: Request, res: Response, next: NextFunction) => {
@@ -13,8 +13,7 @@ class CheckoutController {
 
   cancelReservation = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const { orderId } = req.body as { orderId?: string | number }
-      if (!orderId) return next(new BadRequestError('orderId required'))
+      const orderId = this.getOrderIdOrThrow(req)
       return res.status(200).json(await checkoutService.cancelReservation(orderId))
     } catch (error) {
       return next(error)
@@ -23,15 +22,28 @@ class CheckoutController {
 
   payOrder = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const auth = (req as any).auth as { email?: string }
-      if (!auth?.email) return next(new UnauthorizedError('Unauthorized'))
-
-      const { orderId } = req.body as { orderId?: string | number }
-      if (!orderId) return next(new BadRequestError('orderId required'))
-      return res.json(await checkoutService.payOrder(auth.email, orderId))
+      const authEmail = this.getAuthEmailOrThrow(req)
+      const orderId = this.getOrderIdOrThrow(req)
+      return res.json(await checkoutService.payOrder(authEmail, orderId))
     } catch (error) {
       return next(error)
     }
+  }
+
+  private getOrderIdOrThrow(req: Request): string | number {
+    const { orderId } = req.body as { orderId?: string | number }
+    if (!orderId) {
+      throw new BadRequestError('orderId required')
+    }
+    return orderId
+  }
+
+  private getAuthEmailOrThrow(req: Request): string {
+    const auth = (req as any).auth as { email?: string }
+    if (!auth?.email) {
+      throw new UnauthorizedError('Unauthorized')
+    }
+    return auth.email
   }
 }
 

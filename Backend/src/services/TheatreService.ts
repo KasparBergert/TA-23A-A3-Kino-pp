@@ -2,9 +2,9 @@ import type { theatre } from '@prisma/client'
 import prisma from '../../db'
 import type { TheatreCreateInput } from '../dto/schemas'
 import { BadRequestError, NotFoundError } from '../errors/HttpError'
-import type { CRUDService } from './interface/CRUDService'
 
-class TheatreService implements CRUDService<theatre, TheatreCreateInput> {
+
+class TheatreService {
   async get(filters?: { city?: string; search?: string; orderBy?: 'name' | 'city' }): Promise<theatre[]> {
     const where = {
       ...(filters?.city ? { city: filters.city } : {}),

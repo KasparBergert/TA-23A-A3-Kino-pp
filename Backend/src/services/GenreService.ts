@@ -2,9 +2,9 @@ import prisma from '../../db'
 import type { genre } from '@prisma/client'
 import type { GenreCreateInput } from '../dto/schemas'
 import { BadRequestError, NotFoundError } from '../errors/HttpError'
-import type { CRUDService } from './interface/CRUDService'
 
-class GenreService implements CRUDService<genre, GenreCreateInput> {
+
+class GenreService {
   async get(): Promise<genre[]> {
     return await prisma.genre.findMany()
   }

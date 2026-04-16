@@ -39,7 +39,7 @@ export default function ApiRoutes(): Router {
   routes.get('/auth/jwt/refresh', authController.refresh)
   routes.get('/auth/me', authController.me)
   routes.post('/auth/logout', authController.logout)
-
+  
   // SERVICES
   routes.get('/theatres', theatreController.get)
   routes.get('/halls', hallController.get)
