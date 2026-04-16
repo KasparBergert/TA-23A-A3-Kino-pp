@@ -11,6 +11,7 @@
     "dev-server": "bun --watch ./Backend/server.ts",
     "build": "vite build",
     "preview": "vite preview",
+    "test": "vitest run",
     "test:unit": "vitest",
     "lint": "eslint . --fix",
     "format": "prettier --write src/"
@@ -35,7 +36,6 @@
     "preline": "^3.2.3",
     "tailwindcss": "^4.1.14",
     "vue": "^3.5.22",
-    "vue-i18n": "^11.1.12",
     "vue-router": "^4.5.1",
     "zod": "^3.25.76"
   },
@@ -64,7 +64,6 @@
     "typescript": "^5.9.3",
     "vite": "^7.1.7",
     "vite-plugin-vue-devtools": "^8.0.2",
-    "vite-plugin-vuetify": "^2.1.2",
     "vite-svg-loader": "^5.1.0",
     "vitest": "^3.2.4"
   }

@@ -13,7 +13,7 @@ export default function createSeatMatrix(
     )
 
     return rows.flatMap(row =>
-      Array.from({ length: colCount }, () => {
+      Array.from({ length: colCount }, (_, colIndex) => {
         const type =
           Math.random() < 0.7
             ? seatType.Standard
@@ -25,10 +25,10 @@ export default function createSeatMatrix(
           hallId,
           type,
           row,
+          column: colIndex + 1,
         }
       })
     )
   })
 }
-
 

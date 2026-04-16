@@ -1,26 +1,28 @@
-import seatRepository from '../repositories/SeatRepository'
+import prisma from '../../db'
 import { seat, seatPrices } from '@prisma/client'
 
 class SeatService {
   async getAllByHallId(hallId: number): Promise<seat[]> {
-    return await seatRepository.getByHallId(hallId)
+    return await prisma.seat.findMany({
+      where: { hallId },
+      orderBy: [{ row: 'asc' }, { column: 'asc' }],
+    })
   }
 
 
   /** @returns generated uuid to get the data afterwards */
   async saveUserChosenSeats(seat_ids: number[]): Promise<string> {
-    //create random uid
-    const uuid = crypto.randomUUID();
-    await seatRepository.setUserChosenSeats(uuid, seat_ids);
-    return uuid
+    void seat_ids
+    throw new Error('USER_CHOSEN_SEATS_NOT_SUPPORTED')
   }
 
   async getUserChosenSeats(id: string){
-    return await seatRepository.getUserChosenSeats(id);
+    void id
+    throw new Error('USER_CHOSEN_SEATS_NOT_SUPPORTED')
   }
 
   async getPrices(): Promise<seatPrices[]>{
-    return await seatRepository.getSeatPrices();
+    return await prisma.seatPrices.findMany();
   }
 }
 

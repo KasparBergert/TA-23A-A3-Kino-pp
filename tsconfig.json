@@ -52,6 +52,7 @@
     "Frontend/src/**/*.vue",
     "Backend/api/**/*.ts",    
     "Backend/database/**/*.ts",
+    "tests/**/*.ts",
     "shared/**/*.ts", 
     "Frontend/env.d.ts",         
     "prisma/*.ts", "prisma.config.ts",         

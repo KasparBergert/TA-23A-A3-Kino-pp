@@ -1,21 +1,27 @@
+import prisma from '../../db'
 import type { film, hall, showtime, theatre } from '@prisma/client'
 import type ShowtimeFilters from '../../../shared/types/ShowtimeFilter.ts'
 import type ShowtimeDTO from '../../../shared/types/ShowtimeDTO.ts'
 import type SeatDTO from '../../../shared/types/SeatDTO.ts'
 import showtimeFilter from '../filters/ShowtimeFilter.ts'
-import showtimeRepository from '../repositories/ShowtimeRepository.ts'
-import hallRepositroy from '../repositories/HallRepository.ts'
-import filmRepository from '../repositories/FilmRepository.ts'
-import theatreRepository from '../repositories/TheatreRepository.ts'
-import seatRepository from '../repositories/SeatRepository.ts'
-import seatAvailabilityRepository from '../repositories/ShowtimeTakenSeat.ts'
 
 class ShowtimeService {
+  private localDateOnly(date: Date): string {
+    const year = date.getFullYear()
+    const month = String(date.getMonth() + 1).padStart(2, '0')
+    const day = String(date.getDate()).padStart(2, '0')
+    return `${year}-${month}-${day}`
+  }
+
   private async loadEntities<T>(
     ids: number[],
     loader: (id: number[]) => Promise<T[]>,
     notFound: string,
   ): Promise<T[]> {
+    if (ids.length === 0) {
+      return []
+    }
+
     const result = await loader(ids)
     if (result.length === 0) {
       throw new Error(notFound)
@@ -24,20 +30,44 @@ class ShowtimeService {
   }
 
   private async getShowtimeFilms(filmIds: number[]): Promise<film[]> {
-    return await this.loadEntities(filmIds, filmRepository.getByIds, 'FILM_NOT_FOUND')
+    return await this.loadEntities(
+      filmIds,
+      async (ids) =>
+        await prisma.film.findMany({
+          where: { id: { in: ids } },
+        }),
+      'FILM_NOT_FOUND',
+    )
   }
 
   private async getShowtimeHalls(hallIds: number[]): Promise<hall[]> {
-    return await this.loadEntities(hallIds, hallRepositroy.getByIds, 'HALL_NOT_FOUND')
+    return await this.loadEntities(
+      hallIds,
+      async (ids) =>
+        await prisma.hall.findMany({
+          where: { id: { in: ids } },
+        }),
+      'HALL_NOT_FOUND',
+    )
   }
 
   private async getShowtimeTheatres(hallIds: number[]): Promise<theatre[]> {
-    return await this.loadEntities(hallIds, theatreRepository.getByIds, 'THEATRE_NOT_FOUND')
+    return await this.loadEntities(
+      hallIds,
+      async (ids) =>
+        await prisma.theatre.findMany({
+          where: { id: { in: ids } },
+        }),
+      'THEATRE_NOT_FOUND',
+    )
   }
 
   async exists(filter: ShowtimeFilters): Promise<boolean> {
     const showtimeFilters = await showtimeFilter.build(filter)
-    const showtime = await showtimeRepository.getAll(showtimeFilters)
+    const showtime = await prisma.showtime.findMany({
+      where: showtimeFilters,
+      orderBy: { startsAt: 'asc' },
+    })
     return showtime.length !== 0
   }
 
@@ -45,43 +75,48 @@ class ShowtimeService {
     //much more efficient way of this algorithim would work with sets, but this works too.
 
     //hallSeats for showtime don't exist when showtime itself with the id's doesn't exist
-    if(!await this.exists({hallId, showtimeId})){
+    if (!(await this.exists({ hallId, showtimeId }))) {
       throw new Error("Cannot get seat's for a showtime that doesn't exist")
     }
 
-    const seats = await seatRepository.getByHallId(hallId);
-    const taken_seats = await seatAvailabilityRepository.getTakenSeats(showtimeId);
+    const seats = await prisma.seat.findMany({
+      where: { hallId },
+      orderBy: [{ row: 'asc' }, { column: 'asc' }],
+    })
+    const taken_seats = await prisma.showtimeTakenSeat.findMany({
+      where: { showtimeId },
+      select: { seatId: true },
+    })
+    const takenSeatIds = new Set(taken_seats.map((seat) => seat.seatId))
 
     return seats.map((seat) => {
-      let isTaken: boolean = false
-      //find taken seat if exists.
-      for(const taken_seat of taken_seats){
-        if(seat.id === taken_seat.seatId){ isTaken = true; break; } //taken seat found.
-      }
-
       return {
         id: seat.id,
         hallId: seat.hallId,
         type: seat.type,
         row: seat.row,
-        isTaken
+        column: seat.column,
+        isTaken: takenSeatIds.has(seat.id),
       }
     })
   }
 
   async getAll(filters: ShowtimeFilters): Promise<showtime[]> {
     const builtFilters = await showtimeFilter.build(filters)
-    return await showtimeRepository.getAll(builtFilters)
+    return await prisma.showtime.findMany({
+      where: builtFilters,
+      orderBy: { startsAt: 'asc' },
+    })
   }
 
-  async getShowtimeDTOs(filters: ShowtimeFilters): Promise<ShowtimeDTO[]>  {
+  async getShowtimeDTOs(filters: ShowtimeFilters): Promise<ShowtimeDTO[]> {
     //creates the desired look for the showtime object
     const showtimes = await this.getAll(filters)
     // drop past showtimes for today
     if (filters.date) {
       const now = new Date()
-      const isoDay = now.toISOString().split('T')[0]
-      if (filters.date === isoDay) {
+      const today = this.localDateOnly(now)
+      if (filters.date === today) {
         const nowTs = now.getTime()
         for (let i = showtimes.length - 1; i >= 0; i--) {
           if (new Date(showtimes[i].startsAt).getTime() < nowTs) {
@@ -91,6 +126,10 @@ class ShowtimeService {
       }
     }
 
+    if (showtimes.length === 0) {
+      return []
+    }
+
     const filmIds = showtimes.map((st) => st.filmId)
     const hallIds = showtimes.map((st) => st.hallId)
 
@@ -98,7 +137,7 @@ class ShowtimeService {
     const halls = await this.getShowtimeHalls(hallIds)
 
     const showtimeIds = showtimes.map((st) => st.id)
-    const takenSeatCounts = await seatAvailabilityRepository.countByShowtimeIds(showtimeIds)
+    const takenSeatCounts = await this.countTakenSeatByShowtimeIds(showtimeIds)
 
     const theatreIds = halls.map((h) => h.theatreId)
 
@@ -144,6 +183,21 @@ class ShowtimeService {
         },
       }
     })
+  }
+
+  private async countTakenSeatByShowtimeIds(showtimeIds: number[]): Promise<Record<number, number>> {
+    if (showtimeIds.length === 0) return {}
+
+    const grouped = await prisma.showtimeTakenSeat.groupBy({
+      by: ['showtimeId'],
+      _count: { _all: true },
+      where: { showtimeId: { in: showtimeIds } },
+    })
+
+    return grouped.reduce<Record<number, number>>((acc, row) => {
+      acc[row.showtimeId] = row._count._all
+      return acc
+    }, {})
   }
 }
 

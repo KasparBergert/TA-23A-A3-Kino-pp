@@ -1,92 +1,84 @@
-import { Router } from 'express'
-import login from './controllers/auth/login.ts'
-import register from './controllers/auth/register.ts'
-import refresh from './controllers/auth/refresh.ts'
-import { getShowtimes } from './controllers/getShowtimes.ts'
 import validateEmailAndPassword from './controllers/middleware/validateEmailAndPassword.ts'
-import getTheatres from './controllers/getTheatres.ts'
-import getHalls from './controllers/getHalls.ts'
-import getSeats from './controllers/getSeats.ts'
-import getActors from './controllers/getActors.ts'
-import getFilms from './controllers/getFilms.ts'
-import getGenres from './controllers/getGenres.ts'
+import AuthController from './controllers/AuthController.ts'
+import FilmController from './controllers/FilmController.ts'
+import genreController from './controllers/GenreController.ts'
+import theatreController from './controllers/TheatreController.ts'
+import ShowtimeController from './controllers/ShowtimeController.ts'
+import AdminShowtimeController from './controllers/AdminShowtimeController.ts'
+import ActorController from './controllers/ActorController.ts'
+import HallController from './controllers/HallController.ts'
+import SeatPriceController from './controllers/SeatPriceController.ts'
+import CheckoutController from './controllers/CheckoutController.ts'
+import OrderController from './controllers/OrderController.ts'
+import UserController from './controllers/UserController.ts'
+import AnalyticsController from './controllers/AnalyticsController.ts'
+import { genreCreateSchema, genreUpdateSchema, theatreCreateSchema } from './dto/schemas.ts'
 import requireRole from './controllers/middleware/requireRole.ts'
 import { userRole } from '@prisma/client'
-import createFilm from './controllers/admin/createFilm.ts'
-import updateFilm from './controllers/admin/updateFilm.ts'
-import deleteFilm from './controllers/admin/deleteFilm.ts'
-import getAnalytics from './controllers/admin/getAnalytics.ts'
-import createGenre from './controllers/admin/createGenre.ts'
-import updateGenre from './controllers/admin/updateGenre.ts'
-import deleteGenre from './controllers/admin/deleteGenre.ts'
-import getFilmGenres from './controllers/admin/getFilmGenres.ts'
-import listUsers from './controllers/super/listUsers.ts'
-import updateUserRole from './controllers/super/updateUserRole.ts'
-import deleteUser from './controllers/super/deleteUser.ts'
-import autoScheduleShowtimes from './controllers/admin/autoScheduleShowtimes.ts'
-import deleteShowtime from './controllers/admin/deleteShowtime.ts'
-import createTheatre from './controllers/super/createTheatre.ts'
-import updateTheatre from './controllers/super/updateTheatre.ts'
-import deleteTheatre from './controllers/super/deleteTheatre.ts'
-import createUser from './controllers/super/createUser.ts'
-import me from './controllers/auth/me.ts'
-import logout from './controllers/auth/logout.ts'
-import { getSeatPrices } from './controllers/getSeatPrices.ts'
-import mockPay from './controllers/checkout/mockPay.ts'
-import cancelReservation from './controllers/checkout/cancelReservation.ts'
 import requireAuth from './controllers/middleware/requireAuth.ts'
-import getMyOrders from './controllers/orders/getMyOrders.ts'
-import payOrder from './controllers/checkout/payOrder.ts'
+import { Router } from 'express'
+import { validateSchema } from './controllers/middleware/validateSchema.ts'
 
 export default function ApiRoutes(): Router {
   const routes = Router()
-
+  const authController = new AuthController()
+  const filmController = new FilmController()
+  const showtimeController = new ShowtimeController()
+  const adminShowtimeController = new AdminShowtimeController()
+  const actorController = new ActorController()
+  const hallController = new HallController()
+  const seatPriceController = new SeatPriceController()
+  const checkoutController = new CheckoutController()
+  const orderController = new OrderController()
+  const userController = new UserController()
+  const analyticsController = new AnalyticsController()
+  
   // AUTH
-  routes.post('/auth/users/login', validateEmailAndPassword, login)
-  routes.post('/auth/users/register', validateEmailAndPassword, register)
-  routes.get('/auth/jwt/refresh', refresh)
-  routes.get('/auth/me', me)
-  routes.post('/auth/logout', logout)
+  routes.post('/auth/users/login', validateEmailAndPassword, authController.login)
+  routes.post('/auth/users/register', validateEmailAndPassword, authController.register)
+  routes.get('/auth/jwt/refresh', authController.refresh)
+  routes.get('/auth/me', authController.me)
+  routes.post('/auth/logout', authController.logout)
 
   // SERVICES
-  routes.get('/theatres', getTheatres)
-  routes.get('/halls', getHalls)
-  routes.get('/showtimes', ...getShowtimes)
-  routes.get('/showtimes/:showtimeId/:hallId/seats', getSeats)
-  routes.get('/films', getFilms)
-  routes.get('/actors', getActors)
-  routes.get('/genres', getGenres)
-  routes.get('/seat-prices', getSeatPrices)
-  routes.post('/checkout/mock', mockPay)
-  routes.post('/checkout/cancel', cancelReservation)
-  routes.post('/checkout/pay', requireAuth, payOrder)
-  routes.get('/orders/me', requireAuth, getMyOrders)
+  routes.get('/theatres', theatreController.get)
+  routes.get('/halls', hallController.get)
+  routes.get('/showtimes', ...showtimeController.get)
+  routes.get('/showtimes/:showtimeId/:hallId/seats', showtimeController.getSeats)
+  routes.get('/films', filmController.get)
+  routes.get('/actors', actorController.get)
+  routes.get('/genres', genreController.get)
+  routes.get('/seat-prices', seatPriceController.get)
+  routes.post('/checkout/mock', checkoutController.mockPay)
+  routes.post('/checkout/cancel', checkoutController.cancelReservation)
+  routes.post('/checkout/pay', requireAuth, checkoutController.payOrder)
+  routes.get('/orders/me', requireAuth, orderController.getMyOrders)
 
   // ADMIN
-  routes.post('/admin/films', requireRole(userRole.admin, userRole.super_admin), ...createFilm)
-  routes.patch('/admin/films/:filmId', requireRole(userRole.admin, userRole.super_admin), ...updateFilm)
-  routes.delete('/admin/films/:filmId', requireRole(userRole.admin, userRole.super_admin), deleteFilm)
-  routes.get('/admin/films/:filmId/genres', requireRole(userRole.admin, userRole.super_admin), getFilmGenres)
-  routes.get('/admin/analytics', requireRole(userRole.admin, userRole.super_admin), getAnalytics)
-  routes.post('/admin/genres', requireRole(userRole.admin, userRole.super_admin), ...createGenre)
-  routes.patch('/admin/genres/:genreId', requireRole(userRole.admin, userRole.super_admin), ...updateGenre)
-  routes.delete('/admin/genres/:genreId', requireRole(userRole.admin, userRole.super_admin), deleteGenre)
-  routes.post('/admin/showtimes/auto', requireRole(userRole.admin, userRole.super_admin), ...autoScheduleShowtimes)
-  routes.delete('/admin/showtimes/:showtimeId', requireRole(userRole.admin, userRole.super_admin), deleteShowtime)
+  routes.post('/admin/films', requireRole(userRole.admin, userRole.super_admin), ...filmController.create)
+  routes.patch('/admin/films/:filmId', requireRole(userRole.admin, userRole.super_admin), ...filmController.update)
+  routes.delete('/admin/films/:filmId', requireRole(userRole.admin, userRole.super_admin), filmController.delete)
+  routes.get('/admin/films/:filmId/genres', requireRole(userRole.admin, userRole.super_admin), filmController.getGenres)
+  routes.get('/admin/analytics', requireRole(userRole.admin, userRole.super_admin), analyticsController.get)
+  routes.post('/admin/genres', requireRole(userRole.admin, userRole.super_admin), validateSchema(genreCreateSchema), genreController.create)
+  routes.patch('/admin/genres/:genreId', requireRole(userRole.admin, userRole.super_admin), validateSchema(genreUpdateSchema), genreController.edit)
+  routes.delete('/admin/genres/:genreId', requireRole(userRole.admin, userRole.super_admin), genreController.delete)
+  routes.post('/admin/showtimes/auto', requireRole(userRole.admin, userRole.super_admin), ...adminShowtimeController.autoSchedule)
+  routes.delete('/admin/showtimes/:showtimeId', requireRole(userRole.admin, userRole.super_admin), adminShowtimeController.delete)
 
   // SUPER ADMIN
-  routes.get('/super/users', requireRole(userRole.super_admin), listUsers)
+  routes.get('/super/users', requireRole(userRole.super_admin), userController.list)
   routes.post(
     '/super/users',
     requireRole(userRole.super_admin),
     validateEmailAndPassword,
-    ...createUser,
+    ...userController.create,
   )
-  routes.patch('/super/users/:userId/role', requireRole(userRole.super_admin), ...updateUserRole)
-  routes.delete('/super/users/:userId', requireRole(userRole.super_admin), deleteUser)
-  routes.post('/super/theatres', requireRole(userRole.super_admin), ...createTheatre)
-  routes.patch('/super/theatres/:theatreId', requireRole(userRole.super_admin), ...updateTheatre)
-  routes.delete('/super/theatres/:theatreId', requireRole(userRole.super_admin), deleteTheatre)
+  routes.patch('/super/users/:userId/role', requireRole(userRole.super_admin), ...userController.updateRole)
+  routes.delete('/super/users/:userId', requireRole(userRole.super_admin), userController.delete)
+  routes.post('/super/theatres', requireRole(userRole.super_admin), validateSchema(theatreCreateSchema), theatreController.create)
+  routes.patch('/super/theatres/:theatreId', requireRole(userRole.super_admin), validateSchema(theatreCreateSchema), theatreController.edit)
+  routes.delete('/super/theatres/:theatreId', requireRole(userRole.super_admin), theatreController.delete)
 
   return routes
 }

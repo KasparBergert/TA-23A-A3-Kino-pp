@@ -1,9 +1,10 @@
 import './env.ts'
 import './utils/setupConsoleColors.ts'
-import express, { ErrorRequestHandler, NextFunction, Request, Response } from 'express'
+import express, { ErrorRequestHandler } from 'express'
 import cookieParser from 'cookie-parser'
 import ApiRoutes from './src/routes.ts'
 import cors from 'cors'
+import { isHttpError } from './src/errors/HttpError.ts'
 import { getErrorMessage } from './utils/getErrorMessage.ts'
 
 const app = express()
@@ -46,13 +47,17 @@ app.use('/api', ApiRoutes())
 
 // --- ERROR MIDDLEWARE ---
 
-const errorMiddleware = (
-  err: ErrorRequestHandler,
-  req: Request,
-  res: Response,
-  next: NextFunction,
-) => {
-  res.status(500).json({ error: getErrorMessage(err) })
+const errorMiddleware: ErrorRequestHandler = (err, _req, res, _next) => {
+  if (isHttpError(err)) {
+    if (err.details) {
+      return res.status(err.status).json({ errors: err.details })
+    }
+
+    return res.status(err.status).send(err.message)
+  }
+
+  console.error(err)
+  return res.status(500).json({ error: getErrorMessage(err) })
 }
 
 app.use(errorMiddleware)
